@@ -1,4 +1,6 @@
-# from cottonmouth library, ported to python3.
+# from cottonmouth library, ported to python3 by Vishesh Gupta.
+# also, added the ability to define style-type tags using the css syntax, so
+# a dictionary value for an attribute is converted to: "key:value;key2:value2;"
 
 import collections
 import itertools
@@ -202,8 +204,14 @@ def render_tag(tag, content, **context):
     if classes:
         extra['class'] = ' '.join(classes)
 
+    def dictattr(d):
+      return ''.join('{}:{};'.format(*x) for x in d.items())
     # Format attributes
-    attributes = ''.join([' {}="{}"'.format(*i) for i in list(extra.items())])
+    attributes = ''.join(' {}="{}"'.format(i[0],
+                                           dictattr(i[1])
+                                           if isinstance(i[1], dict)
+                                           else i[1])
+                         for i in list(extra.items()))
 
     # Start our tag sandwich
     yield '<{}{}>'.format(tag, attributes)

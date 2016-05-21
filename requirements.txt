@@ -1,0 +1,4 @@
+inflection
+pytest
+regex
+toolz
