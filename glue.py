@@ -1,14 +1,14 @@
 # for js: https://github.com/davidchambers/string-format
 
-# from typing import List, Callable, Mapping, Union
-#
-# from collections import namedtuple as nt
-# from enum import Enum
-# import operator as op
-#
-# import toolz as t
-# import toolz.curried as tc
-# import regex as re
+from typing import List, Callable, Mapping, Union
+
+from collections import namedtuple as nt
+from enum import Enum
+import operator as op
+
+import toolz as t
+import toolz.curried as tc
+import regex as re
 
 def htmlbodymap(f, x):
   if isinstance(x, list) or isinstance(x, tuple):
@@ -90,24 +90,30 @@ def parseinline(registry:Mapping[str, Union[Inline, Block]],
     if m == None:
       # if we never matched anything, it's just text we need to be returning.
       if ind == 0: return unescape(text)
+      # otherwise, make it into a child of the returned html.
       l.append(unescape(text[ind:]))
       break
     else:
+      # untouched text should be made into its own child
       if m.span()[0] > ind:
         l.append(unescape(text[ind:m.span()[0]]))
       
-      ind = m.span()[1]
+      # figure out which parser the match is corresponding to.
+      # first not-None group index.
       groupind = indexby(lambda x: x is not None, m.groups())
+      # the index of the regex in `inlines` that the groupind corresponds to
       matchind = indexby(lambda x: x >= groupind, grouplengths)
-      print(matchind)
-      print(grouplengths)
-      print(m.groups())
+      # the parser/elem from that index.
       parser,elem = inlines[matchind][1]
+      # stripping all the groups corresponding to the matched sub-regex
       groups = m.groups()[grouplengths[matchind]:grouplengths[min(m.re.groups, matchind+1)]]
       if elem.nest == Nesting.FRAME:
+        # frames are simple, by default they have inherit behavior
+        # and deal with one group
         l.append(parser(parseinline(registry, block, groups[0])))
       elif elem.nest == Nesting.POST:
-        print(groups)
+        # post requires a tree-traversal to reparse all the body elements.
+        # the only difference is that we have to
         l.append(
           htmlbodymap(
             lambda t: parseinline(
@@ -117,6 +123,8 @@ def parseinline(registry:Mapping[str, Union[Inline, Block]],
             parser(groups)))
       else:
         l.append((parser, groups))
+
+      ind = m.span()[1]
   
   return l
 
