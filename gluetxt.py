@@ -1,17 +1,22 @@
 # for js: https://github.com/davidchambers/string-format
 
-from typing import List, Callable, Mapping, Union
+# from typing import List, Callable, Mapping, Union
+#
+# from collections import namedtuple as nt
+# from enum import Enum
+# import operator as op
+#
+# import toolz as t
+# import toolz.curried as tc
+# import regex as re
 
-from collections import namedtuple as nt
-from collections import OrderedDict as odict
-from enum import Enum
-import operator as op
-
-import toolz as t
-import toolz.curried as tc
-import regex as re
-
-
+def htmlbodymap(f, x):
+  if isinstance(x, list) or isinstance(x, tuple):
+    return list(t.cons(x[0], t.map(lambda e: htmlbodymap(f,e), x[1:])))
+  elif isinstance(x, str):
+    return f(x)
+  else:
+    return x
 
 # Paragraphs = Block('paragraphs', 'post', ''
 #  lambda text: t.cons('div', t.map(lambda x: ['p', x], text.split('\n\n'))))
@@ -42,39 +47,49 @@ def fills(quantities, n):
   k = n
   for i,e in enumerate(quantities):
     k -= e
-    if k <0: return i
+    if k < 0: return i
   
   return len(quantities)
 
   
 def parseinline(registry:Mapping[str, Union[Inline, Block]],
-                block:Block, text:str):
+                element:Union[Block,Inline,str], text:str):
   """
   Parses a block of text for its subscribed inline styles,
   depending on the nesting style of the block, it will return
   """
+  
+  block = registry[element] if isinstance(element, str) else element
     
   # a map of regexes to parsing function
-  inlines = t.pipe(block.subinline,
+  inlines = t.pipe(
+    block.subinline if isinstance(block, Block) else block.subscribe,
     tc.map(lambda x: x if isinstance(x, Inline) else registry[x]),
     tc.map(lambda x: t.map(lambda p: (p[0],(p[1],x)), x.parser)),
     t.merge,
     lambda x: list(x.items()))
   
+  # combine all escaped characters from all subscribed inline objects.
   escapes = ''.join(t.reduce(set.union,
     ((x if isinstance(x, Inline) else registry[x]).escape
      for x in block.subinline)))
-  
+  # function that will unescape body code so eg \* -> *
   unescape = lambda t: re.compile('\\\\(['+escapes+'])').sub(r'\1', t)
   
+  # combine all inline patterns into one regex.
+  # might not be efficient for very complex parsers....
   patt = re.compile('|'.join(t.map(lambda x: '(?:'+x[0].pattern+')', inlines)), re.V1)
-  grouplengths = t.accumulate(op.add, t.map(lambda x: num_groups(x[0]), inlines))
+  # how many groups are in each regex, in order, so we can assign the final
+  # match to the right parser function.
+  grouplengths = list(t.cons(0, t.accumulate(op.add, t.map(lambda x: num_groups(x[0]), inlines))))
 
   ind = 0
   l = []
   while ind < len(text):
     m = patt.search(text, ind)
     if m == None:
+      # if we never matched anything, it's just text we need to be returning.
+      if ind == 0: return unescape(text)
       l.append(unescape(text[ind:]))
       break
     else:
@@ -83,11 +98,23 @@ def parseinline(registry:Mapping[str, Union[Inline, Block]],
       
       ind = m.span()[1]
       groupind = indexby(lambda x: x is not None, m.groups())
-      matchind = indexby(lambda x: x > groupind, grouplengths)
-      parser = inlines[matchind][1]
-      groups = m.groups()[matchind:min(m.re.groups, matchind+1)]
-      if parser[1].nest == Nesting.FRAME:
-        l.append(parser[0](parseinline(registry, block, groups[0])))
+      matchind = indexby(lambda x: x >= groupind, grouplengths)
+      print(matchind)
+      print(grouplengths)
+      print(m.groups())
+      parser,elem = inlines[matchind][1]
+      groups = m.groups()[grouplengths[matchind]:grouplengths[min(m.re.groups, matchind+1)]]
+      if elem.nest == Nesting.FRAME:
+        l.append(parser(parseinline(registry, block, groups[0])))
+      elif elem.nest == Nesting.POST:
+        print(groups)
+        l.append(
+          htmlbodymap(
+            lambda t: parseinline(
+              registry,
+              block if elem.subscribe == 'inherit' else elem,
+              t),
+            parser(groups)))
       else:
         l.append((parser, groups))
   
@@ -99,9 +126,9 @@ def parseblock(registry:Mapping[str, Union[Inline, Block]], block:Block, text:st
   parses text at the block level. ASSUMES VALIDATED REGISTRY.
   minus some minor helper things (defining appropriate )
   """
-  if block.nestb == Nesting.FRAME:
+  if block.nestb == Nesting.NONE:
     # separate pathway, we just parse inline styles and then parse the block
-    return block.parser() + parseinline(registry, block, text)
+    return block.parser(parseinline(registry, block, text))
     
   # if registy[block]['nesting'] == 'sub':
   #   # first, extract all sub-blocks in the text.
@@ -123,13 +150,13 @@ def parseblock(registry:Mapping[str, Union[Inline, Block]], block:Block, text:st
   #       l.append(b)
   #
   #   bodyformat(registry[block]['parser'](join(l)), subblocks)
-    
 
 
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 Block = nt('Block', ['name', 'nestb', 'nesti', 'subblock', 'subinline', 'parser'])
 Inline = nt('Inline', ['name', 'nest', 'subscribe', 'escape', 'parser'])
-InlineFrame = lambda name, escape, parser: Inline(name, Nesting.FRAME, ['inherit'], escape, parser)
+InlineFrame = lambda name, escape, parser: Inline(
+  name, Nesting.FRAME, 'inherit', escape, parser)
 
 def SingleGroupInlineFrame(name:str, start:str, end:str,
                            tag:str, attr:Mapping[str,str]=None):
@@ -151,21 +178,27 @@ def MirrorInlineFrame(name:str, start:str, tag:str, attr:Mapping[str,str]=None):
 Bold = IdenticalInlineFrame('bold', '*', 'strong')
 Italic = IdenticalInlineFrame('italic', '_', 'em')
 Monospace = IdenticalInlineFrame('monospace', '`', 'code')
-Underline = IdenticalInlineFrame('underline', '__', 'span', {'text-decoration': 'underline'})
+Underline = IdenticalInlineFrame('underline', '__', 'span',
+  {'text-decoration': 'underline'})
 
 CriticAdd = MirrorInlineFrame('critic-add', '{++', 'ins')
 CriticDel = MirrorInlineFrame('critic-del', '{--', 'del')
-CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span', {'class', 'critic comment'})
+CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span.critic.comment')
+CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
+
+Link = Inline('link', Nesting.POST, 'inherit', '()[]',
+  [(re.compile('(?<!\\\\)(?:\\\\\\\\)*\\K\\[(.*?(?<!\\\\)(?:\\\\\\\\)*)\\]\\((.*?(?<!\\\\)(?:\\\\\\\\)*)\\)'),
+   lambda groups: ['a', {'href': groups[1]}, groups[0]])])
 
 NoopBlock = Block(
   'noop',
-  Nesting.FRAME,
+  Nesting.NONE,
   Nesting.POST,
   [],
-  ['bold', 'italic', 'monospace'],
-  lambda: ['div'])
+  ['bold', 'italic', 'monospace', 'link', 'underline'],
+  lambda body: ['div', *body])
 
 def makeregistry(*args: Union[Block, Inline]):
   return dict((x.name, x) for x in args)
 
-registry = makeregistry(Bold, Italic, Monospace, Underline, NoopBlock)
+registry = makeregistry(Bold, Italic, Monospace, Underline, Link, NoopBlock)
