@@ -10,6 +10,14 @@ import toolz as t
 import toolz.curried as tc
 import regex as re
 
+Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
+
+Block = nt('Block', ['name', 'nestb', 'nesti', 'subblock', 'subinline', 'parser'])
+Block.__call__ = lambda self, *args, **kwargs: self.parser(*args, **kwargs)
+
+Inline = nt('Inline', ['name', 'nest', 'subscribe', 'escape', 'parser'])
+
+
 def htmlbodymap(f, x):
   if isinstance(x, list) or isinstance(x, tuple):
     return list(t.cons(x[0], t.map(lambda e: htmlbodymap(f,e), x[1:])))
@@ -17,9 +25,6 @@ def htmlbodymap(f, x):
     return f(x)
   else:
     return x
-
-# Paragraphs = Block('paragraphs', 'post', ''
-#  lambda text: t.cons('div', t.map(lambda x: ['p', x], text.split('\n\n'))))
 
 cut = lambda i,s: (s[:i], s[i:])
 
@@ -51,7 +56,7 @@ def fills(quantities, n):
   
   return len(quantities)
 
-  
+
 def parseinline(registry:Mapping[str, Union[Inline, Block]],
                 element:Union[Block,Inline,str], text:str):
   """
@@ -72,7 +77,7 @@ def parseinline(registry:Mapping[str, Union[Inline, Block]],
   # combine all escaped characters from all subscribed inline objects.
   escapes = ''.join(t.reduce(set.union,
     ((x if isinstance(x, Inline) else registry[x]).escape
-     for x in block.subinline)))
+     for x in block.subinline))).replace('[', '\\[').replace(']', '\\]')
   # function that will unescape body code so eg \* -> *
   unescape = lambda t: re.compile('\\\\(['+escapes+'])').sub(r'\1', t)
   
@@ -81,16 +86,15 @@ def parseinline(registry:Mapping[str, Union[Inline, Block]],
   patt = re.compile('|'.join(t.map(lambda x: '(?:'+x[0].pattern+')', inlines)), re.V1)
   # how many groups are in each regex, in order, so we can assign the final
   # match to the right parser function.
-  grouplengths = list(t.cons(0, t.accumulate(op.add, t.map(lambda x: num_groups(x[0]), inlines))))
+  grouplengths = list(
+    t.cons(0, t.accumulate(op.add, t.map(lambda x: num_groups(x[0]), inlines))))
 
   ind = 0
   l = []
   while ind < len(text):
     m = patt.search(text, ind)
     if m == None:
-      # if we never matched anything, it's just text we need to be returning.
-      if ind == 0: return unescape(text)
-      # otherwise, make it into a child of the returned html.
+      if ind == 0: return text
       l.append(unescape(text[ind:]))
       break
     else:
@@ -103,10 +107,10 @@ def parseinline(registry:Mapping[str, Union[Inline, Block]],
       groupind = indexby(lambda x: x is not None, m.groups())
       # the index of the regex in `inlines` that the groupind corresponds to
       matchind = indexby(lambda x: x >= groupind, grouplengths)
-      # the parser/elem from that index.
-      parser,elem = inlines[matchind][1]
+      parser, elem = inlines[matchind][1]
       # stripping all the groups corresponding to the matched sub-regex
-      groups = m.groups()[grouplengths[matchind]:grouplengths[min(m.re.groups, matchind+1)]]
+      groups = m.groups()[grouplengths[matchind]:
+                          grouplengths[min(m.re.groups, matchind+1)]]
       if elem.nest == Nesting.FRAME:
         # frames are simple, by default they have inherit behavior
         # and deal with one group
@@ -126,43 +130,71 @@ def parseinline(registry:Mapping[str, Union[Inline, Block]],
 
       ind = m.span()[1]
   
-  return l
+  return l[0] if len(l) == 1 and isinstance(l[0], list) else l
 
+def splitblocks(text:str):
+  return t.map(lambda b: b[3:].split('\n', 1) if b.startswith('---') else b,
+               re.split(re.compile(r'\n(---(?:.|\n)*?)\n\.\.\.\n', re.MULTILINE),
+                        text))
 
-def parseblock(registry:Mapping[str, Union[Inline, Block]], block:Block, text:str):
+def parseblock(registry:Mapping[str, Union[Inline, Block]],
+               block:Block, text:str, parent:Block=None):
   """
   parses text at the block level. ASSUMES VALIDATED REGISTRY.
   minus some minor helper things (defining appropriate )
   """
+  def postparse(block, text):
+    subblocks = list(splitblocks(text))
+    if len(subblocks) == 1:
+      # there are no subblocks, so return one level up!
+      return parseinline(registry, block, subblocks[0])
+      
+    l = []
+    for b in subblocks:
+      if isinstance(b, list):
+        l.append(parseblock(registry, registry[b[0]], b[1], block))
+      elif isinstance(b, str):
+        t = parseinline(registry, block, b)
+        if isinstance(t,str):
+          l.append(t)
+        else:
+          l += t
+
+    return l
+  
   if block.nestb == Nesting.NONE:
     # separate pathway, we just parse inline styles and then parse the block
     return block.parser(parseinline(registry, block, text))
-    
-  # if registy[block]['nesting'] == 'sub':
-  #   # first, extract all sub-blocks in the text.
-  #   # this needs to be only done at level 1. If the blocks allow nesting, then
-  #   # the dispatch will call parse AGAIN, which will extract blocks again.
-  #   blocks = re.split(re.compile('\n(---(?:.|\n)*)\n...\n', re.MULTILINE), text)
-  #   subi = 1
-  #   subblocks = {}
-  #   l = []
-  #   for b in block:
-  #     if b.startswith('---'):
-  #       dispatch, body = b[3:].split('\n', 1)
-  #       # for now, dispatch is just a string
-  #       kind = dispatch.trim()
-  #       subblocks[subi] = parseblock(registry, kind, body)
-  #       subi += 1
-  #       l.append('{{{}}}'.format(subi))
-  #     else:
-  #       l.append(b)
+  
+  if block.nestb == Nesting.POST:
+          
+    # parse block first, then call parseblock on the children.
+    return htmlbodymap(t.partial(postparse, block), block.parser(text))
+  
+  # if block.nestb == Nesting.FRAME:
+  #   return block.parser(postparse(parent or block, ))
+  # # if registy[block]['nesting'] == 'sub':
+  # # first, extract all sub-blocks in the text.
+  # # this needs to be only done at level 1. If the blocks allow nesting, then
+  # # the dispatch will call parse AGAIN, which will extract blocks again.
+  # subi = 1
+  # subblocks = {}
+  # l = []
+  # for b in block:
+  #   if b.startswith('---'):
+  #     dispatch, body = b[3:].split('\n', 1)
+  #     # for now, dispatch is just a string
+  #     kind = dispatch.trim()
+  #     subblocks[subi] = parseblock(registry, kind, body)
+  #     subi += 1
+  #     l.append('{{{}}}'.format(subi))
+  #   else:
+  #     l.append(b)
   #
-  #   bodyformat(registry[block]['parser'](join(l)), subblocks)
+  # return l
 
 
-Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
-Block = nt('Block', ['name', 'nestb', 'nesti', 'subblock', 'subinline', 'parser'])
-Inline = nt('Inline', ['name', 'nest', 'subscribe', 'escape', 'parser'])
+
 InlineFrame = lambda name, escape, parser: Inline(
   name, Nesting.FRAME, 'inherit', escape, parser)
 
@@ -172,7 +204,7 @@ def SingleGroupInlineFrame(name:str, start:str, end:str,
     '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'.format(
       re.escape(start), re.escape(end)))
   return InlineFrame(name, set(stringcat(start, end)),
-    [(patt, lambda groups: [tag, attr or {}, groups[0]])])
+    [(patt, lambda body: [tag, attr or {}, body])])
 
 def IdenticalInlineFrame(name:str, s:str, tag:str, attr:Mapping[str,str]=None):
   return SingleGroupInlineFrame(name, s, s, tag, attr)
@@ -195,18 +227,18 @@ CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span.critic.comment'
 CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
 
 Link = Inline('link', Nesting.POST, 'inherit', '()[]',
-  [(re.compile('(?<!\\\\)(?:\\\\\\\\)*\\K\\[(.*?(?<!\\\\)(?:\\\\\\\\)*)\\]\\((.*?(?<!\\\\)(?:\\\\\\\\)*)\\)'),
+  [(re.compile(
+    r'(?<!\\)(?:\\\\)*\K\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'),
    lambda groups: ['a', {'href': groups[1]}, groups[0]])])
 
-NoopBlock = Block(
-  'noop',
-  Nesting.NONE,
-  Nesting.POST,
-  [],
-  ['bold', 'italic', 'monospace', 'link', 'underline'],
+NoopBlock = Block('noop', Nesting.NONE, Nesting.POST, [], [],
   lambda body: ['div', *body])
+
+Paragraphs = Block('paragraphs', Nesting.POST, Nesting.POST, [],
+  [Bold, Italic, Monospace, Underline, Link],
+  lambda text: list(t.cons('div', t.map(lambda x: ['p', x.strip()], text.split('\n\n')))))
 
 def makeregistry(*args: Union[Block, Inline]):
   return dict((x.name, x) for x in args)
 
-registry = makeregistry(Bold, Italic, Monospace, Underline, Link, NoopBlock)
+registry = makeregistry(Bold, Italic, Monospace, Underline, Link, NoopBlock, Paragraphs)
