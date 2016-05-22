@@ -26,7 +26,7 @@ pandoc, MS Word etc), or through some combination of raw html and js scripts,
 you can plug in special formats (eg, KaTeX or Mermaidjs). Now we even have
 programs designed to interoperate between these different formats as well.
 
-At the risk of [that famous XKCD comic]() 
+At the risk of [that famous XKCD comic](https://xkcd.com/927/)
 
 You need to design yourself something I'm calling a **registry**.
 What's that, you ask? It's just of **elements**, which can be either `block`
