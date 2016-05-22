@@ -250,6 +250,23 @@ name, gives you sane defaults for the nesting,
 and doesn't require you to think up *another* name for the parser.
 Still, option exists, and is useful for writing functions that generate `Block`s.
 
+### Registry
+
+Then, you make a registry out of the elements you've defined, and parse!
+
+```python
+from glue.registry import Registry
+from glue import parser
+reg = Registry(Italic, Paragraphs)
+text = '''
+_italic text_ text
+
+a new paragraph! _more italic text_ \_ <- escaped underscore.
+'''
+parser(reg, Paragraphs, text)
+# <html output here>
+```
+
 ## Motivation
 
 There are excellent full CFG parsers, and there are great plaintext parsers
