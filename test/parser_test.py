@@ -15,7 +15,7 @@ def unwind(g):
     else:
       l.append(e)
   return l
-
+  
 sample = Registry(Bold, Italic, Monospace, Paragraphs)
 
 def test_parseinline_empty():

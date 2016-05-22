@@ -2,3 +2,4 @@ inflection
 pytest
 regex
 toolz
+pytest-cov
