@@ -30,6 +30,8 @@ def test_parseinline_basic():
   assert parseinline(sample, Paragraphs, '*text*') == [['strong', {}, 'text']]
   assert parseinline(sample, Paragraphs, '*`text`*') == [
     ['strong', {}, ['code', {}, 'text']]]
+  assert parseinline(sample, Paragraphs, '*text**text2*') == [
+    ['strong', {}, 'text'],['strong', {}, 'text2']]
 
 def test_parseblock_empty():
   assert unwind(parseblock(sample, Paragraphs, '')) == ['div', ['p']]

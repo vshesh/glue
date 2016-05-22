@@ -265,7 +265,9 @@ the page and parse based on classes etc (this might still have to be done).
 
 Take, for example, CriticMarkup. Someone wrote a spec for this, but it's been
 implemented in some Markdown parsers and not others, so maybe it's there and
-it's great! Or maybe you want it, but you can't have it (sad face).
+it's great! Or maybe you want it, but you can't have it (sad face). Do you
+switch dialects? Does it have all the other features? Maybe write a Pandoc
+filter?
 
 It's pretty simple to add CriticMarkup to a registry using **Glue**:
 
@@ -279,7 +281,8 @@ CriticMarkdown = Registry(CriticAdd, CriticDel, CriticComment, CriticHighlight)
 ```
 
 I'll leave CriticSub as an exercise for the reader. It fits in a similar vein
-as the Link component. There are a whole bunch of examples that allow you to
+as the Link component. There is an example section that discusses some
+common architectures of these components and how they could fit together.
 
 `MirrorInlineFrame` is a helper function I provide for you, which is written
 to simply writing a parser for an element with one group in which the start
