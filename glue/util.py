@@ -24,7 +24,7 @@ def num_groups(regex):
 
 def indexby(pred, lst):
   """gives index of first item in list for which pred(item) is True"""
-  return next(i for i, j in enumerate(lst) if f(j))
+  return next(i for i, j in enumerate(lst) if pred(j))
 
 def fills(quantities, n):
   """

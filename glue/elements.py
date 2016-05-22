@@ -8,13 +8,13 @@ import regex as re
 import inflection
 import toolz as t
 
-from .util import stringcat
+from glue.util import stringcat
 
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 # ------------------  BASE ELEMENTS --------------------------
 
 Block = nt('Block',
-           ['name', 'nestb', 'nesti', 'subblock', 'subinline', 'parser'])
+           ['name', 'nest', 'nesti', 'subblock', 'subinline', 'parser'])
 Block.__call__ = lambda self, *args, **kwargs: self.parser(*args, **kwargs)
 Block.__doc__ = """
 Base class for elements that are enclosed in yaml-like document blocks.
@@ -47,7 +47,7 @@ accept every block, but you can be more specific if you'd like.
 to whatever this block would like to parse.
 """
 
-Inline = nt('Inline', ['name', 'nest', 'subscribe', 'escape', 'parser'])
+Inline = nt('Inline', ['name', 'nest', 'subinline', 'escape', 'parser'])
 Inline.__doc__ = """
 Base class for elements that are meant to be inline in the text inside blocks.
 An inline element is expected to render in the style of an html `span` element.
@@ -90,7 +90,7 @@ important for others as well.
 
 
 # --------------------- DECORATORS for ELEMENTS ---------------------------
-def block(nestb=Nesting.POST, nesti=Nesting.POST,subblock=None, subinline=None):
+def block(nest=Nesting.POST, nesti=Nesting.POST,subblock=None, subinline=None):
   """
   Decorator for block style elements, to be used on a parser function.
   eg:
@@ -108,12 +108,10 @@ def block(nestb=Nesting.POST, nesti=Nesting.POST,subblock=None, subinline=None):
   So `BlockName` would have `name='block-name'` so that it's easier to type
   in the plain-text format.
   """
-  if subblock is None: subblock = ['all']
-  if subinline is None: subinline = ['all']
   
   def block_fn(parser):
     b = Block(inflection.dasherize(inflection.underscore(parser.__name__)),
-              nestb, nesti, subblock, subinline, parser)
+              nest, nesti, subblock or ['all'], subinline or ['all'], parser)
     return b
     
   return block_fn
