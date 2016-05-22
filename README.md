@@ -1,4 +1,4 @@
-# Glue, plain-text format for other plain text-formats
+# Glue: plain-text format for other plain-text formats
 
 [![Build Status](https://travis-ci.org/vshesh/glue.svg?branch=master)](https://travis-ci.org/vshesh/glue)
 [![Coverage Status](https://coveralls.io/repos/github/vshesh/glue/badge.svg?branch=master)](https://coveralls.io/github/vshesh/glue?branch=master)
@@ -12,6 +12,134 @@ $ python3
 >>> reg = glue.Registry(glue.elements.Bold, glue.elements.Italic, glue.elements.Paragraphs)
 >>> glue.parse(reg, glue.elements.Paragraphs, '*test*')
 <div><p><strong>text</strong></p></div>
+```
+
+## Dream
+
+### Web
+
+fully extensible text, with custom react-components, and even forms!
+
+```md
+# Title
+
+blah blah blah T[some text](tooltip!)
+
+![alt](img url)
+
+---mermaid
+graph TD
+A --> B
+B --> C
+C --> A
+...
+
+---katex
+\sum_{k=0}^x \binom{x}{k} = 2^x
+...
+
+---annotated-image http://img.url/goes/here
+5,6: Note the brush strokes here!
+100,100: woohoo the end of the image!
+...
+
+---sidebyside
+[link](goes here) | other column
+---code python    | ---code julia
+def f(x):         | function f(x)
+  return 2*x      |  2x
+                  | end
+... | ...
+...
+
+---react-yaml ComponentName
+prop1: [data, more, data]
+prop2:
+  x: 1
+  y: 2
+...
+
+
+---form
+Name: [text]
+Age: [number]
+Descr:
+[textarea]
+[checkbox] Agree to Terms
+...
+note how i put more blocks in the columns! and how it doesn't need to line up!
+That's the power of nesting!
+```
+
+### Seamless Code/Docs (a la Rusthon/Mathematica Notebook/Jupyter)
+
+```md
+# Hilbert Curves for Rectangles
+
+## L System
+
+here, we'd like to be able to generate some order of an l system.
+For that, we need to be able to replace the text easily, and we need to
+replace many tokens at the same time:
+
+---code python
+def multireplace(rep, text):
+  """
+  Takes
+  """
+  r = dict((re.escape(k), v) for k, v in rep.items())
+  pattern = re.compile("|".join(r.keys()))
+  return pattern.sub(lambda m: r[re.escape(m.group(0))], text)
+...
+
+Now, functions that correspond to the hilbert curve.
+---code python
+def hilbert(order):
+  s = 'L'
+  for i in range(order):
+    s = multireplace({'L':'+RF-LFL-FR+', 'R':'-LF+RFR+FL-'}, s)
+  return re.sub(r'[LR]|(?:\+-)|(?:-\+)', '', s)
+
+def movements(hilbert):
+  plus = {'U': 'L', 'L': 'D', 'D': 'R', 'R': 'U'}
+  minus = {'U': 'R', 'R': 'D', 'D': 'L', 'L': 'U'}
+  
+  m = []
+  d = 'R'
+  for e in hilbert.split('F'):
+    n = d if e == '' else (plus if e == '+' else minus)[d]
+    m.append((d, n))
+    d = n
+  return m
+...
+
+The movements gives us an array of the corners. Let's see if this maps
+nicely onto a larger pattern or not!.
+
+There's some mapping that requires us to think about how to flip the
+original left and up patterns.
+
+```
+
+### Journal
+
+```md
+# 2015-05-02
+
+Some free text about my experience of the morning.
+I had cereal for breakfast. Again. I'm just too lazy to cook oatmeal.
+
+## 12-1pm Lunch w/Nick at Lag
+I had lunch with nick!
+it was nice lunch too - we had this really good mexican food.
+
+## 2-4pm Presentation for Class at 550 w/Sarah
+The presentation went well...
+@John was there too! I was surprised to see him.
+
+!(/url/to/img)
+
+etc
 ```
 
 ## Overview
