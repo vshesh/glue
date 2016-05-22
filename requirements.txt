@@ -1,5 +1,6 @@
 inflection
-pytest
 regex
 toolz
+pytest
 pytest-cov
+coveralls
