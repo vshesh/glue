@@ -291,3 +291,7 @@ the function will compute the other side eg `++}` and then make the appropriate
 regex.
 
 This is so simple, in fact, that I went ahead and included it for you.
+
+## Examples/Common Architectures
+
+TODO
