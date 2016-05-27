@@ -15,6 +15,10 @@ class TestHTML(unittest.TestCase):
     def test_p_with_content(self):
         self.assertEqual(render(['p', 'paragraph']), '<p>paragraph</p>')
 
+    def test_p_with_style_dict(self):
+      assert html_equiv(render(['p', {'style': {'display': 'inline-block', 'color': 'red'}}, 'hello world']),
+                        '<p style="display:inline-block;color:red;">hello world</p>')
+
     def test_div_shortcut_with_content(self):
         assert html_equiv(
             render(['#my.test', 'testing']),
