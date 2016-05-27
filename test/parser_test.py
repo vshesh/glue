@@ -1,21 +1,8 @@
 from glue.parser import parse, parseinline, parseblock
 from glue.elements import Block, Inline, Bold, Italic, Monospace, Paragraphs
 from glue.registry import Registry
+from glue.util import unwind
 
-import inspect
-import types
-
-def unwind(g):
-  l = []
-  for e in g:
-    if (isinstance(e, types.GeneratorType)
-        or inspect.isgenerator(e)
-        or inspect.isgeneratorfunction(e)):
-      l.append(unwind(e))
-    else:
-      l.append(e)
-  return l
-  
 sample = Registry(Bold, Italic, Monospace, Paragraphs)
 
 def test_parseinline_empty():
@@ -40,4 +27,4 @@ def test_parseblock_nosub():
   examples = ['test', 'k', 'a;lkjfksdfnqwenqw;eriouZN<ZMXz;lkj;sldakfjsf']
   for e in examples:
     assert unwind(parseblock(sample, Paragraphs, e)) == ['div', ['p', e]]
-  
+

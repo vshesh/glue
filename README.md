@@ -48,9 +48,10 @@ C --> A
 ---code python    | ---code julia
 def f(x):         | function f(x)
   return 2*x      |  2x
-                  | end
+| end
 ... | ...
 ...
+note how i put more blocks in the columns! and how it doesn't need to line up!
 
 ---react-yaml ComponentName
 prop1: [data, more, data]
@@ -67,8 +68,6 @@ Descr:
 [textarea]
 [checkbox] Agree to Terms
 ...
-note how i put more blocks in the columns! and how it doesn't need to line up!
-That's the power of nesting!
 ```
 
 ### Seamless Code/Docs (a la Rusthon/Mathematica Notebook/Jupyter)
