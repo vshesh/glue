@@ -10,7 +10,6 @@ def test_cut():
   assert cut(0, 'x') == ('', 'x')
   assert cut(1, 'x') == ('x', '')
 
-
 def test_stringcat():
   assert unwind(stringcat('a','b')) == ['a', 'b']
   assert unwind(stringcat('a', 'b', 'cd')) == ['a', 'b', 'c', 'd']
@@ -29,6 +28,7 @@ def test_fills():
   assert fills([1,1,1],1) == 1
   assert fills([2,1,1],3) == 2
   assert fills([4,5,4],1) == 0
+  assert fills([1,1,1], 10) == 3
 
 
 
