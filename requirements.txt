@@ -4,3 +4,4 @@ toolz
 pytest
 pytest-cov
 bs4
+coveralls
