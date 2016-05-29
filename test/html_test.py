@@ -7,6 +7,7 @@ import unittest
 
 from glue.html import *
 from bs4 import BeautifulSoup
+from collections import OrderedDict as odict
 
 def html_equiv(h1, h2):
   return BeautifulSoup(h1) == BeautifulSoup(h2)
@@ -16,7 +17,7 @@ class TestHTML(unittest.TestCase):
         self.assertEqual(render(['p', 'paragraph']), '<p>paragraph</p>')
 
     def test_p_with_style_dict(self):
-      assert html_equiv(render(['p', {'style': {'display': 'inline-block', 'color': 'red'}}, 'hello world']),
+      assert html_equiv(render(['p', {'style': odict([('display', 'inline-block'), ('color', 'red')])}, 'hello world']),
                         '<p style="display:inline-block;color:red;">hello world</p>')
 
     def test_div_shortcut_with_content(self):

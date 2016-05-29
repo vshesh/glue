@@ -1,5 +1,5 @@
 #/usr/bin/env python3
-from typing import Mapping, List
+from typing import Mapping, List, Union, Set
 from functools import wraps
 from enum import Enum
 from collections import namedtuple as nt
@@ -8,7 +8,6 @@ import regex as re
 import inflection
 import toolz as t
 
-from glue.util import stringcat
 
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 # ------------------  BASE ELEMENTS --------------------------
@@ -16,6 +15,7 @@ Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 Block = nt('Block',
            ['name', 'nest', 'nesti', 'subblock', 'subinline', 'parser'])
 Block.__call__ = lambda self, *args, **kwargs: self.parser(*args, **kwargs)
+Block.__hash__ = lambda self: self.name.__hash__()
 Block.__doc__ = """
 Base class for elements that are enclosed in yaml-like document blocks.
 A block element is an element that is expected to render in the style of an
@@ -48,6 +48,7 @@ to whatever this block would like to parse.
 """
 
 Inline = nt('Inline', ['name', 'nest', 'subinline', 'escape', 'parser'])
+Inline.__hash__ = lambda self: self.name.__hash__()
 Inline.__doc__ = """
 Base class for elements that are meant to be inline in the text inside blocks.
 An inline element is expected to render in the style of an html `span` element.
@@ -94,26 +95,26 @@ def block(nest=Nesting.POST, nesti=Nesting.POST,subblock=None, subinline=None):
   """
   Decorator for block style elements, to be used on a parser function.
   eg:
-  
+
   ```python
   @block(...)
   def BlockName(text):
     \"\"\" docs for BlockName element go here \"\"\"
     return ['div', text]
   ```
-  
+
   The name of the function is the name of the block, and the parser for a block
   should always take just one argument, which is the text (for now).
   The block name is changed so that it's made into a dash-separated name.
   So `BlockName` would have `name='block-name'` so that it's easier to type
   in the plain-text format.
   """
-  
+
   def block_fn(parser):
     b = Block(inflection.dasherize(inflection.underscore(parser.__name__)),
               nest, nesti, subblock or ['all'], subinline or ['all'], parser)
     return b
-    
+
   return block_fn
 
 
@@ -122,27 +123,27 @@ def inlineone(regex, nest=Nesting.FRAME, subscribe=None, escape=''):
   Decorator for an inline element that has exactly one pattern and parser.
   For more complex inline elements, it's best to just define the element
   yourself.
-  
+
   Recommended usage is to pass the regex is as a positional argument, and the
   others as kwargs, since it's hard to remember what order they go in.
-  
+
   The parser function should take the groups of the returned regex as params,
   per usual and return html in s-expression form, like
   `['div', {'attr': 'value'}, 'text']`.
-  
+
   """
-  if subscribe is None: subscribe = ['all']
-  
+  if subscribe is None: subscribe = ['inherit']
+
   def inline_fn(parser):
     i = Inline(inflection.dasherize(inflection.underscore(parser.__name__)),
                nest, subscribe, escape, [(regex, parser)])
     return i
-    
+
   return inline_fn
 
 
 # ----------------- ELEMENT CREATOR HELPERS ----------------------------
-def InlineFrame(name, escape, parser):
+def InlineFrame(name:str, escape:Union[str,Set[str]], parser):
   """
   A helper for inline frames, which have nesting type frame, and are ALWAYS
   subscribing to the style 'inherit'.
@@ -150,16 +151,17 @@ def InlineFrame(name, escape, parser):
   """
   return Inline(name, Nesting.FRAME, ['inherit'], escape, parser)
 
+
 def SingleGroupInlineFrame(name:str, start:str, end:str,
                            tag:str, attr:Mapping[str,str]=None):
   """
   A special kind of inline frame that has only one capture group and wraps
   it with some set of start and end characters.
-  
+
   It's expected that this kind of element will wrap its contents in one tag
   with specified attributes, so you can pass in a tag and its attributes
   here directly and the parser function will be generated for you.
-  
+
   The first character of `start` and `end` is added to the list of escapable
   letters, and the generated regex makes sure that neither the start nor the
   end of the pattern are preceded by a backslash for escape.
@@ -167,8 +169,9 @@ def SingleGroupInlineFrame(name:str, start:str, end:str,
   patt = re.compile(
     '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'.format(
       re.escape(start), re.escape(end)))
-  return InlineFrame(name, set([start[0], end[0]]),
+  return InlineFrame(name, {start[0], end[0]},
     [(patt, lambda body: [tag, attr or {}, *body])])
+
 
 def IdenticalInlineFrame(name:str, s:str, tag:str, attr:Mapping[str,str]=None):
   """
@@ -176,7 +179,8 @@ def IdenticalInlineFrame(name:str, s:str, tag:str, attr:Mapping[str,str]=None):
   if you expect the start/end of the element to be the same. Eg: `*bold*`.
   """
   return SingleGroupInlineFrame(name, s, s, tag, attr)
-  
+
+
 def MirrorInlineFrame(name:str, start:str, tag:str, attr:Mapping[str,str]=None):
   """
   A very simple wrapper around `SingleGroupInlineFrame` that is for when
@@ -211,7 +215,7 @@ def NoopBlock(body):
   Block does nothing, it just wraps contents with a div, and subscribes to the
   entire registry.
   """
-  lambda body: ['div', *body]
+  return ['div', *body]
 
 @block()
 def Paragraphs(text):
@@ -219,7 +223,7 @@ def Paragraphs(text):
   Any blocks of text with a blank line in between them (`\n\n` sequence) is
   separated and given its own `p` tag. This is the minimum formatting you'd
   probably expect in any static content generator.
-  
+
   Subscribes to the entire registry.
   """
   return list(t.cons('div', t.map(lambda x: ['p', x.strip()], text.split('\n\n'))))
