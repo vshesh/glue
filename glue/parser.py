@@ -7,6 +7,7 @@ import toolz as t
 import toolz.curried as tc
 import regex as re
 
+from glue.registry import Registry
 from glue.util import *
 from glue.elements import Inline, Block, Nesting
 from glue.html import render
@@ -15,7 +16,7 @@ def parse(registry, topblock, text):
   return render(parseblock(registry, topblock, text))
 
 
-def parseinline(registry:Mapping[str, Union[Inline, Block]],
+def parseinline(registry:Registry,
                 element:Union[Block,Inline,str], text:str, parent=None):
   """
   Parses a block of text for its subscribed inline styles.
@@ -94,7 +95,7 @@ def parseinline(registry:Mapping[str, Union[Inline, Block]],
   return l
 
 
-def parseblock(registry:Mapping[str, Union[Inline, Block]],
+def parseblock(registry:Registry,
                block:Block, text:str, parent=None):
   """
   parses text at the block level. ASSUMES VALIDATED REGISTRY.

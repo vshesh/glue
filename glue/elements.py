@@ -12,8 +12,7 @@ import toolz as t
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 # ------------------  BASE ELEMENTS --------------------------
 
-Block = nt('Block',
-           ['name', 'nest', 'nesti', 'subblock', 'subinline', 'parser'])
+Block = nt('Block', ['name', 'nest', 'subblock', 'subinline', 'parser'])
 Block.__call__ = lambda self, *args, **kwargs: self.parser(*args, **kwargs)
 Block.__hash__ = lambda self: self.name.__hash__()
 Block.__doc__ = """
@@ -91,7 +90,7 @@ important for others as well.
 
 
 # --------------------- DECORATORS for ELEMENTS ---------------------------
-def block(nest=Nesting.POST, nesti=Nesting.POST,subblock=None, subinline=None):
+def block(nest=Nesting.POST, subblock=None, subinline=None):
   """
   Decorator for block style elements, to be used on a parser function.
   eg:
@@ -112,13 +111,13 @@ def block(nest=Nesting.POST, nesti=Nesting.POST,subblock=None, subinline=None):
 
   def block_fn(parser):
     b = Block(inflection.dasherize(inflection.underscore(parser.__name__)),
-              nest, nesti, subblock or ['all'], subinline or ['all'], parser)
+              nest, subblock or ['all'], subinline or ['all'], parser)
     return b
 
   return block_fn
 
 
-def inlineone(regex, nest=Nesting.FRAME, subscribe=None, escape=''):
+def inlineone(regex, nest=Nesting.FRAME, subinline=None, escape=''):
   """
   Decorator for an inline element that has exactly one pattern and parser.
   For more complex inline elements, it's best to just define the element
@@ -132,11 +131,11 @@ def inlineone(regex, nest=Nesting.FRAME, subscribe=None, escape=''):
   `['div', {'attr': 'value'}, 'text']`.
 
   """
-  if subscribe is None: subscribe = ['inherit']
+  if subinline is None: subinline = ['inherit']
 
   def inline_fn(parser):
     i = Inline(inflection.dasherize(inflection.underscore(parser.__name__)),
-               nest, subscribe, escape, [(regex, parser)])
+               nest, subinline, escape, [(regex, parser)])
     return i
 
   return inline_fn
