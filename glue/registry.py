@@ -3,8 +3,29 @@ from typing import Union, List, Mapping
 from glue.elements import *
 
 class Registry(dict, Mapping[str, Union[Inline, Block]]):
+  """
+  Registry class is some convenience functions tacked onto
+  a dictionary that maps names (strings) to elements (Inline or Block).
+
+  The idea is that you can treat registries like sets and do merge to combine
+  or update them, or subtract to remove keys, etc.
+
+  r = Registry(...)
+  r |= {'name': {'property': 'new-value'}}
+  r -= ['name1', 'name2']
+  """
+
   def __init__(self, *args:Union[Inline, Block]):
     super().__init__([(x.name, x) for x in args])
+
+  def __iadd__(self, other):
+    if not all(isinstance(x, (Inline, Block)) for x in other):
+      return NotImplemented
+
+    for k in other:
+      self[k.name] = k
+
+    return self
 
   def __ior__(self, other:dict):
     if not isinstance(other, dict):
@@ -27,9 +48,28 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
 
     return self
 
+  def __isub__(self, other):
+    # remove keys from sub that aren't in dict
+    for k in other:
+      key = k.name if isinstance(k, (Inline, Block)) else k
+      if key in self:
+          del self[key]
+
+    return self
+
   def __or__(self, other:dict):
     r = Registry(*self.values())
     r |= other
+    return r
+
+  def __sub__(self, other):
+    r = Registry(*self.values())
+    r -= other
+    return r
+
+  def __add__(self, other):
+    r = Registry(*self.values())
+    r += other
     return r
 
   @property

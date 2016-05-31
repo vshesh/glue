@@ -38,9 +38,14 @@ def parseinline(registry:Registry,
   
   # combine all escaped characters from all subscribed inline objects.
   escapes = ''.join(t.reduce(set.union,
-    (x.escape for x in subinline))).replace('[', '\\[').replace(']', '\\]')
+    (x.escape for x in subinline), set())).replace('[', '\\[').replace(']', '\\]')
   # function that will unescape body code so eg \* -> *
   unescape = lambda t: re.compile('\\\\(['+escapes+'])').sub(r'\1', t)
+
+  # if there are no inline styles declared in the registry, then we need
+  # to handle that as a special case before all the regex stuff.
+  if len(inlines) == 0:
+    return [text]
   
   # combine all inline patterns into one regex.
   # might not be efficient for very complex parsers....
@@ -54,7 +59,6 @@ def parseinline(registry:Registry,
   l = []
   while ind < len(text):
     m = patt.search(text, ind)
-    print(m)
     if m == None:
       l.append(unescape(text[ind:]))
       break
@@ -103,7 +107,7 @@ def parseblock(registry:Registry,
   """
   def postparse(block, text):
     subblocks = list(splitblocks(text))
-    if len(subblocks) == 1:
+    if len(subblocks) == 1 and isinstance(subblocks[0], str):
       # there are no subblocks, so return one level up!
       return parseinline(registry, block, subblocks[0])
       
@@ -121,8 +125,8 @@ def parseblock(registry:Registry,
     return l
   
   if block.nest == Nesting.NONE:
-    # separate pathway, we just parse inline styles and then parse the block
-    return block.parser(parseinline(registry, block, text))
+    # separate pathway, we just parse the block
+    return block.parser(text)
   
   if block.nest == Nesting.POST:
           
@@ -136,15 +140,15 @@ def parseblock(registry:Registry,
     subs = {}
     i = 1
     for e in blocks:
-      if isinstance(e, (list, tuple)):
+      if isinstance(e, str):
+        subtext.append(e)
+      else:
         substr = '[|{}|]'.format(i)
         subs[substr] = e
         subtext.append(substr)
         i += 1
-      else:
-        subtext.append(e)
-    
+
     return splicehtmlmap(
       lambda t: [subs[x] if x.startswith('[|') else x
-                 for x in re.split(r'(\[\|\d+\|\])', t)],
+                 for x in re.split(r'(\[\|\d+\|\])', t) if x != ''],
       block.parser(''.join(subtext)))

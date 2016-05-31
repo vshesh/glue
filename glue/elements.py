@@ -134,8 +134,9 @@ def inlineone(regex, nest=Nesting.FRAME, subinline=None, escape=''):
   if subinline is None: subinline = ['inherit']
 
   def inline_fn(parser):
+    r = re.compile(regex) if isinstance(regex,str) else regex
     i = Inline(inflection.dasherize(inflection.underscore(parser.__name__)),
-               nest, subinline, escape, [(regex, parser)])
+               nest, subinline, escape, [(r, parser)])
     return i
 
   return inline_fn
@@ -203,7 +204,7 @@ CriticDel = MirrorInlineFrame('critic-del', '{--', 'del')
 CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span.critic.comment')
 CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
 
-Link = Inline('link', Nesting.POST, 'inherit', '()[]',
+Link = Inline('link', Nesting.POST, ['inherit'], '()[]',
   [(re.compile(
     r'(?<!\\)(?:\\\\)*\K\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'),
    lambda groups: ['a', {'href': groups[1]}, groups[0]])])

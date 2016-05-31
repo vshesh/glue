@@ -1,4 +1,5 @@
 from glue.elements import *
+import regex as re
 
 def test_block_decorator():
 
@@ -38,7 +39,7 @@ def test_inlineone_decorator():
   assert i.nest == Nesting.FRAME
   assert i.subinline == ['inherit']
   assert i.escape == ''
-  assert i.parser[0][0] == r'.*'
+  assert i.parser[0][0] == re.compile(r'.*')
   assert i.parser[0][1].__doc__ == 'mock docstring'
 
 
@@ -48,5 +49,5 @@ def test_inlineone_decorator():
   assert i.nest == Nesting.POST
   assert i.subinline == ['all']
   assert i.escape == '*'
-  assert i.parser[0][0] == r'\\.*'
+  assert i.parser[0][0] == re.compile(r'\\.*')
   assert i.parser[0][1].__doc__ == 'mock docstring'
