@@ -1,5 +1,7 @@
+from glue.library import Bold, Italic, Monospace, CriticAdd, CriticDel, \
+  CriticComment, CriticHighlight, Link, Paragraphs
 from glue.registry import *
-from glue.elements import *
+
 
 def test_registry_create():
   r = Registry(Monospace, Italic, Bold, Paragraphs)

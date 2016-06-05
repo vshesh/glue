@@ -1,13 +1,11 @@
 #/usr/bin/env python3
-from typing import Mapping, List, Union, Set
-from functools import wraps
-from enum import Enum
+import enum
 from collections import namedtuple as nt
+from enum import Enum
+from typing import Mapping, Union, Set, Callable
 
-import regex as re
 import inflection
-import toolz as t
-
+import regex as re
 
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 # ------------------  BASE ELEMENTS --------------------------
@@ -71,7 +69,7 @@ common, and basically "passes through" parsing from the parent block element.
 However, you can also define `POST` or `SUB` if you expect to do some of
 your own parsing (eg, link elements work well with the `POST` style).
 
-`subscribe` is a list of either strings or literal element objects that define
+`subinline` is a list of either strings or literal element objects that define
 which styles are allowed inside this style. The two special values are 'inherit'
 and 'all'. 'inherit' is a dynamic key, and at parse-time the text inside the
 element will be parsed as if it was in the enclosing block's scope. 'all' means
@@ -88,6 +86,14 @@ character literally. This is most critical for the 1-char elements, but it's
 important for others as well.
 """
 
+# --------------------- ELEMENT UTILITIES ---------------------------------
+
+makename = lambda name: inflection.dasherize(inflection.underscore(name))
+
+@enum.unique
+class Patterns(Enum):
+  single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'
+  link = r'(?<!\\)(?:\\\\)*\K{0}\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
 
 # --------------------- DECORATORS for ELEMENTS ---------------------------
 def block(nest=Nesting.POST, subblock=None, subinline=None):
@@ -110,7 +116,7 @@ def block(nest=Nesting.POST, subblock=None, subinline=None):
   """
 
   def block_fn(parser):
-    b = Block(inflection.dasherize(inflection.underscore(parser.__name__)),
+    b = Block(makename(parser.__name__),
               nest, subblock or ['all'], subinline or ['all'], parser)
     return b
 
@@ -135,7 +141,7 @@ def inlineone(regex, nest=Nesting.FRAME, subinline=None, escape=''):
 
   def inline_fn(parser):
     r = re.compile(regex) if isinstance(regex,str) else regex
-    i = Inline(inflection.dasherize(inflection.underscore(parser.__name__)),
+    i = Inline(makename(parser.__name__),
                nest, subinline, escape, [(r, parser)])
     return i
 
@@ -166,8 +172,7 @@ def SingleGroupInlineFrame(name:str, start:str, end:str,
   letters, and the generated regex makes sure that neither the start nor the
   end of the pattern are preceded by a backslash for escape.
   """
-  patt = re.compile(
-    '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'.format(
+  patt = re.compile(Patterns.single_group.value.format(
       re.escape(start), re.escape(end)))
   return InlineFrame(name, {start[0], end[0]},
     [(patt, lambda body: [tag, attr or {}, *body])])
@@ -192,38 +197,13 @@ def MirrorInlineFrame(name:str, start:str, tag:str, attr:Mapping[str,str]=None):
     start[::-1].translate(str.maketrans('()[]{}<>', ')(][}{><')),
     tag, attr)
 
-# -------------------------- BASIC SAMPLE ELEMENTS ----------------------
-Bold = IdenticalInlineFrame('bold', '*', 'strong')
-Italic = IdenticalInlineFrame('italic', '_', 'em')
-Monospace = IdenticalInlineFrame('monospace', '`', 'code')
-Underline = IdenticalInlineFrame('underline', '__', 'span',
-  {'style': 'text-decoration:underline;'})
 
-CriticAdd = MirrorInlineFrame('critic-add', '{++', 'ins')
-CriticDel = MirrorInlineFrame('critic-del', '{--', 'del')
-CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span.critic.comment')
-CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
+def SpecializedLink(designation:str):
+  pattern = Patterns.link.value.format(designation)
 
-Link = Inline('link', Nesting.POST, ['inherit'], '()[]',
-  [(re.compile(
-    r'(?<!\\)(?:\\\\)*\K\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'),
-   lambda groups: ['a', {'href': groups[1]}, groups[0]])])
+  def wrapper(fn:Callable):
+    return Inline(makename(fn.__name__), Nesting.POST, ['inherit'],
+                  '()[]'+ designation[0] if len(designation) > 0 else '',
+                  [(pattern, fn)])
 
-@block()
-def NoopBlock(body):
-  """
-  Block does nothing, it just wraps contents with a div, and subscribes to the
-  entire registry.
-  """
-  return ['div', *body]
-
-@block()
-def Paragraphs(text):
-  """
-  Any blocks of text with a blank line in between them (`\n\n` sequence) is
-  separated and given its own `p` tag. This is the minimum formatting you'd
-  probably expect in any static content generator.
-
-  Subscribes to the entire registry.
-  """
-  return list(t.cons('div', t.map(lambda x: ['p', x.strip()], text.split('\n\n'))))
+  return wrapper

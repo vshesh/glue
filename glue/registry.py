@@ -2,6 +2,7 @@ import toolz as t
 from typing import Union, List, Mapping
 from glue.elements import *
 
+
 class Registry(dict, Mapping[str, Union[Inline, Block]]):
   """
   Registry class is some convenience functions tacked onto
@@ -15,8 +16,12 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
   r -= ['name1', 'name2']
   """
 
-  def __init__(self, *args:Union[Inline, Block]):
+  TOP = 'TOP'
+
+  def __init__(self, *args:Union[Inline, Block], top=None, **kwargs):
     super().__init__([(x.name, x) for x in args])
+    if top:
+      self[Registry.TOP] = top
 
   def __iadd__(self, other):
     if not all(isinstance(x, (Inline, Block)) for x in other):
@@ -71,6 +76,10 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
     r = Registry(*self.values())
     r += other
     return r
+
+  @property
+  def top(self):
+    return self[Registry.TOP]
 
   @property
   def all_inline(self) -> List[Inline]:

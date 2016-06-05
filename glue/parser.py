@@ -1,20 +1,17 @@
 #!/usr/bin/env python3
 
-from typing import List, Callable, Mapping, Union
-
 import operator as op
-import toolz as t
-import toolz.curried as tc
-import regex as re
+from typing import Union
 
-from glue.registry import Registry
-from glue.util import *
+import toolz.curried as tc
+
 from glue.elements import Inline, Block, Nesting
 from glue.html import render
+from glue.registry import Registry
+from glue.util import *
 
-def parse(registry, topblock, text):
-  return render(parseblock(registry, topblock, text))
-
+parse = lambda registry, text, topblock=None: parseblock(registry, topblock or registry.top, text)
+tohtml = t.compose(render, parse)
 
 def parseinline(registry:Registry,
                 element:Union[Block,Inline,str], text:str, parent=None):
@@ -105,7 +102,7 @@ def parseblock(registry:Registry,
   parses text at the block level. ASSUMES VALIDATED REGISTRY.
   minus some minor helper things (defining appropriate )
   """
-  def postparse(block, text):
+  def postparse(block, text, meta=False):
     subblocks = list(splitblocks(text))
     if len(subblocks) == 1 and isinstance(subblocks[0], str):
       # there are no subblocks, so return one level up!
@@ -114,13 +111,24 @@ def parseblock(registry:Registry,
     l = []
     for b in subblocks:
       if isinstance(b, list):
-        l.append(parseblock(registry, registry[b[0]], b[1]))
+        sub = parseblock(registry, registry[b[0]], b[1])
+        if meta:
+          l.append({'type': 'block', 'value': sub})
+        else:
+          l.append(sub)
       elif isinstance(b, str):
         t = parseinline(registry, block, b)
         if isinstance(t,str):
           l.append(t)
-        else:
-          l += t
+        else: # t is a list of inline styles or intermediary text
+          if meta:
+            for elem in t:
+              if isinstance(elem, (list, tuple)):
+                l.append({'type': 'inline', 'value': elem})
+              else:
+                l.append(elem)
+          else:
+            l += t
 
     return l
   
@@ -134,7 +142,8 @@ def parseblock(registry:Registry,
     return splicehtmlmap(t.partial(postparse, block), block.parser(text))
   
   if block.nest == Nesting.SUB:
-    blocks = postparse(block, text)
+    blocks = postparse(block, text, meta=True)
+    print(blocks)
     # make sub directory, and string only array:
     subtext = []
     subs = {}
@@ -142,13 +151,13 @@ def parseblock(registry:Registry,
     for e in blocks:
       if isinstance(e, str):
         subtext.append(e)
-      else:
-        substr = '[|{}|]'.format(i)
-        subs[substr] = e
+      elif isinstance(e, dict):
+        substr = ('[|{}|]' if e['type'] == 'inline' else '[||{}||]').format(i)
+        subs[substr] = e['value']
         subtext.append(substr)
         i += 1
 
     return splicehtmlmap(
       lambda t: [subs[x] if x.startswith('[|') else x
-                 for x in re.split(r'(\[\|\d+\|\])', t) if x != ''],
+                 for x in re.split(r'(\[\|\|?\d+\|?\|\])', t) if x != ''],
       block.parser(''.join(subtext)))

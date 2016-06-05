@@ -4,6 +4,6 @@
 
 __version__ = "0.1.0"
 
-from glue.parser import parse
+from glue.parser import parse, tohtml
 from glue.elements import Nesting, Block, Inline, block, inlineone
 from glue.registry import Registry

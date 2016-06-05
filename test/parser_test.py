@@ -1,6 +1,6 @@
 from glue import *
 from glue.parser import parseinline, parseblock
-from glue.elements import Bold, Italic, Monospace, Paragraphs, Link
+from glue.library import Bold, Italic, Monospace, Link, Paragraphs
 from glue.util import unwind
 
 sample = Registry(Bold, Italic, Monospace, Paragraphs)

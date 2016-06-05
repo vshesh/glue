@@ -169,8 +169,8 @@ Inline elements consist of
 
 * `name` the name of the element - should be in dash-case, like `critic-add`
 * `nest` how to nest other inline elements (explained in the next section)
-* `subscribe`
-* `escape`
+* `subinline` names of other inline elements allowed inside this one.
+* `escape` characters that should be escaped in the block body text.
 * `parser` takes the form `[(regex, parser_fn), (regex, parser_fn)]`.
   * `parser_fn(groups) -> ['span', {'attr': 'value'}, 'something']`
     * takes the captured groups from the regex and returns html.
@@ -204,10 +204,12 @@ Italic = Inline('italic', Nesting.FRAME, ['all'], '_',
 Block elements consist of:
 
 * `name` the name of the element - should be in dash-case, like `block-name`
-* `nest` how to nest other blocks
-* `nesti` how to nest inline elements (currently does nothing, `nest` is
-  used in both places, but this is left here in case there's a day someone
-  needs separate nesting policies for inline/block elements).
+* `nest` how to nest other blocks AND other inline elements
+  * in the future, this may need to be separate in case someone desires
+    different policies for nesting blocks and inlines.
+    `block: NONE` and `inline: POST` comes to mind as being probable.
+  * this may also be implemented as new nesting types eg, `INLINE_ONLY`,
+    but that's easy to do with `nest:POST`, `subblock: []` as well.
 * `subblock` what other block elements are legal inside this block element.
   * `inherit` is a special keyword here, that inherits from the parent.
   * `all` is a special keyword that subscribes to ALL block elements in the registry.
@@ -240,8 +242,7 @@ def paragraphs_parser(text):
   """
   return ['div', *map(lambda x: ['p', x.strip()], text.split('\n\n'))]
 
-Paragraphs = Block('paragraphs', Nesting.POST, Nesting.POST,
-                   ['all'], ['all'], paragraphs_parser)
+Paragraphs = Block('paragraphs', Nesting.POST, ['all'], ['all'], paragraphs_parser)
 ```
 
 You can see how the decorator style is easier, since it auto-calculates the
@@ -300,13 +301,11 @@ I'll leave CriticSub as an exercise for the reader. It fits in a similar vein
 as the Link component. There is an example section that discusses some
 common architectures of these components and how they could fit together.
 
-`MirrorInlineFrame` is a helper function I provide for you, which is written
+`MirrorInlineFrame` is a helper function I provide, which is written
 to simply writing a parser for an element with one group in which the start
 and end pattern are mirrors of each other - I've defined the start pattern, and
 the function will compute the other side eg `++}` and then make the appropriate
 regex.
-
-This is so simple, in fact, that I went ahead and included it for you.
 
 ## Examples/Common Architectures
 
