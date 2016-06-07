@@ -24,6 +24,9 @@ def test_parseinline_basic():
     ['strong', {}, 'text'],['strong', {}, 'text2']]
 
 
+def test_parseinline_multiline():
+  assert parseinline(sample, Paragraphs, '*te\nxt*') == [['strong', {}, 'te\nxt']]
+
 def test_parseinline_post():
   assert parseinline(sample + [Link], Paragraphs,
                      '[link](http://google.com)') == [['a', {'href': 'http://google.com'}, 'link']]

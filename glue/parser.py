@@ -3,6 +3,7 @@
 import operator as op
 from typing import Union
 
+import toolz as t
 import toolz.curried as tc
 
 from glue.elements import Inline, Block, Nesting
@@ -46,7 +47,7 @@ def parseinline(registry:Registry,
   
   # combine all inline patterns into one regex.
   # might not be efficient for very complex parsers....
-  patt = re.compile('|'.join(t.map(lambda x: '(?:'+x[0].pattern+')', inlines)), re.V1)
+  patt = re.compile('|'.join(t.map(lambda x: '(?:'+x[0].pattern+')', inlines)), re.V1 | re.DOTALL)
   # how many groups are in each regex, in order, so we can assign the final
   # match to the right parser function.
   grouplengths = list(
@@ -137,7 +138,6 @@ def parseblock(registry:Registry,
     return block.parser(text)
   
   if block.nest == Nesting.POST:
-          
     # parse block first, then call parseblock on the children.
     return splicehtmlmap(t.partial(postparse, block), block.parser(text))
   
@@ -158,6 +158,6 @@ def parseblock(registry:Registry,
         i += 1
 
     return splicehtmlmap(
-      lambda t: [subs[x] if x.startswith('[|') else x
-                 for x in re.split(r'(\[\|\|?\d+\|?\|\])', t) if x != ''],
+      lambda text: [subs[x] if x.startswith('[|') else x
+                 for x in re.split(r'(\[\|\|?\d+\|?\|\])', text) if x != ''],
       block.parser(''.join(subtext)))

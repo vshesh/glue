@@ -50,8 +50,32 @@ def CriticSub(groups):
 # bold, italic, monospace, link
 
 # LISTS - blocks that allow defining lists.
+# ordered list, unordered list, outline
+
+# TABLES - blocks that result in some kind of tabular form
+# table - basic table form
+# sidebyside - 2 columns that are rendered independently
+# flexbox - lays out things in a flex manner
 #
 
+# COMPONENTS - general purpose blocks for isomorphic-js components
+# works well with react/mithril etc
+
+# PHOTOS - displaying images
+# image (inline like markdown)
+# annotated image - component library image processing
+# figures - images with captions, basically.
+
+# STANDALONE - such as KaTeX and musicalabc, to name a few.
+
+# CODE BLOCKS - styling these is really complicated for some reason
+# web library integration
+# julia formatter pseudocode (from Sexpr.jl)
+
+
+# TOPLEVEL - two options for what the top might look like
+# such as doing nothing and returning a div, or parsing paragraphs, but
+# excluding block elements
 
 @block()
 def NoopBlock(text):
@@ -60,8 +84,7 @@ def NoopBlock(text):
   """
   return ['div', text]
 
-
-@block()
+@block(nest=Nesting.SUB)
 def Paragraphs(text):
   """
   Creates p tags from each blank line separated block of text.
@@ -72,4 +95,4 @@ def Paragraphs(text):
 
   Subscribes to the entire registry.
   """
-  return list(t.cons('div', t.map(lambda x: ['p', x.strip()], text.split('\n\n'))))
+  return list(t.cons('div', t.map(lambda x: x if x.startswith('[||') else ['p', x.strip()], text.split('\n\n'))))
