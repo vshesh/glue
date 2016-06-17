@@ -1,3 +1,4 @@
+import pytest
 from glue.library import Bold, Italic, Monospace, CriticAdd, CriticDel, \
   CriticComment, CriticHighlight, Link, Paragraphs
 from glue.registry import *
@@ -77,4 +78,17 @@ def test_registry_sub():
   assert Paragraphs.name in a
   assert Italic.name not in a
   assert len(a) == 3
+
+
+def test_registry_notimplemented():
+  with pytest.raises(TypeError):
+    r = Registry()
+    r | []
+
+  with pytest.raises(TypeError):
+    Registry() + Registry(Italic)
+
+  with pytest.raises(TypeError):
+    Registry() + {'mono': {"escape": '!@#$'}}
+
 

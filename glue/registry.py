@@ -1,5 +1,5 @@
 import toolz as t
-from typing import Union, List, Mapping
+from typing import Union, List, Mapping, Iterable
 from glue.elements import *
 
 
@@ -53,7 +53,9 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
 
     return self
 
-  def __isub__(self, other):
+  def __isub__(self, other:Iterable):
+    if not isinstance(other, Iterable):
+      return NotImplemented
     # remove keys from sub that aren't in dict
     for k in other:
       key = k.name if isinstance(k, (Inline, Block)) else k
@@ -63,16 +65,27 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
     return self
 
   def __or__(self, other:dict):
+    if not isinstance(other, dict):
+      return NotImplemented
+
     r = Registry(*self.values())
     r |= other
     return r
 
-  def __sub__(self, other):
+  def __sub__(self, other:Iterable):
+    if not isinstance(other, Iterable) or \
+        not all(isinstance(x, (Inline, Block)) for x in other):
+      return NotImplemented
+
     r = Registry(*self.values())
     r -= other
     return r
 
-  def __add__(self, other):
+  def __add__(self, other:Iterable):
+    if not isinstance(other, Iterable) or \
+       not all(isinstance(x, (Inline, Block)) for x in other):
+      return NotImplemented
+
     r = Registry(*self.values())
     r += other
     return r

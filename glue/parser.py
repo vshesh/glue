@@ -118,18 +118,16 @@ def parseblock(registry:Registry,
         else:
           l.append(sub)
       elif isinstance(b, str):
+        # t has type List[Union[str, List[str]]] (s-expr)
         t = parseinline(registry, block, b)
-        if isinstance(t,str):
-          l.append(t)
-        else: # t is a list of inline styles or intermediary text
-          if meta:
-            for elem in t:
-              if isinstance(elem, (list, tuple)):
-                l.append({'type': 'inline', 'value': elem})
-              else:
-                l.append(elem)
-          else:
-            l += t
+        if meta:
+          for elem in t:
+            if isinstance(elem, (list, tuple)):
+              l.append({'type': 'inline', 'value': elem})
+            else:
+              l.append(elem)
+        else:
+          l += t
 
     return l
   
