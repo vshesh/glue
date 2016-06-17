@@ -53,8 +53,10 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
 
     return self
 
-  def __isub__(self, other:Iterable):
-    if not isinstance(other, Iterable):
+  def __isub__(self, other:dict):
+    if not isinstance(other, dict) and (
+          not isinstance(other, Iterable) or
+          not all(isinstance(x, (Inline, Block)) for x in other)):
       return NotImplemented
     # remove keys from sub that aren't in dict
     for k in other:
@@ -72,9 +74,10 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
     r |= other
     return r
 
-  def __sub__(self, other:Iterable):
-    if not isinstance(other, Iterable) or \
-        not all(isinstance(x, (Inline, Block)) for x in other):
+  def __sub__(self, other:Union[dict, Iterable]):
+    if not isinstance(other, dict) and (
+        not isinstance(other, Iterable) or
+        not all(isinstance(x, (Inline, Block)) for x in other)):
       return NotImplemented
 
     r = Registry(*self.values())

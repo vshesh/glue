@@ -92,3 +92,8 @@ def test_registry_notimplemented():
     Registry() + {'mono': {"escape": '!@#$'}}
 
 
+  with pytest.raises(TypeError):
+    Registry() - [1]
+
+  with pytest.raises(TypeError):
+    Registry() - Italic
