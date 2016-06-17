@@ -43,8 +43,14 @@ def test_parseinline_none():
                      '@*bold* _italic_ abc@') == [['p', '*bold* _italic_ abc']]
 
 
+def test_parseinline_embedded():
+  assert parseinline(sample, Paragraphs, 'text *bold* text') == ['text ', ['strong', {}, 'bold'], ' text']
+
+
+# ------------------ PARSEBLOCK TESTS ----------------------------------------
+
 def test_parseblock_empty():
-  assert unwind(parseblock(sample, Paragraphs, '')) == ['div', ['p']]
+  assert unwind(parseblock(sample, Paragraphs, '')) == ['div']
 
 
 def test_parseblock_nosub():
@@ -63,11 +69,46 @@ def test_parseblock_nestingnone():
                     '---paragraphs\n...\n') == ['p', '---paragraphs\n...\n']
 
 
-def test_parseblock_nestingsub():
-  @block(nest=Nesting.SUB)
-  def IdentityBlock(text):
-    return ['p', text]
+@block(nest=Nesting.SUB)
+def IdentityBlock(text):
+  return ['div', text]
 
+
+def test_parseblock_nestingsub():
   # should consume paragraphs block
   assert unwind(parseblock(Registry(IdentityBlock, Paragraphs), IdentityBlock,
-                    'hello\n---paragraphs\nhello\n...\n')) == ['p', 'hello\n', ['div', ['p', 'hello']]]
+                    'hello\n---paragraphs\nhello\n...\n')) == ['div', 'hello\n', ['div', ['p', 'hello']]]
+
+def test_parseblock_nestingsub_multiple():
+  assert unwind(parseblock(sample + [IdentityBlock], IdentityBlock,
+                           '*hello*\n---paragraphs\nhello\n---paragraphs\nhello again\n...\n...\n')) == ['div', ['strong', {}, 'hello'], '\n', ['div', ['p', 'hello'], ['div', ['p', 'hello again']]]]
+
+def test_parseblock_nestingpost():
+  @block()
+  def IdentityBlock(text):
+    return ['div', text]
+
+  assert unwind(parseblock(Registry(IdentityBlock, Paragraphs), IdentityBlock,
+                           'hello\n---paragraphs\nhello\n...\n')) == ['div', 'hello\n', ['div', ['p', 'hello']]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

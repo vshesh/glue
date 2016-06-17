@@ -40,9 +40,8 @@ CriticDel = MirrorInlineFrame('critic-del', '{--', 'del')
 CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span.critic.comment')
 CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
 
-@inlineone(r'(?<!\\)(?:\\\\)*\K\{~~(.*?(?<!\\)(?:\\\\)*)~>(.*?(?<!\\)(?:\\\\)*)~~}', nest=Nesting.POST)
-def CriticSub(groups):
-  return [['ins', groups[0]],['del', groups[1]]]
+CriticSub = inlineone(r'(?<!\\)(?:\\\\)*\K\{~~(.*?(?<!\\)(?:\\\\)*)~>(.*?(?<!\\)(?:\\\\)*)~~}', nest=Nesting.POST)(
+  lambda groups: [['ins', groups[0]],['del', groups[1]]])
 
 # MARKDOWN - registry that contains standard definitions according to the
 # markdown syntax style. These are *different* from the STANDARD definitions
@@ -77,12 +76,7 @@ def CriticSub(groups):
 # such as doing nothing and returning a div, or parsing paragraphs, but
 # excluding block elements
 
-@block()
-def NoopBlock(text):
-  """
-  Block wraps contents with a div, and subscribes to the entire registry.
-  """
-  return ['div', text]
+NoopBlock = block()(lambda text: ['div', text])
 
 @block(nest=Nesting.SUB)
 def Paragraphs(text):
@@ -95,4 +89,4 @@ def Paragraphs(text):
 
   Subscribes to the entire registry.
   """
-  return list(t.cons('div', t.map(lambda x: x if x.startswith('[||') else ['p', x.strip()], text.split('\n\n'))))
+  return list(t.cons('div', t.map(lambda x: x if x.endswith('|]') else ['p', x.rstrip()], t.filter(lambda x: not not x, re.split(r'(?:\n\n)|(\[\|\|?\d+\|?\|\])', text)))))
