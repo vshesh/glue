@@ -83,6 +83,12 @@ def test_parseblock_nestingsub_multiple():
   assert unwind(parseblock(sample + [IdentityBlock], IdentityBlock,
                            '*hello*\n---paragraphs\nhello\n---paragraphs\nhello again\n...\n...\n')) == ['div', ['strong', {}, 'hello'], '\n', ['div', ['p', 'hello'], ['div', ['p', 'hello again']]]]
 
+  assert unwind(parseblock(sample, Paragraphs,
+                           '*hello*\n---paragraphs\nhello\n---paragraphs\n*hello* again\n...\n...\n')) == [
+           'div', ['p', ['strong', {}, 'hello']],
+           ['div', ['p', 'hello'], ['div', ['p', ['strong', {}, 'hello'], ' again']]]]
+
+
 def test_parseblock_nestingpost():
   @block()
   def IdentityBlock(text):
@@ -90,9 +96,6 @@ def test_parseblock_nestingpost():
 
   assert unwind(parseblock(Registry(IdentityBlock, Paragraphs), IdentityBlock,
                            'hello\n---paragraphs\nhello\n...\n')) == ['div', 'hello\n', ['div', ['p', 'hello']]]
-
-
-
 
 
 

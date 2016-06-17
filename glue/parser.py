@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import operator as op
+from itertools import tee
 from typing import Union
 
 import toolz as t
@@ -103,11 +104,23 @@ def parseblock(registry:Registry,
   parses text at the block level. ASSUMES VALIDATED REGISTRY.
   minus some minor helper things (defining appropriate )
   """
+
+  def postparseinline(block, text, meta=False):
+    t = parseinline(registry, block, text)
+    if not meta: return t
+    l = []
+    for elem in t:
+      if isinstance(elem, (list, tuple)):
+        l.append({'type': 'inline', 'value': elem})
+      else:
+        l.append(elem)
+    return l
+
   def postparse(block, text, meta=False):
     subblocks = list(splitblocks(text))
     if len(subblocks) == 1 and isinstance(subblocks[0], str):
       # there are no subblocks, so return one level up!
-      return parseinline(registry, block, subblocks[0])
+      return postparseinline(block, subblocks[0], meta)
       
     l = []
     for b in subblocks:
@@ -118,16 +131,7 @@ def parseblock(registry:Registry,
         else:
           l.append(sub)
       elif isinstance(b, str):
-        # t has type List[Union[str, List[str]]] (s-expr)
-        t = parseinline(registry, block, b)
-        if meta:
-          for elem in t:
-            if isinstance(elem, (list, tuple)):
-              l.append({'type': 'inline', 'value': elem})
-            else:
-              l.append(elem)
-        else:
-          l += t
+        l += postparseinline(block, b, meta)
 
     return l
   
@@ -155,6 +159,6 @@ def parseblock(registry:Registry,
         i += 1
 
     return splicehtmlmap(
-      lambda text: [subs[x] if x.startswith('[|') else x
+      lambda text: [subs[x] if x.startswith('[|') and x.endswith('|]') else x
                  for x in re.split(r'(\[\|\|?\d+\|?\|\])', text) if x != ''],
       block.parser(''.join(subtext)))

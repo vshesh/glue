@@ -89,4 +89,6 @@ def Paragraphs(text):
 
   Subscribes to the entire registry.
   """
-  return list(t.cons('div', t.map(lambda x: x if x.endswith('|]') else ['p', x.rstrip()], t.filter(lambda x: not not x, re.split(r'(?:\n\n)|(\[\|\|?\d+\|?\|\])', text)))))
+  r = list(t.cons('div', t.map(lambda x: x if x.endswith('|]') else ['p', x.rstrip()], t.filter(lambda x: not not x, re.split(r'(?:\n\n)|(\[\|\|\d+\|\|\])', text)))))
+  print('paragraphs: ', r)
+  return r
