@@ -4,9 +4,10 @@
 
 import regex as re
 import toolz as t
+import toolz.curried as tc
 
 from glue import inlineone, Nesting, Inline, block
-from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, Patterns
+from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_link
 
 # this module exposes basic elements and registries for common tasks.
 # it's designed to have feature parity with markdown, or a more sensible
@@ -26,9 +27,10 @@ Underline = IdenticalInlineFrame('underline', '__', 'span',
   {'style': 'text-decoration:underline;'})
 Strikethrough = IdenticalInlineFrame('strikethrough', '~', '')
 
-Link = Inline('link', Nesting.POST, ['inherit'], '()[]',
-  [(re.compile(Patterns.link.value.format('')),
-   lambda groups: ['a', {'href': groups[1]}, groups[0]])])
+
+@specialized_link('')
+def Link(groups):
+  return ['a', {'href': groups[1]}, groups[0]]
 
 
 # CRITIC - registry for doing annotations and critiques on the document.
@@ -40,8 +42,9 @@ CriticDel = MirrorInlineFrame('critic-del', '{--', 'del')
 CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span.critic.comment')
 CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
 
-CriticSub = inlineone(r'(?<!\\)(?:\\\\)*\K\{~~(.*?(?<!\\)(?:\\\\)*)~>(.*?(?<!\\)(?:\\\\)*)~~}', nest=Nesting.POST)(
-  lambda groups: [['ins', groups[0]],['del', groups[1]]])
+@inlineone(r'(?<!\\)(?:\\\\)*\K\{~~(.*?(?<!\\)(?:\\\\)*)~>(.*?(?<!\\)(?:\\\\)*)~~}', nest=Nesting.POST)
+def CriticSub(groups):
+  return [['ins', groups[0]],['del', groups[1]]]
 
 # MARKDOWN - registry that contains standard definitions according to the
 # markdown syntax style. These are *different* from the STANDARD definitions
@@ -76,7 +79,9 @@ CriticSub = inlineone(r'(?<!\\)(?:\\\\)*\K\{~~(.*?(?<!\\)(?:\\\\)*)~>(.*?(?<!\\)
 # such as doing nothing and returning a div, or parsing paragraphs, but
 # excluding block elements
 
-NoopBlock = block()(lambda text: ['div', text])
+@block()
+def NoopBlock(text):
+  return ['div', text]
 
 @block(nest=Nesting.SUB)
 def Paragraphs(text):
@@ -89,6 +94,8 @@ def Paragraphs(text):
 
   Subscribes to the entire registry.
   """
-  r = list(t.cons('div', t.map(lambda x: x if x.endswith('|]') else ['p', x.rstrip()], t.filter(lambda x: not not x, re.split(r'(?:\n\n)|(\[\|\|\d+\|\|\])', text)))))
-  print('paragraphs: ', r)
-  return r
+  return t.pipe(re.split(r'(?:\n\n)|(\[\|\|\d+\|\|\])', text),
+                tc.filter(lambda x: not not x),
+                tc.map(lambda x: x if x.endswith('|]') else ['p', x.rstrip()]),
+                tc.cons('div'),
+                list)

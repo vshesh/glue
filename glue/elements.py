@@ -198,8 +198,8 @@ def MirrorInlineFrame(name:str, start:str, tag:str, attr:Mapping[str,str]=None):
     tag, attr)
 
 
-def SpecializedLink(designation:str):
-  pattern = Patterns.link.value.format(designation)
+def specialized_link(designation:str):
+  pattern = re.compile(Patterns.link.value.format(designation), re.V1)
 
   def wrapper(fn:Callable):
     return Inline(makename(fn.__name__), Nesting.POST, ['inherit'],
