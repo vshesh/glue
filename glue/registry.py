@@ -1,3 +1,4 @@
+import copy
 import toolz as t
 from typing import Union, List, Mapping, Iterable
 from glue.elements import *
@@ -20,7 +21,7 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
 
   def __init__(self, *args:Union[Inline, Block], top=None, **kwargs):
     super().__init__([(x.name, x) for x in args])
-    if top:
+    if top is not None:
       self[Registry.TOP] = top
 
   def __iadd__(self, other):
@@ -70,7 +71,7 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
     if not isinstance(other, dict):
       return NotImplemented
 
-    r = Registry(*self.values())
+    r = copy.copy(self)
     r |= other
     return r
 
@@ -80,7 +81,7 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
         not all(isinstance(x, (Inline, Block)) for x in other)):
       return NotImplemented
 
-    r = Registry(*self.values())
+    r = copy.copy(self)
     r -= other
     return r
 
@@ -89,7 +90,7 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
        not all(isinstance(x, (Inline, Block)) for x in other):
       return NotImplemented
 
-    r = Registry(*self.values())
+    r = copy.copy(self)
     r += other
     return r
 

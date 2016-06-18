@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import operator as op
-from itertools import tee
 from typing import Union
 
 import toolz as t

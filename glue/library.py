@@ -6,8 +6,8 @@ import regex as re
 import toolz as t
 import toolz.curried as tc
 
-from glue import inlineone, Nesting, Inline, block
-from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_link
+from glue import Nesting, Registry
+from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_link, inlineone, block
 
 # this module exposes basic elements and registries for common tasks.
 # it's designed to have feature parity with markdown, or a more sensible
@@ -19,6 +19,7 @@ from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_l
 # such as
 # bold, italic, monospace, underline, strikethrough
 # link, tooltip
+
 
 Bold = IdenticalInlineFrame('bold', '*', 'strong')
 Italic = IdenticalInlineFrame('italic', '_', 'em')
@@ -32,6 +33,12 @@ Strikethrough = IdenticalInlineFrame('strikethrough', '~', '')
 def Link(groups):
   return ['a', {'href': groups[1]}, groups[0]]
 
+@specialized_link('T')
+def Tooltip(groups):
+  return ['span.tooltip', groups[0], ['div.tooltip-text', groups[1]]]
+
+StandardInline = Registry(Bold, Italic, Monospace, Underline,
+                          Strikethrough, Link, Tooltip)
 
 # CRITIC - registry for doing annotations and critiques on the document.
 # insertion, deletion, substitution (really deletion + insertion)
@@ -46,6 +53,8 @@ CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
 def CriticSub(groups):
   return [['ins', groups[0]],['del', groups[1]]]
 
+CriticMarkup = Registry(CriticAdd, CriticDel, CriticComment, CriticHighlight, CriticSub)
+
 # MARKDOWN - registry that contains standard definitions according to the
 # markdown syntax style. These are *different* from the STANDARD definitions
 # in that they have redundancy and aren't capable of showing off as many styles.
@@ -58,21 +67,24 @@ def CriticSub(groups):
 # table - basic table form
 # sidebyside - 2 columns that are rendered independently
 # flexbox - lays out things in a flex manner
-#
+
 
 # COMPONENTS - general purpose blocks for isomorphic-js components
 # works well with react/mithril etc
 
 # PHOTOS - displaying images
 # image (inline like markdown)
-# annotated image - component library image processing
 # figures - images with captions, basically.
+# annotated image - component library image processing
 
 # STANDALONE - such as KaTeX and musicalabc, to name a few.
 
+
 # CODE BLOCKS - styling these is really complicated for some reason
-# web library integration
+# web library integration - there are many
+# pygments using native python
 # julia formatter pseudocode (from Sexpr.jl)
+# theoretical example of using regexes to make a code highlighter.
 
 
 # TOPLEVEL - two options for what the top might look like
@@ -99,3 +111,5 @@ def Paragraphs(text):
                 tc.map(lambda x: x if x.endswith('|]') else ['p', x.rstrip()]),
                 tc.cons('div'),
                 list)
+
+Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup
