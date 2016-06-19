@@ -38,7 +38,9 @@ def parseinline(registry:Registry,
   escapes = ''.join(t.reduce(set.union,
     (x.escape for x in subinline), set())).replace('[', '\\[').replace(']', '\\]')
   # function that will unescape body code so eg \* -> *
-  unescape = lambda t: re.compile('\\\\(['+escapes+'])').sub(r'\1', t)
+  unescape = ((lambda t: re.compile('\\\\(['+escapes+'])').sub(r'\1', t))
+              if len(escapes) > 0
+              else t.identity)
 
   # if there are no inline styles declared in the registry, then we need
   # to handle that as a special case before all the regex stuff.
@@ -47,7 +49,7 @@ def parseinline(registry:Registry,
   
   # combine all inline patterns into one regex.
   # might not be efficient for very complex parsers....
-  patt = re.compile('|'.join(t.map(lambda x: '(?:'+x[0].pattern+')', inlines)), re.V1 | re.DOTALL)
+  patt = re.compile('|'.join(t.map(lambda x: '(?:'+x[0].pattern+')', inlines)), re.V1 | re.S | re.M)
   # how many groups are in each regex, in order, so we can assign the final
   # match to the right parser function.
   grouplengths = list(

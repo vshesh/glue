@@ -19,6 +19,7 @@ from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_l
 # such as
 # bold, italic, monospace, underline, strikethrough
 # link, tooltip
+# headers
 
 
 Bold = IdenticalInlineFrame('bold', '*', 'strong')
@@ -36,6 +37,10 @@ def Link(groups):
 @specialized_link('T')
 def Tooltip(groups):
   return ['span.tooltip', groups[0], ['div.tooltip-text', groups[1]]]
+
+@inlineone(r'^(\#{1,6})([^\n]*)(?:\n|$)', nest=Nesting.POST, escape='#')
+def Header(groups):
+  return ['h' + str(len(groups[0])), groups[1]]
 
 StandardInline = Registry(Bold, Italic, Monospace, Underline,
                           Strikethrough, Link, Tooltip)
@@ -106,9 +111,9 @@ def Paragraphs(text):
 
   Subscribes to the entire registry.
   """
-  return t.pipe(re.split(r'(?:\n\n)|(\[\|\|\d+\|\|\])', text),
+  return t.pipe(re.split(r'(?m)(?:\n|^)(\[\|\|\d+\|\|\])', text),
                 tc.filter(lambda x: not not x),
-                tc.map(lambda x: x if x.endswith('|]') else ['p', x.rstrip()]),
+                tc.map(lambda x: x if re.match(r'^\[\|\|\d+\|\|\]$',x) else ['p', x.rstrip()]),
                 tc.cons('div'),
                 list)
 
