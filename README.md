@@ -7,8 +7,17 @@
 
 ```bash
 $ git clone <this repo>
+$ cd glue
+glue$ echo '*test*' | python3 -m glue 
+
+
 $ python3
 >>> import glue
+>>> from glue.library import Standard
+>>> glue.parse(Standard, '*test*')
+<div><p><strong>text</strong></p></div>
+
+>>> import glue.elements
 >>> reg = glue.Registry(glue.elements.Bold, glue.elements.Italic, glue.elements.Paragraphs)
 >>> glue.parse(reg, glue.elements.Paragraphs, '*test*')
 <div><p><strong>text</strong></p></div>
@@ -153,7 +162,7 @@ In order to remove *some* regex pain, I've written generators that will
 help you write simple patterns that I imagine you will want to use.
 Make sure that you `pip install regex` and use that library. It will eventually
 become the real regex library, but it has a lot of features that are useful
-(especially `\K`).
+(especially `\K`). 
 
 You need to design yourself something I'm calling a **registry**.
 What's that, you ask? It's just a list of **elements**, which can be `block`

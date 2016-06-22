@@ -154,7 +154,7 @@ def inlineone(regex, display=Display.INLINE, nest=Nesting.FRAME, subinline=None,
   """
   if subinline is None: subinline = ['inherit']
 
-  def inline_fn(parser):
+  def inline_fn(parser: Callable) -> Inline:
     r = re.compile(regex) if isinstance(regex,str) else regex
     i = Inline(makename(parser.__name__), display,
                nest, subinline, escape, [(r, parser)])

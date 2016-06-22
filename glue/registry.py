@@ -95,7 +95,7 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
     return r
 
   @property
-  def top(self):
+  def top(self) -> Union[Inline,Block]:
     return self[Registry.TOP]
 
   @property
@@ -106,7 +106,7 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
   def all_block(self) -> List[Block]:
     return t.filter(lambda x: isinstance(x, Block), self.values())
 
-  def inline_subscriptions(self, names:List[str], parent:Union[Block, Inline]=None):
+  def inline_subscriptions(self, names:List[str], parent:Union[Block, Inline]=None) -> List[Inline]:
     l = []
     if 'all' in names:
       l.extend(self.all_inline)

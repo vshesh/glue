@@ -6,6 +6,7 @@ from typing import Union
 
 import toolz as t
 import toolz.curried as tc
+from regex import Regex
 
 from glue.elements import Inline, Block, Nesting, Display
 from glue.html import render
@@ -50,7 +51,9 @@ def parseinline(registry:Registry,
   
   # combine all inline patterns into one regex.
   # might not be efficient for very complex parsers....
-  patt = re.compile('|'.join(t.map(lambda x: '(?:'+x[0].pattern+')', inlines)), re.V1 | re.S | re.M)
+  patt = re.compile('|'.join(t.map(lambda x: '(?:'+(
+    x[0] if isinstance(x[0], str) else x[0].pattern)+')', inlines)), re.V1 | re.S | re.M)
+
   # how many groups are in each regex, in order, so we can assign the final
   # match to the right parser function.
   grouplengths = list(
