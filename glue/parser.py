@@ -6,7 +6,7 @@ from typing import Union
 import toolz as t
 import toolz.curried as tc
 
-from glue.elements import Inline, Block, Nesting
+from glue.elements import Inline, Block, Nesting, Display
 from glue.html import render
 from glue.registry import Registry
 from glue.util import *
@@ -76,23 +76,25 @@ def parseinline(registry:Registry,
     # stripping all the groups corresponding to the matched sub-regex
     groups = m.groups()[grouplengths[matchind]:
                         grouplengths[min(m.re.groups, matchind+1)]]
+
+    # doing the parsing based on nesting type
     if elem.nest == Nesting.FRAME:
       # frames are simple, by default they have inherit behavior
       # and deal with one group
-      l.append(parser(parseinline(registry, block, groups[0])))
+      l.append((elem, parser(parseinline(registry, block, groups[0]))))
+    elif elem.nest == Nesting.NONE:
+      l.append((elem, parser(groups)))
     elif elem.nest == Nesting.POST:
       # post requires a tree-traversal to reparse all the body elements.
       # the only difference is that we have to
-      l.append(list(
+      l.append((elem, list(
         splicehtmlmap(
           lambda t: parseinline(
             registry,
             block if elem.subinline == ['inherit'] else elem,
             t,
             parent if elem.subinline == ['inherit'] else block),
-          parser(groups))))
-    elif elem.nest == Nesting.NONE:
-      l.append(parser(groups))
+          parser(groups)))))
 
     ind = m.span()[1]
   
@@ -107,15 +109,9 @@ def parseblock(registry:Registry,
   """
 
   def postparseinline(block, text, meta=False):
-    t = parseinline(registry, block, text)
-    if not meta: return t
-    l = []
-    for elem in t:
-      if isinstance(elem, (list, tuple)):
-        l.append({'type': 'inline', 'value': elem})
-      else:
-        l.append(elem)
-    return l
+    html = parseinline(registry, block, text)
+    if meta: return html
+    else: return [e if isinstance(e, str) else e[1] for e in html]
 
   def postparse(block, text, meta=False):
     subblocks = list(splitblocks(text))
@@ -128,7 +124,7 @@ def parseblock(registry:Registry,
       if isinstance(b, list):
         sub = parseblock(registry, registry[b[0]], b[1])
         if meta:
-          l.append({'type': 'block', 'value': sub})
+          l.append((registry[b[0]], sub))
         else:
           l.append(sub)
       elif isinstance(b, str):
@@ -146,6 +142,7 @@ def parseblock(registry:Registry,
   
   if block.nest == Nesting.SUB:
     blocks = postparse(block, text, meta=True)
+    print(blocks)
     # make sub directory, and string only array:
     subtext = []
     subs = {}
@@ -153,9 +150,9 @@ def parseblock(registry:Registry,
     for e in blocks:
       if isinstance(e, str):
         subtext.append(e)
-      elif isinstance(e, dict):
-        substr = ('[|{}|]' if e['type'] == 'inline' else '[||{}||]').format(i)
-        subs[substr] = e['value']
+      elif isinstance(e, tuple):
+        substr = ('[|{}|]' if isinstance(e[0], Inline) and e[0].display is Display.BLOCK else '[||{}||]').format(i)
+        subs[substr] = e[1]
         subtext.append(substr)
         i += 1
 

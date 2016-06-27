@@ -5,6 +5,7 @@ from glue.util import unwind
 
 sample = Registry(Bold, Italic, Monospace, Paragraphs)
 
+# --------------------------------- PARSEINLINE TESTS --------------------
 
 def test_parseinline_empty():
   assert parseinline(sample, Paragraphs, '') == []
@@ -17,21 +18,22 @@ def test_parseinline_nosub():
 
 
 def test_parseinline_basic():
-  assert parseinline(sample, Paragraphs, '*text*') == [['strong', {}, 'text']]
+  assert parseinline(sample, Paragraphs, '*text*') == [(Bold, ['strong', {}, 'text'])]
   assert parseinline(sample, Paragraphs, '*`text`*') == [
-    ['strong', {}, ['code', {}, 'text']]]
+    (Bold, ['strong', {}, (Monospace, ['code', {}, 'text'])])]
   assert parseinline(sample, Paragraphs, '*text**text2*') == [
-    ['strong', {}, 'text'],['strong', {}, 'text2']]
+    (Bold, ['strong', {}, 'text']),
+    (Bold, ['strong', {}, 'text2'])]
 
 
 def test_parseinline_multiline():
-  assert parseinline(sample, Paragraphs, '*te\nxt*') == [['strong', {}, 'te\nxt']]
+  assert parseinline(sample, Paragraphs, '*te\nxt*') == [(Bold, ['strong', {}, 'te\nxt'])]
 
 def test_parseinline_post():
   assert parseinline(sample + [Link], Paragraphs,
-                     '[link](http://google.com)') == [['a', {'href': 'http://google.com'}, 'link']]
+                     '[link](http://google.com)') == [(Link, ['a', {'href': 'http://google.com'}, 'link'])]
   assert parseinline(sample + [Link], Paragraphs,
-                     '[*link*](http://google.com)') == [['a', {'href': 'http://google.com'}, ['strong', {}, 'link']]]
+                     '[*link*](http://google.com)') == [(Link, ['a', {'href': 'http://google.com'}, (Bold, ['strong', {}, 'link'])])]
 
 
 def test_parseinline_none():
@@ -40,11 +42,11 @@ def test_parseinline_none():
     return ['p', groups[0]]
 
   assert parseinline(sample + [InlineNone], Paragraphs,
-                     '@*bold* _italic_ abc@') == [['p', '*bold* _italic_ abc']]
+                     '@*bold* _italic_ abc@') == [(InlineNone, ['p', '*bold* _italic_ abc'])]
 
 
 def test_parseinline_embedded():
-  assert parseinline(sample, Paragraphs, 'text *bold* text') == ['text ', ['strong', {}, 'bold'], ' text']
+  assert parseinline(sample, Paragraphs, 'text *bold* text') == ['text ', (Bold, ['strong', {}, 'bold']), ' text']
 
 
 # ------------------ PARSEBLOCK TESTS ----------------------------------------

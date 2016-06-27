@@ -20,7 +20,7 @@ from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_l
 # bold, italic, monospace, underline, strikethrough
 # link, tooltip
 # headers
-
+from glue.util import indexby
 
 Bold = IdenticalInlineFrame('bold', '*', 'strong')
 Italic = IdenticalInlineFrame('italic', '_', 'em')
@@ -67,6 +67,18 @@ CriticMarkup = Registry(CriticAdd, CriticDel, CriticComment, CriticHighlight, Cr
 
 # LISTS - blocks that allow defining lists.
 # ordered list, unordered list, outline
+
+# ---list
+# as;fkjasdf
+#   as;dkfjas
+# a sfa sfas;fkj sdf
+#   as;dkfljas
+#   asfjas;kdfj
+#     asdlfjasldfkj
+# ...
+
+
+
 
 # TABLES - blocks that result in some kind of tabular form
 # table - basic table form

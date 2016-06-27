@@ -8,6 +8,7 @@ import inflection
 import regex as re
 
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
+Display = Enum('Display', 'BLOCK INLINE')
 # ------------------  BASE ELEMENTS --------------------------
 
 Block = nt('Block', ['name', 'nest', 'subblock', 'subinline', 'parser'])
@@ -44,7 +45,7 @@ accept every block, but you can be more specific if you'd like.
 to whatever this block would like to parse.
 """
 
-Inline = nt('Inline', ['name', 'nest', 'subinline', 'escape', 'parser'])
+Inline = nt('Inline', ['name', 'display', 'nest', 'subinline', 'escape', 'parser'])
 Inline.__hash__ = lambda self: self.name.__hash__()
 Inline.__doc__ = """
 Base class for elements that are meant to be inline in the text inside blocks.
