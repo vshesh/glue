@@ -11,39 +11,52 @@ Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 Display = Enum('Display', 'BLOCK INLINE')
 # ------------------  BASE ELEMENTS --------------------------
 
-Block = nt('Block', ['name', 'nest', 'subblock', 'subinline', 'parser'])
-Block.__call__ = lambda self, *args, **kwargs: self.parser(*args, **kwargs)
-Block.__hash__ = lambda self: self.name.__hash__()
-Block.__doc__ = """
-Base class for elements that are enclosed in yaml-like document blocks.
-A block element is an element that is expected to render in the style of an
-html `div` element, and is represented in the plain-text format as:
+class Block(nt('Block', ['name', 'nest', 'subblock', 'subinline', 'parser', 'opts'])):
+  """
+  Base class for elements that are enclosed in yaml-like document blocks.
+  A block element is an element that is expected to render in the style of an
+  html `div` element, and is represented in the plain-text format as:
 
-```yaml
----block ...args
-text that will be parsed by the block goes here.
-...
-```
+  ```yaml
+  ---block ...args
+  text that will be parsed by the block goes here.
+  ...
+  ```
 
-The name of the block is put right after the `---` and is used to dispatch
-to the block with the appropriate name. The name of the block should be
-dasherized for style purposes (so that it's easier to type than capitals, and
-so that there's a consistent look).
+  The name of the block is put right after the `---` and is used to dispatch
+  to the block with the appropriate name. The name of the block should be
+  dasherized for style purposes (so that it's easier to type than capitals, and
+  so that there's a consistent look).
 
-`nestb`/`nesti` are the nesting policies for nesting blocks and inline elements,
-respectively. As of now, only `nestb` works, and it is the nesting policy
-for both. This will probably be changed in the future, as soon as I identify
-an actual use case where someone would want a different inline policy.
+  `nestb`/`nesti` are the nesting policies for nesting blocks and inline elements,
+  respectively. As of now, only `nestb` works, and it is the nesting policy
+  for both. This will probably be changed in the future, as soon as I identify
+  an actual use case where someone would want a different inline policy.
 
-`subblock` is an array of names or literal block elements that this block
-accepts as sub-blocks. In general, most blocks will either be `Nesting.NONE` or
-accept every block, but you can be more specific if you'd like.
+  `subblock` is an array of names or literal block elements that this block
+  accepts as sub-blocks. In general, most blocks will either be `Nesting.NONE` or
+  accept every block, but you can be more specific if you'd like.
 
-`subinline` is the same for inline elements.
+  `subinline` is the same for inline elements.
 
-`parser` is a function that takes string text and outputs html corresponding
-to whatever this block would like to parse.
-"""
+  `parser` is a function that takes string text and outputs html corresponding
+  to whatever this block would like to parse.
+  """
+  def __new__(cls, name, nest=Nesting.POST, subblock=None, subinline=None, parser=None, opts=''):
+    return super(Block, cls).__new__(cls,
+      name,
+      nest,
+      subblock or ['all'],
+      subinline or ['all'],
+      parser or (lambda text: ['div', text]),
+      opts)
+
+  def __call__(self, *args, **kwargs):
+    return self.parser(*args, **kwargs)
+
+  def __hash__(self):
+    return self.name.__hash__()
+
 
 Inline = nt('Inline', ['name', 'display', 'nest', 'subinline', 'escape', 'parser'])
 Inline.__hash__ = lambda self: self.name.__hash__()
@@ -97,7 +110,7 @@ class Patterns(Enum):
   link = r'(?<!\\)(?:\\\\)*\K{0}\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
 
 # --------------------- DECORATORS for ELEMENTS ---------------------------
-def block(nest=Nesting.POST, subblock=None, subinline=None):
+def block(nest=Nesting.POST, subblock=None, subinline=None, opts=''):
   """
   Decorator for block style elements, to be used on a parser function.
   eg:
@@ -118,7 +131,7 @@ def block(nest=Nesting.POST, subblock=None, subinline=None):
 
   def block_fn(parser):
     b = Block(makename(parser.__name__),
-              nest, subblock or ['all'], subinline or ['all'], parser)
+              nest, subblock or ['all'], subinline or ['all'], parser, opts)
     return b
 
   return block_fn

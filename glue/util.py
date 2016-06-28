@@ -77,9 +77,10 @@ def splitblocks(text:str):
       level -= 1
       if level < 0:
         # end with no beginning
-        raise ValueError('Block closing "..." found with no corresponing opening. at line {}'.format(lineno))
+        raise ValueError('Block closing "..." found with no corresponding opening. at line {}'.format(lineno))
       elif level == 0:
-        l.append([block, token])
+        b = block.split(maxsplit=1)
+        l.append([b[0], b[1].split() if len(b) > 1 else [], token])
         token = ''
       else:
         token += tokens[i+1] + "\n"
@@ -107,20 +108,6 @@ def splitblocks(text:str):
 
   return l
 
-
-
-# # regex based solution currently crashes the python `regex` module.
-# blockregex = re.compile(r'^---(.*)\n((?:(?>[^.-]|(?:(?<!^\.\.)\.)|(?:(?<!^--)-))+|(?R))*)\n\.\.\.$', re.MULTILINE)
-# def splitblocks(text:str):
-#   """
-#   Given some block of text, returns a seq that has a string element for
-#   the text in between blocks, and a pair list element with
-#   [dispatch, body] for the blocks. The dispatch is everything on the `---` line,
-#   and the body is everything after that line and before the `...` at the end.
-#   """
-#   return t.map(lambda b: b.strip()[3:-3].split('\n', 1) if b.startswith('---') else b,
-#            t.remove(lambda x: x.strip() == '',
-#                     re.split(blockregex, text)))
 
 def splicehtmlmap(f, html):
   """

@@ -75,7 +75,7 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 '''
 
 def test_splitblocks_oneblock():
-  assert list(splitblocks(oneblock)) == ['some text\n\n', ['block', blockcontents]]
+  assert list(splitblocks(oneblock)) == ['some text\n\n', ['block', [], blockcontents]]
 
 twoblock='''some text
 ---block
@@ -102,8 +102,8 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 def test_splitblocks_twoblock():
   assert list(splitblocks(twoblock)) == [
-  'some text\n', ['block', blockcontents],
-  '\nsome text\n', ['block', blockcontents]]
+  'some text\n', ['block', [], blockcontents],
+  '\nsome text\n', ['block', [], blockcontents]]
 
 
 nestblock = '''some text
@@ -129,4 +129,7 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 def test_splitblocks_nestblock():
   assert list(splitblocks(nestblock)) == [
-  'some text\n', ['block', blockcontents + '---block\n'+blockcontents+'...\n']]
+  'some text\n', ['block', [], blockcontents + '---block\n'+blockcontents+'...\n']]
+
+def test_splitblocks_args():
+  assert list(splitblocks('---block -x y z\n...')) == [['block', ['-x', 'y', 'z'], '']]

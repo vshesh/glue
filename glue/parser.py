@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import operator as op
+from getopt import getopt
 from typing import Union
 
 import toolz as t
@@ -102,11 +103,18 @@ def parseinline(registry:Registry,
 
 
 def parseblock(registry:Registry,
-               block:Block, text:str, parent=None):
+               block:Block, text:str, args=None, parent=None):
   """
   parses text at the block level. ASSUMES VALIDATED REGISTRY.
   minus some minor helper things (defining appropriate )
   """
+  # handle default args
+  if args is None:
+    kwopts = {}
+    opts = []
+  else:
+    kw, opts = getopt(args, block.opts)
+    kwopts = dict(kw)
 
   def postparseinline(block, text, meta=False):
     html = parseinline(registry, block, text)
@@ -122,7 +130,7 @@ def parseblock(registry:Registry,
     l = []
     for b in subblocks:
       if isinstance(b, list):
-        sub = parseblock(registry, registry[b[0]], b[1])
+        sub = parseblock(registry, registry[b[0]], b[2], args=b[1])
         if meta:
           l.append((registry[b[0]], sub))
         else:
@@ -134,13 +142,13 @@ def parseblock(registry:Registry,
   
   if block.nest == Nesting.NONE:
     # separate pathway, we just parse the block
-    return block.parser(text)
+    return block.parser(text, *opts, **kwopts)
   
-  if block.nest == Nesting.POST:
+  elif block.nest == Nesting.POST:
     # parse block first, then call parseblock on the children.
-    return splicehtmlmap(t.partial(postparse, block), block.parser(text))
+    return splicehtmlmap(t.partial(postparse, block), block.parser(text, *opts, **kwopts))
   
-  if block.nest == Nesting.SUB:
+  elif block.nest == Nesting.SUB:
     blocks = postparse(block, text, meta=True)
     print(blocks)
     # make sub directory, and string only array:
@@ -159,4 +167,4 @@ def parseblock(registry:Registry,
     return splicehtmlmap(
       lambda text: [subs[x] if x.startswith('[|') and x.endswith('|]') else x
                  for x in re.split(r'(\[\|\|?\d+\|?\|\])', text) if x != ''],
-      block.parser(''.join(subtext)))
+      block.parser(''.join(subtext), *opts, **kwopts))
