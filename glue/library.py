@@ -7,7 +7,8 @@ import toolz as t
 import toolz.curried as tc
 
 from glue import Nesting, Registry
-from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_link, inlineone, block
+from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_link, inlineone, block, \
+  Display
 
 # this module exposes basic elements and registries for common tasks.
 # it's designed to have feature parity with markdown, or a more sensible
@@ -38,7 +39,7 @@ def Link(groups):
 def Tooltip(groups):
   return ['span.tooltip', groups[0], ['div.tooltip-text', groups[1]]]
 
-@inlineone(r'^(\#{1,6})([^\n]*)(?:\n|$)', nest=Nesting.POST, escape='#')
+@inlineone(r'^(\#{1,6})([^\n]*)$', display=Display.BLOCK, nest=Nesting.POST, escape='#')
 def Header(groups):
   return ['h' + str(len(groups[0])), groups[1]]
 
@@ -123,6 +124,7 @@ def Paragraphs(text):
 
   Subscribes to the entire registry.
   """
+  print(text)
   return t.pipe(re.split(r'(?m)(?:\n|^)(\[\|\|\d+\|\|\])', text),
                 tc.filter(lambda x: not not x),
                 tc.map(lambda x: x if re.match(r'^\[\|\|\d+\|\|\]$',x) else ['p', x.rstrip()]),

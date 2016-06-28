@@ -124,7 +124,7 @@ def block(nest=Nesting.POST, subblock=None, subinline=None):
   return block_fn
 
 
-def inlineone(regex, nest=Nesting.FRAME, subinline=None, escape=''):
+def inlineone(regex, display=Display.INLINE, nest=Nesting.FRAME, subinline=None, escape=''):
   """
   Decorator for an inline element that has exactly one pattern and parser.
   For more complex inline elements, it's best to just define the element
@@ -142,7 +142,7 @@ def inlineone(regex, nest=Nesting.FRAME, subinline=None, escape=''):
 
   def inline_fn(parser):
     r = re.compile(regex) if isinstance(regex,str) else regex
-    i = Inline(makename(parser.__name__),
+    i = Inline(makename(parser.__name__), display,
                nest, subinline, escape, [(r, parser)])
     return i
 
@@ -156,7 +156,7 @@ def InlineFrame(name:str, escape:Union[str,Set[str]], parser):
   subscribing to the style 'inherit'.
   The only things a frame needs to define is name, escape, and parser.
   """
-  return Inline(name, Nesting.FRAME, ['inherit'], escape, parser)
+  return Inline(name, Display.INLINE, Nesting.FRAME, ['inherit'], escape, parser)
 
 
 def SingleGroupInlineFrame(name:str, start:str, end:str,
@@ -203,7 +203,7 @@ def specialized_link(designation:str):
   pattern = re.compile(Patterns.link.value.format(designation), re.V1)
 
   def wrapper(fn:Callable):
-    return Inline(makename(fn.__name__), Nesting.POST, ['inherit'],
+    return Inline(makename(fn.__name__), Display.INLINE, Nesting.POST, ['inherit'],
                   '()[]'+ designation[0] if len(designation) > 0 else '',
                   [(pattern, fn)])
 

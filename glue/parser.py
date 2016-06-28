@@ -151,7 +151,7 @@ def parseblock(registry:Registry,
       if isinstance(e, str):
         subtext.append(e)
       elif isinstance(e, tuple):
-        substr = ('[|{}|]' if isinstance(e[0], Inline) and e[0].display is Display.BLOCK else '[||{}||]').format(i)
+        substr = ('[|{}|]' if isinstance(e[0], Inline) and e[0].display is Display.INLINE else '[||{}||]').format(i)
         subs[substr] = e[1]
         subtext.append(substr)
         i += 1
