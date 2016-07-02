@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import regex as re
-import toolz as t
 import inspect
 import types
 
@@ -13,7 +12,7 @@ def unwind(g):
   """
   l = []
   for e in g:
-    if (isinstance(e, (list, types.GeneratorType))
+    if (isinstance(e, (list, types.GeneratorType, map, zip, filter))
         or inspect.isgenerator(e)
         or inspect.isgeneratorfunction(e)):
       l.append(unwind(e))

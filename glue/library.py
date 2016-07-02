@@ -86,6 +86,7 @@ CriticMarkup = Registry(CriticAdd, CriticDel, CriticComment, CriticHighlight, Cr
 # table - basic table form
 # sidebyside - 2 columns that are rendered independently
 # flexbox - lays out things in a flex manner
+# matrix - every line is a row, and pipes separate columns, rendered in flexbox again.
 
 @block()
 def SideBySide(text):
@@ -101,6 +102,15 @@ def SideBySide(text):
                 tc.cons({'style': {'display': 'flex'}}),
                 tc.cons('div'))
 
+@block()
+def Matrix(text, type='flex'):
+  return t.pipe(text.split('\n'),
+                tc.map(lambda x: re.split(' ?' + Patterns.escape.value.format('\|') + ' ?', x)),
+                tc.map(lambda x: ['div' if type == 'flex' else 'tr',
+                                  {'style': {'display':'flex'}},
+                                  *t.map(lambda y: ['span' if type == 'flex' else 'td', {'flex': 1}, y], x)]),
+                tc.cons({'class': 'matrix matrix-flex' if type == 'flex' else 'matrix matrix-table'}),
+                tc.cons('div' if type == 'flex' else 'table'))
 
 # COMPONENTS - general purpose blocks for isomorphic-js components
 # works well with react/mithril etc

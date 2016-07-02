@@ -70,7 +70,7 @@ The parser in an Inline element looks like a list of pairs, where the first
 element in a pair is a regex and the second is a function that takes the
 recorded groups of the regex and returns an html element, in cottonmouth form.
 
-It's recommended to use the more advanced `regex` library that comes from
+It's recommended to use the more advanced `regex` 2016 library that comes from
 pip so that you can properly create regexes that allow escaped characters.
 
 Eg, matching bold text might seem easy (`\*(.*?)\*`) but it is actually quite
@@ -110,7 +110,7 @@ class Patterns(Enum):
   single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'
   link = r'(?<!\\)(?:\\\\)*\K{0}\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
 
-# --------------------- DECORATORS for ELEMENTS ---------------------------
+# --------------------- BASE DECORATORS for ELEMENTS ---------------------------
 def block(nest=Nesting.POST, subblock=None, subinline=None, opts=''):
   """
   Decorator for block style elements, to be used on a parser function.

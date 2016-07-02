@@ -22,6 +22,33 @@ def test_sidebyside():
   assert list(SideBySide('a|b|c\nd|e')) == ['div', {'style': {'display': 'flex'}}, ['div', {'style': {'flex': '1'}}, 'a\nd'], ['div', {'style': {'flex': '1'}}, 'b\ne'], ['div', {'style': {'flex': '1'}}, 'c\n']]
   assert list(SideBySide('a')) == ['div', {'style': {'display': 'flex'}}, ['div', {'style': {'flex': '1'}}, 'a']]
 
+def test_matrix():
+  assert unwind(Matrix('c | x')) == ['div', {'class': 'matrix matrix-flex'},
+                                     ['div', {'style': {'display': 'flex'}},
+                                      ['span', {'flex': 1}, 'c'],
+                                      ['span', {'flex': 1}, 'x']]]
+
+  assert unwind(Matrix('c|x')) == ['div', {'class': 'matrix matrix-flex'},
+                                     ['div', {'style': {'display': 'flex'}},
+                                      ['span', {'flex': 1}, 'c'],
+                                      ['span', {'flex': 1}, 'x']]]
+
+  assert unwind(Matrix('c| x')) == ['div', {'class': 'matrix matrix-flex'},
+                                     ['div', {'style': {'display': 'flex'}},
+                                      ['span', {'flex': 1}, 'c'],
+                                      ['span', {'flex': 1}, 'x']]]
+
+  assert unwind(Matrix('c |x')) == ['div', {'class': 'matrix matrix-flex'},
+                                     ['div', {'style': {'display': 'flex'}},
+                                      ['span', {'flex': 1}, 'c'],
+                                      ['span', {'flex': 1}, 'x']]]
+
+  assert unwind(Matrix('c | x', type='matrix')) == ['table', {'class': 'matrix matrix-table'},
+                                     ['tr', {'style': {'display': 'flex'}},
+                                      ['td', {'flex': 1}, 'c'],
+                                      ['td', {'flex': 1}, 'x']]]
+
+
 def test_noop():
   assert list(NoopBlock('text')) == ['div', 'text']
   assert list(NoopBlock('text\n\nmore text')) == ['div', 'text\n\nmore text']
