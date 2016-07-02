@@ -5,10 +5,12 @@
 import regex as re
 import toolz as t
 import toolz.curried as tc
+from itertools import zip_longest
 
 from glue import Nesting, Registry
-from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_link, inlineone, block, \
-  Display
+from glue.elements import IdenticalInlineFrame, MirrorInlineFrame
+from glue.elements import specialized_link, inlineone, block, Display
+from glue.elements import Patterns
 
 # this module exposes basic elements and registries for common tasks.
 # it's designed to have feature parity with markdown, or a more sensible
@@ -21,7 +23,6 @@ from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, specialized_l
 # bold, italic, monospace, underline, strikethrough
 # link, tooltip
 # headers
-from glue.util import indexby
 
 Bold = IdenticalInlineFrame('bold', '*', 'strong')
 Italic = IdenticalInlineFrame('italic', '_', 'em')
@@ -86,6 +87,20 @@ CriticMarkup = Registry(CriticAdd, CriticDel, CriticComment, CriticHighlight, Cr
 # sidebyside - 2 columns that are rendered independently
 # flexbox - lays out things in a flex manner
 
+@block()
+def SideBySide(text):
+  """A block for multicolumn layout in a row.
+  Uses the `|` character to separate columns, escape pipe with \| in the body.
+  The columns are processed as their own blocks, and they do not need to line up.
+  """
+
+  return t.pipe(text.split('\n'),
+                tc.map(lambda x: re.split(' ?' + Patterns.escape.value.format('\|') + ' ?', x)),
+                lambda x: zip_longest(*x, fillvalue=''),
+                tc.map(lambda x: ['div', {'style': {'flex': '1'}}, '\n'.join(x)]),
+                tc.cons({'style': {'display': 'flex'}}),
+                tc.cons('div'))
+
 
 # COMPONENTS - general purpose blocks for isomorphic-js components
 # works well with react/mithril etc
@@ -124,7 +139,6 @@ def Paragraphs(text):
 
   Subscribes to the entire registry.
   """
-  print(text)
   return t.pipe(re.split(r'(?m)(?:\n|^)(\[\|\|\d+\|\|\])', text),
                 tc.filter(lambda x: not not x),
                 tc.map(lambda x: x if re.match(r'^\[\|\|\d+\|\|\]$',x) else ['p', x.rstrip()]),

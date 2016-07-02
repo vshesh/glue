@@ -13,7 +13,7 @@ def unwind(g):
   """
   l = []
   for e in g:
-    if (isinstance(e, types.GeneratorType)
+    if (isinstance(e, (list, types.GeneratorType))
         or inspect.isgenerator(e)
         or inspect.isgeneratorfunction(e)):
       l.append(unwind(e))
