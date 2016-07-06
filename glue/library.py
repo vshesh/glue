@@ -14,7 +14,7 @@ from glue.elements import Patterns
 
 # this module exposes basic elements and registries for common tasks.
 # it's designed to have feature parity with markdown, or a more sensible
-# version of markdown, if so desired.
+# version of markdown (called STANDARD), if so desired.
 
 # Registries exposed are:
 
@@ -45,7 +45,7 @@ def Header(groups):
   return ['h' + str(len(groups[0])), groups[1]]
 
 StandardInline = Registry(Bold, Italic, Monospace, Underline,
-                          Strikethrough, Link, Tooltip)
+                          Strikethrough, Link, Tooltip, Header)
 
 # CRITIC - registry for doing annotations and critiques on the document.
 # insertion, deletion, substitution (really deletion + insertion)
@@ -66,6 +66,14 @@ CriticMarkup = Registry(CriticAdd, CriticDel, CriticComment, CriticHighlight, Cr
 # markdown syntax style. These are *different* from the STANDARD definitions
 # in that they have redundancy and aren't capable of showing off as many styles.
 # bold, italic, monospace, link
+
+MDStarBold = MirrorInlineFrame('md-star-bold', '**', 'strong')
+MDLodashBold = MirrorInlineFrame('md-lodash-bold', '__', 'strong')
+MDStarItalic = MirrorInlineFrame('md-star-italic', '*', 'em')
+MDLodashItalic = MirrorInlineFrame('md-lodash-italic', '_', 'em')
+
+MarkdownInline = (StandardInline - [Bold, Italic]) + [
+  MDStarBold, MDLodashBold, MDStarItalic, MDLodashItalic]
 
 # LISTS - blocks that allow defining lists.
 # ordered list, unordered list, outline
@@ -104,6 +112,10 @@ def SideBySide(text):
 
 @block()
 def Matrix(text, type='flex'):
+  """Displays a table or flexbox style grid of values.
+  For flexbox mode, make sure that there are an equal number of | in each row.
+  Table mode is more flexible.
+  """
   return t.pipe(text.split('\n'),
                 tc.map(lambda x: re.split(' ?' + Patterns.escape.value.format('\|') + ' ?', x)),
                 tc.map(lambda x: ['div' if type == 'flex' else 'tr',
@@ -121,6 +133,26 @@ def Matrix(text, type='flex'):
 # annotated image - component library image processing
 
 # STANDALONE - such as KaTeX and musicalabc, to name a few.
+
+# the few general strategies here are:
+# 1. render server-side: this would work a lot better if I was writing this
+#    library in JS rather than python. Starting a node process to render
+#    something might be nice but probably is going to make the rendering process
+#    slow, especially for pages with a lot of math.
+# 2. generate an element with a script that will render the math into the element
+#    May result in strange looking divs with js embedded in them, not necessarily ideal,
+#    but very fast, and mirrors the API online for a lot of parser JS libraries
+# 3. Depend on some component library to do the generation.
+#    Fast also, and has less cruft, but then requires you use react/mithril/etc
+
+# #2 is the best compromise and that is what is included with the standard library.
+
+@block(nest=Nesting.NONE, subinline=[], subblock=[])
+def Katex(text):
+  h = hash(text)
+  return ['div#{0}'.format(h),
+          ['script', 'katex.render({0}, {1})'.format(text, 'document.getElementById({0})'.format(h))]]
+
 
 
 # CODE BLOCKS - styling these is really complicated for some reason
@@ -156,3 +188,5 @@ def Paragraphs(text):
                 list)
 
 Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup
+Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup
+
