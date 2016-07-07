@@ -4,7 +4,7 @@
 
 from bottle import request, response, abort, error, HTTPResponse
 
-import json
+import simplejson as json
 import toolz as t
 import sys
 
@@ -23,8 +23,9 @@ def reqinfo():
   """
   return {'path':request.path,
           'method' : request.method,
-          'params': json.dumps({k:request.params[k] for k in request.params})
-                    if request.json == None else json.dumps(request.json)}
+          'params': json.dumps({k:request.params[k] for k in request.params}
+                               if request.json == None else request.json,
+                               iterable_as_array=True)}
 
 
 def jsonabort(status,message):

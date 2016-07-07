@@ -39,7 +39,8 @@ def parseinline(registry:Registry,
   escapes = ''.join(t.reduce(set.union,
     (x.escape for x in subinline), set())).replace('[', '\\[').replace(']', '\\]')
   # function that will unescape body code so eg \* -> *
-  unescape = ((lambda t: re.compile('\\\\(['+escapes+'])').sub(r'\1', t))
+  print(escapes)
+  unescape = ((lambda t: re.compile('\\\\(['+re.escape(escapes)+'])').sub(r'\1', t))
               if len(escapes) > 0
               else t.identity)
 
