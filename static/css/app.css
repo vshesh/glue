@@ -1,0 +1,16 @@
+textarea {
+  border: none;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+textarea:focus {
+  outline: none;
+}
+
+
+textarea {
+  font-size: 11pt;
+  font-family: Inconsolata;
+}
