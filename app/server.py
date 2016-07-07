@@ -1,14 +1,19 @@
-from bottle import Bottle, run, route, static_file
-from server.params import params
-from server.staticroute import staticroutestack
-
+from bottle import Bottle, get, post, static_file, run
+from .params import params
+from .staticroute import staticroutestack
 
 app = Bottle()
 
-@app.route('/')
+@app.get('/')
 def index():
-  return static_file('index.html', root='server')
+  return static_file('index.html', root='app')
 
-staticroutestack(app, ['js', 'css'], 'server')
+@app.post('/render')
+@params(['text'])
+def render(text: str):
+  return {'template': parse(text, Standard)}
 
-run(app, host='localhost', port='8000', reloader=True)
+staticroutestack(app, ['js', 'css'], 'app')
+
+if __name__ == '__main__':
+  run(app, host='localhost', port='8000', reloader=True)
