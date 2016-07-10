@@ -97,22 +97,3 @@ def test_parseblock_nestingpost():
 
   assert unwind(parseblock(Registry(IdentityBlock, Paragraphs), IdentityBlock,
                            'hello\n---paragraphs\nhello\n...\n')) == ['div', 'hello\n', ['div', ['p', 'hello']]]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

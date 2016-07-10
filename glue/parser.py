@@ -150,7 +150,6 @@ def parseblock(registry:Registry,
   
   elif block.nest == Nesting.SUB:
     blocks = postparse(block, text, meta=True)
-    print(blocks)
     # make sub directory, and string only array:
     subtext = []
     subs = {}

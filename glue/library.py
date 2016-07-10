@@ -42,7 +42,7 @@ def Tooltip(groups):
 
 @inlineone(r'^(\#{1,6})([^\n]*)$', display=Display.BLOCK, nest=Nesting.POST, escape='#')
 def Header(groups):
-  return ['h' + str(len(groups[0])), groups[1]]
+  return ['h' + str(len(groups[0])), groups[1].lstrip()]
 
 StandardInline = Registry(Bold, Italic, Monospace, Underline,
                           Strikethrough, Link, Tooltip, Header)
@@ -181,7 +181,9 @@ def Paragraphs(text):
 
   Subscribes to the entire registry.
   """
+  print(repr(text), text)
   return t.pipe(re.split(r'(?m)(?:\n|^)(\[\|\|\d+\|\|\])', text),
+                tc.mapcat(lambda x: x.split('\n\n')),
                 tc.filter(lambda x: not not x),
                 tc.map(lambda x: x if re.match(r'^\[\|\|\d+\|\|\]$',x) else ['p', x.rstrip()]),
                 tc.cons('div'),
@@ -189,4 +191,3 @@ def Paragraphs(text):
 
 Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup
-
