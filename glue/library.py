@@ -44,7 +44,7 @@ def Tooltip(groups):
 def Header(groups):
   return ['h' + str(len(groups[0])), groups[1].lstrip()]
 
-StandardInline = Registry(Bold, Italic, Monospace, Underline,
+StandardInline = Registry(Bold, Underline, Italic, Monospace,
                           Strikethrough, Link, Tooltip, Header)
 
 # CRITIC - registry for doing annotations and critiques on the document.
@@ -108,7 +108,8 @@ def SideBySide(text):
                 lambda x: zip_longest(*x, fillvalue=''),
                 tc.map(lambda x: ['div', {'style': {'flex': '1'}}, '\n'.join(x)]),
                 tc.cons({'style': {'display': 'flex'}}),
-                tc.cons('div'))
+                tc.cons('div'),
+                list)
 
 @block()
 def Matrix(text, type='flex'):
@@ -181,7 +182,6 @@ def Paragraphs(text):
 
   Subscribes to the entire registry.
   """
-  print(repr(text), text)
   return t.pipe(re.split(r'(?m)(?:\n|^)(\[\|\|\d+\|\|\])', text),
                 tc.mapcat(lambda x: x.split('\n\n')),
                 tc.filter(lambda x: not not x),
@@ -189,5 +189,5 @@ def Paragraphs(text):
                 tc.cons('div'),
                 list)
 
-Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup
+Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup

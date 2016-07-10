@@ -107,7 +107,7 @@ makename = lambda name: inflection.dasherize(inflection.underscore(name))
 @enum.unique
 class Patterns(Enum):
   escape = '(?<!\\\\)(?:\\\\\\\\)*{0}'
-  single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'
+  single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.+?(?<!\\\\)(?:\\\\\\\\)*){1}'
   link = r'(?<!\\)(?:\\\\)*\K{0}\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
 
 # --------------------- BASE DECORATORS for ELEMENTS ---------------------------

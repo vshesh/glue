@@ -13,7 +13,7 @@ function renderText(text) {
              unwrapSuccess: x => x.template})
 }
 
-var debouncedRenderText = _.throttle(renderText, 100);
+var debouncedRenderText = renderText;
 
 var Root = {
   controller: function() {

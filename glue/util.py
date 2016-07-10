@@ -3,6 +3,7 @@
 import regex as re
 import inspect
 import types
+import toolz as t
 
 # ----------------------- GENERAL UTILITIES ------------------------------
 
@@ -62,8 +63,7 @@ def fills(quantities, n):
 
 def splitblocks(text:str):
   # tokenize
-  tokens = re.split(re.compile(r'^(?:(---[\w_=\- \.]*)|(\.\.\.))(?:\n|$)', re.M), text)
-  print(tokens)
+  tokens = re.split(re.compile(r'^(?:(---[\w_=\- \.]*)|(\.\.\.))[ \t]*(?:\n|$)', re.M), text)
 
   l = []
   token = ''
@@ -117,8 +117,8 @@ def splicehtmlmap(f, html):
   eg f = lambda: [['div', 'hello world']]
   splicehtmlmap(f, ['body', '']) -> ['body', ['div', 'hello world']]
   """
-  yield html[0]
-  for e in html[1:]:
+  yield t.first(html)
+  for e in t.drop(1, html):
     if isinstance(e, (list, tuple)):
       yield splicehtmlmap(f,e)
     elif isinstance(e, str):
