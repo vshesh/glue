@@ -1,3 +1,18 @@
+(function() {
+
+var Katex = {
+  controller: function() {},
+  view: function(vm, args) {
+    return ['div.math', {config: function(element) {
+      katex.render(args.text, element);
+    }}]
+  }
+}
+
+var componentMap = {
+  'Katex': Katex
+}
+
 function makeElem(html) {
   if (_.isArray(html)) {
     return _.partial(m, html[0]).apply(null, _.map(html.slice(1), makeElem));
@@ -15,6 +30,7 @@ function renderText(text) {
 
 var debouncedRenderText = renderText;
 
+
 var Root = {
   controller: function() {
     return {
@@ -22,9 +38,9 @@ var Root = {
       template: m.prop(['div', ['h1', 'Placeholder']])
     }
   },
-  view: function(vm, template) {
+  view: function(vm) {
     return m('div', {style: 'display: flex;'},
-      m('div', {style: 'flex: 1;'},
+      m('div#input', {style: 'flex: 1;'},
         m('textarea', {value: vm.text(), oninput: function(e) {
           vm.text(e.target.value);
           debouncedRenderText(e.target.value).then(vm.template);
@@ -36,3 +52,5 @@ var Root = {
 };
 
 m.mount(document.getElementById('container'), m.component(Root));
+
+})();

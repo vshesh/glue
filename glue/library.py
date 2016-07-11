@@ -152,9 +152,14 @@ def Matrix(text, type='flex'):
 def Katex(text):
   h = hash(text)
   return ['div#{0}'.format(h),
-          ['script', 'katex.render({0}, {1})'.format(text, 'document.getElementById({0})'.format(h))]]
+          ['script', repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), "document.getElementById('{0}')".format(h)))[1:-1]]]
 
 
+@block(nest=Nesting.NONE, subinline=[], subblock=[])
+def Code(text, language='js'):
+  h = str(abs(hash(text)))
+  return ['pre', ['code#{0}'.format(h), {'class': 'language-' + language}, text],
+                 ['script', "Prism.highlight(document.getElementById('{0}'))".format(h)]]
 
 # CODE BLOCKS - styling these is really complicated for some reason
 # web library integration - there are many
@@ -189,5 +194,5 @@ def Paragraphs(text):
                 tc.cons('div'),
                 list)
 
-Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide]
+Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide, Katex, Code]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup
