@@ -61,6 +61,7 @@ proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 def test_splitblocks_noblock():
   assert list(splitblocks(noblock)) == [noblock]
 
+# spaces after beginning and end lines of block are PART of the test!
 oneblock= '''some text
 
 ---block

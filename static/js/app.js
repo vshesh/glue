@@ -30,7 +30,7 @@ var Root = {
           debouncedRenderText(e.target.value).then(vm.template);
         }})
       ),
-      m('div', {style: 'flex: 1;'},
+      m('div#rendered', {style: 'flex: 1;'},
         makeElem(vm.template())));
   }
 };

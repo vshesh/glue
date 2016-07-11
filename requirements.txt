@@ -1,7 +1,10 @@
 inflection
 regex
 toolz
+
+bottle
+
 pytest
 pytest-cov
-bs4
 coveralls
+bs4
