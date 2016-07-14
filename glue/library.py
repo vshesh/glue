@@ -150,9 +150,11 @@ def Matrix(text, type='flex'):
 
 @block(nest=Nesting.NONE, subinline=[], subblock=[])
 def Katex(text):
-  h = hash(text)
-  return ['div#{0}'.format(h),
-          ['script', repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), "document.getElementById('{0}')".format(h)))[1:-1]]]
+  h = abs(hash(text))
+  elem = "document.getElementById('katex-{0}')".format(h)
+  return ['div#katex-{0}'.format(h),
+          ['script'.format(h), {'key': h},
+           repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), elem))[1:-1]]]
 
 
 @block(nest=Nesting.NONE, subinline=[], subblock=[])
