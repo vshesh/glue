@@ -2,6 +2,7 @@
 # Author: Vishesh Gupta
 # Created: 31 May 2016
 
+import uuid
 import regex as re
 import toolz as t
 import toolz.curried as tc
@@ -150,7 +151,7 @@ def Matrix(text, type='flex'):
 
 @block(nest=Nesting.NONE, subinline=[], subblock=[])
 def Katex(text):
-  h = abs(hash(text))
+  h = str(uuid.uuid4())
   elem = "document.getElementById('katex-{0}')".format(h)
   return ['div#katex-{0}'.format(h),
           ['script'.format(h), {'key': h},
@@ -159,9 +160,10 @@ def Katex(text):
 
 @block(nest=Nesting.NONE, subinline=[], subblock=[])
 def Code(text, language='js'):
-  h = str(abs(hash(text)))
+  h = str(uuid.uuid4())
   return ['pre', ['code#{0}'.format(h), {'class': 'language-' + language}, text],
-                 ['script', "Prism.highlight(document.getElementById('{0}'))".format(h)]]
+                 ['script', {'key': h},
+                  "hljs.highlightBlock(document.getElementById('{0}'))".format(h)]]
 
 # CODE BLOCKS - styling these is really complicated for some reason
 # web library integration - there are many
