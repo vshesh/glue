@@ -32,10 +32,13 @@ Underline = IdenticalInlineFrame('underline', '__', 'span',
   {'style': 'text-decoration:underline;'})
 Strikethrough = IdenticalInlineFrame('strikethrough', '~', '')
 
-
 @specialized_link('')
 def Link(groups):
   return ['a', {'href': groups[1]}, groups[0]]
+
+@specialized_link('!')
+def Image(groups):
+  return ['img', {'alt': groups[0], 'src': groups[1], 'style': {'vertical-align': 'bottom'}}]
 
 @specialized_link('T')
 def Tooltip(groups):
@@ -154,9 +157,8 @@ def Katex(text):
   h = str(uuid.uuid4())
   elem = "document.getElementById('katex-{0}')".format(h)
   return ['div#katex-{0}'.format(h),
-          ['script'.format(h), {'key': h},
+          ['script', {'key': h},
            repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), elem))[1:-1]]]
-
 
 @block(nest=Nesting.NONE, subinline=[], subblock=[])
 def Code(text, language='js'):

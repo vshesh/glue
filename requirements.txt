@@ -3,6 +3,7 @@ regex
 toolz
 
 bottle
+simplejson
 
 pytest
 pytest-cov

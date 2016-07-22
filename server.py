@@ -14,9 +14,7 @@ def index():
 @app.post('/render')
 @params(['text'])
 def render(text: str):
-  r = unwind(parse(Standard, text))
-  print(r)
-  return {'template': r}
+  return {'template': unwind(parse(Standard, text))}
 
 staticroutestack(app, ['js', 'css'], 'static')
 
