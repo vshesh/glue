@@ -15,7 +15,9 @@ var componentMap = {
 
 function makeElem(html) {
   if (_.isArray(html)) {
-    if (/^[A-Z][a-zA-Z0-9]*$/.test(html[0])) return _.concat([m.component(eval(html[0]), html[1])], _.map(html.slice(2), makeElem));
+    if (/^[A-Z][a-zA-Z0-9_]*$/.test(html[0])) {
+      return _.concat([m.component(eval(html[0]), html[1])], _.map(html.slice(2), makeElem));
+    }
     return _.partial(m, html[0]).apply(null, _.map(html.slice(1), makeElem));
   } else {
     return html;

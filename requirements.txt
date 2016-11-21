@@ -1,6 +1,7 @@
 inflection
 regex
 toolz
+PyYAML
 
 bottle
 simplejson

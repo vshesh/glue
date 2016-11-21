@@ -3,10 +3,12 @@
 # Created: 31 May 2016
 
 import uuid
+import yaml
 import regex as re
 import toolz as t
 import toolz.curried as tc
 from itertools import zip_longest
+
 
 from glue import Nesting, Registry
 from glue.elements import IdenticalInlineFrame, MirrorInlineFrame
@@ -49,7 +51,7 @@ def Header(groups):
   return ['h' + str(len(groups[0])), groups[1].lstrip()]
 
 StandardInline = Registry(Bold, Underline, Italic, Monospace,
-                          Strikethrough, Link, Tooltip, Header)
+                          Strikethrough, Image, Link, Tooltip, Header)
 
 # CRITIC - registry for doing annotations and critiques on the document.
 # insertion, deletion, substitution (really deletion + insertion)
@@ -90,8 +92,6 @@ MarkdownInline = (StandardInline - [Bold, Italic]) + [
 #   asfjas;kdfj
 #     asdlfjasldfkj
 # ...
-
-
 
 
 # TABLES - blocks that result in some kind of tabular form
@@ -160,6 +160,39 @@ def Katex(text):
           ['script', {'key': h},
            repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), elem))[1:-1]]]
 
+
+@block(nest=Nesting.NONE, subinline=[], subblock=[])
+def GuitarChord(text):
+  """
+  Creates an svg element that draws a guitar chord based on chordography's api.
+
+  :param text: The body of the guitar chord element has up to three lines in
+   YAML syntax:
+   ```
+   title: C7b9
+   fret: x 1 1 4 5 1
+   label: x 1 1 3 4 1
+   ```
+   Only the line that says "fret" is necessary, per the chordography api.
+  :return: the html scaffolding with a small script tag injected that will
+   generate the desired chord diagram.
+  """
+  h = str(uuid.uuid4())
+  elem = "document.getElementById('guitar-chord-{0}')".format(h)
+  info = yaml.safe_load(text)
+  return ['div',
+          ['svg#guitar-chord-{0}'.format(h)],
+          ['script', {'key': h},
+           repr(
+             "chordMaker()({0}, {1})".format(elem, repr(info)))[1:-1]]]
+
+# CODE BLOCKS - styling these is really complicated for some reason
+# web library integration - there are many (hightlight.js)
+# pygments using native python
+# julia formatter pseudocode (from Sexpr.jl)
+# theoretical example of using regexes to make a code highlighter.
+
+# Code block with highlightjs.
 @block(nest=Nesting.NONE, subinline=[], subblock=[])
 def Code(text, language='js'):
   h = str(uuid.uuid4())
@@ -167,11 +200,6 @@ def Code(text, language='js'):
                  ['script', {'key': h},
                   "hljs.highlightBlock(document.getElementById('{0}'))".format(h)]]
 
-# CODE BLOCKS - styling these is really complicated for some reason
-# web library integration - there are many
-# pygments using native python
-# julia formatter pseudocode (from Sexpr.jl)
-# theoretical example of using regexes to make a code highlighter.
 
 
 # TOPLEVEL - two options for what the top might look like
@@ -200,5 +228,5 @@ def Paragraphs(text):
                 tc.cons('div'),
                 list)
 
-Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide, Katex, Code]
+Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide, Katex, Code, GuitarChord]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup

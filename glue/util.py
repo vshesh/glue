@@ -23,7 +23,7 @@ def unwind(g):
 
 def cut(i, s):
   """cuts a string into two parts by a specified index"""
-  return (s[:i], s[i:])
+  return s[:i], s[i:]
 
 def stringcat(*s:str):
   """

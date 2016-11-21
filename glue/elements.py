@@ -7,6 +7,18 @@ from typing import Mapping, Union, Set, Callable
 import inflection
 import regex as re
 
+"""
+FRAME nesting means that the block is intended to contain/frame the inside
+text, which should be parsed using the parent of this block
+POST means that the subtext in this block should be parsed AFTER this block is
+parsed. This is the default, and is suitable for most situations
+SUB means that the inside of the text is parsed for child nodes (inline and
+block) first, and the corresponding sections are replaced with [|*|] style tags
+that are meant to be left UNTOUCHED. After this block is parsed, then the tags
+are replaced with the appropriate parsed sections
+NONE means that this is a terminal block. Whatever is returned here will be
+directly put into the result, without any sub processing.
+"""
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 Display = Enum('Display', 'BLOCK INLINE')
 # ------------------  BASE ELEMENTS --------------------------
@@ -28,10 +40,7 @@ class Block(nt('Block', ['name', 'nest', 'subblock', 'subinline', 'parser', 'opt
   dasherized for style purposes (so that it's easier to type than capitals, and
   so that there's a consistent look).
 
-  `nestb`/`nesti` are the nesting policies for nesting blocks and inline elements,
-  respectively. As of now, only `nestb` works, and it is the nesting policy
-  for both. This will probably be changed in the future, as soon as I identify
-  an actual use case where someone would want a different inline policy.
+  `nest` is the nesting policies for nesting blocks and inline elements.
 
   `subblock` is an array of names or literal block elements that this block
   accepts as sub-blocks. In general, most blocks will either be `Nesting.NONE` or
@@ -41,6 +50,9 @@ class Block(nt('Block', ['name', 'nest', 'subblock', 'subinline', 'parser', 'opt
 
   `parser` is a function that takes string text and outputs html corresponding
   to whatever this block would like to parse.
+
+  `opts` is a string passed to getopts that states which flags are allowed
+  as kwargs options for this block.
   """
   def __new__(cls, name, nest=Nesting.POST, subblock=None, subinline=None, parser=None, opts=''):
     return super(Block, cls).__new__(cls,
@@ -102,7 +114,11 @@ important for others as well.
 
 # --------------------- ELEMENT UTILITIES ---------------------------------
 
-makename = lambda name: inflection.dasherize(inflection.underscore(name))
+def makename(name):
+  """Turns a capital camelcase name into a dasherized name for block detection.
+  Convenience function for blocks, mostly.
+  """
+  return inflection.dasherize(inflection.underscore(name))
 
 @enum.unique
 class Patterns(Enum):
@@ -123,17 +139,15 @@ def block(nest=Nesting.POST, subblock=None, subinline=None, opts=''):
     return ['div', text]
   ```
 
-  The name of the function is the name of the block, and the parser for a block
-  should always take just one argument, which is the text (for now).
-  The block name is changed so that it's made into a dash-separated name.
+  The name of the function becomes the name of the block. There is automatic
+  sanitization/converstion that happens in the process.
   So `BlockName` would have `name='block-name'` so that it's easier to type
   in the plain-text format.
   """
 
-  def block_fn(parser):
-    b = Block(makename(parser.__name__),
+  def block_fn(parser: Callable) -> Block:
+    return Block(makename(parser.__name__),
               nest, subblock or ['all'], subinline or ['all'], parser, opts)
-    return b
 
   return block_fn
 
