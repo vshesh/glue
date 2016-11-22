@@ -9,9 +9,9 @@ import toolz as t
 import toolz.curried as tc
 from itertools import zip_longest
 
-
 from glue import Nesting, Registry
-from glue.elements import IdenticalInlineFrame, MirrorInlineFrame
+from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, \
+  terminal_block
 from glue.elements import specialized_link, inlineone, block, Display
 from glue.elements import Patterns
 
@@ -32,7 +32,7 @@ Italic = IdenticalInlineFrame('italic', '_', 'em')
 Monospace = IdenticalInlineFrame('monospace', '`', 'code')
 Underline = IdenticalInlineFrame('underline', '__', 'span',
   {'style': 'text-decoration:underline;'})
-Strikethrough = IdenticalInlineFrame('strikethrough', '~', '')
+Strikethrough = IdenticalInlineFrame('strikethrough', '~', 'del')
 
 @specialized_link('')
 def Link(groups):
@@ -152,7 +152,7 @@ def Matrix(text, type='flex'):
 
 # #2 is the best compromise and that is what is included with the standard library.
 
-@block(nest=Nesting.NONE, subinline=[], subblock=[])
+@terminal_block()
 def Katex(text):
   h = str(uuid.uuid4())
   elem = "document.getElementById('katex-{0}')".format(h)
@@ -161,7 +161,7 @@ def Katex(text):
            repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), elem))[1:-1]]]
 
 
-@block(nest=Nesting.NONE, subinline=[], subblock=[])
+@terminal_block()
 def GuitarChord(text):
   """
   Creates an svg element that draws a guitar chord based on chordography's api.
@@ -192,14 +192,18 @@ def GuitarChord(text):
 # julia formatter pseudocode (from Sexpr.jl)
 # theoretical example of using regexes to make a code highlighter.
 
-# Code block with highlightjs.
-@block(nest=Nesting.NONE, subinline=[], subblock=[])
-def Code(text, language='js'):
+@terminal_block()
+def Code(text, language='python'):
+  """
+  Code block with highlight.js
+  :param text: the code block, which will be represented verbatim
+  :param language: programming language that has to be supported by highlight.js
+  :return: HTML code that will render a nice syntax highlighted code block.
+  """
   h = str(uuid.uuid4())
   return ['pre', ['code#{0}'.format(h), {'class': 'language-' + language}, text],
                  ['script', {'key': h},
                   "hljs.highlightBlock(document.getElementById('{0}'))".format(h)]]
-
 
 
 # TOPLEVEL - two options for what the top might look like

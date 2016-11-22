@@ -1,4 +1,6 @@
 #/usr/bin/env python3
+
+import abc
 import enum
 from collections import namedtuple as nt
 from enum import Enum
@@ -7,20 +9,54 @@ from typing import Mapping, Union, Set, Callable
 import inflection
 import regex as re
 
-"""
-FRAME nesting means that the block is intended to contain/frame the inside
-text, which should be parsed using the parent of this block
-POST means that the subtext in this block should be parsed AFTER this block is
-parsed. This is the default, and is suitable for most situations
-SUB means that the inside of the text is parsed for child nodes (inline and
-block) first, and the corresponding sections are replaced with [|*|] style tags
-that are meant to be left UNTOUCHED. After this block is parsed, then the tags
-are replaced with the appropriate parsed sections
-NONE means that this is a terminal block. Whatever is returned here will be
-directly put into the result, without any sub processing.
-"""
+
+# --------------------- ELEMENT UTILITIES ---------------------------------
+
+def makename(name):
+  """Turns a capital camelcase name into a dasherized name for block detection.
+  Convenience function for blocks, mostly.
+  """
+  return inflection.dasherize(inflection.underscore(name))
+
+@enum.unique
+class Patterns(Enum):
+  """
+  Defines some known regex pattern templates for common types of inline syntax.
+  For example, a single group inline element (one capture group framed by
+  something before and after the group).
+  """
+  escape = '(?<!\\\\)(?:\\\\\\\\)*{0}'
+  single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.+?(?<!\\\\)(?:\\\\\\\\)*){1}'
+  link = r'(?<!\\)(?:\\\\)*\K{0}\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
+
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
+Nesting.__doc__ = """
+FRAME: element is intended to contain/frame the inside
+       text, which means that subscriptions should be inherited from the parent.
+
+POST: text in the block should be parsed AFTER this block is
+      parsed. This is the default, and is suitable for most situations.
+
+SUB: the inside of the text is parsed for child nodes (inline and
+     block) first, and the corresponding sections are replaced with [|*|] style
+     tags that are meant to be left UNTOUCHED. After this block is parsed,
+     then the tags are replaced with the appropriate parsed sections. This could
+     have also been called 'PRE', since it pre-parses the contents before
+     calling the block's parsing function.
+
+NONE: terminal element. The parser's output is taken verbatim, with out any
+      further processing of its insides.
+"""
+
 Display = Enum('Display', 'BLOCK INLINE')
+Display.__doc__ = """
+You can set an inline element to be displayed like a block element. This is
+good for things like header elements in markdown syntax, which are detected by
+regex, but are not intended to be wrapped in any other kind of block.
+
+INLINE: should be displayed like a HTML inline (think span) (default)
+BLOCK: should be displayed like a HTML block (think div)
+"""
 # ------------------  BASE ELEMENTS --------------------------
 
 class Block(nt('Block', ['name', 'nest', 'subblock', 'subinline', 'parser', 'opts'])):
@@ -112,20 +148,6 @@ character literally. This is most critical for the 1-char elements, but it's
 important for others as well.
 """
 
-# --------------------- ELEMENT UTILITIES ---------------------------------
-
-def makename(name):
-  """Turns a capital camelcase name into a dasherized name for block detection.
-  Convenience function for blocks, mostly.
-  """
-  return inflection.dasherize(inflection.underscore(name))
-
-@enum.unique
-class Patterns(Enum):
-  escape = '(?<!\\\\)(?:\\\\\\\\)*{0}'
-  single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.+?(?<!\\\\)(?:\\\\\\\\)*){1}'
-  link = r'(?<!\\)(?:\\\\)*\K{0}\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
-
 # --------------------- BASE DECORATORS for ELEMENTS ---------------------------
 def block(nest=Nesting.POST, subblock=None, subinline=None, opts=''):
   """
@@ -151,6 +173,16 @@ def block(nest=Nesting.POST, subblock=None, subinline=None, opts=''):
 
   return block_fn
 
+def terminal_block(opts=''):
+  """
+  Decorator for blocks that have nesting = NONE and do not subscribe to any
+  inline or block elements. Note that NONE type blocks should not subscribe
+  to any such elements, anyway, so it is convenient to use this function.
+  :param opts: see Block documentation.
+  :return: a decorator that converts a parser function to a Block object of the
+  same name. See Block for details.
+  """
+  return block(nest=Nesting.NONE, subblock=[], subinline=[], opts=opts)
 
 def inlineone(regex, display=Display.INLINE, nest=Nesting.FRAME, subinline=None, escape=''):
   """

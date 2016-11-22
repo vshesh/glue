@@ -86,8 +86,7 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
     return r
 
   def __add__(self, other:Iterable):
-    if not isinstance(other, Iterable) or \
-       not all(isinstance(x, (Inline, Block)) for x in other):
+    if not all(isinstance(x, (Inline, Block)) for x in other):
       return NotImplemented
 
     r = copy.copy(self)
