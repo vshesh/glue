@@ -3,6 +3,9 @@ from glue import parse
 from glue.library import *
 from glue.util import unwind
 
+def test_bold():
+  assert unwind(parse(Registry(NoopBlock, Bold), '*bold*', NoopBlock)) == ['div', ['strong', {}, 'bold']]
+
 def test_tooltip():
   assert unwind(parse(Registry(NoopBlock, Tooltip), 'T[text](tooltip)', NoopBlock)) == ['div', ['span.tooltip', 'text', ['div.tooltip-text', 'tooltip']]]
 

@@ -12,42 +12,64 @@ def test_block_decorator():
 
   assert b.name == 'identity-block'
   assert b.nest == Nesting.POST
-  assert b.subblock == ['all']
+  assert b.sub == ['all']
   assert b.subinline == ['all']
   assert b.parser.__doc__ == "mock docstring"
 
   b2 = block(nest=Nesting.NONE,
-             subblock=['b1'],
-             subinline=['i1', 'i2'])(IdentityBlock)
+             sub=['b1', 'i1', 'i2'])(IdentityBlock)
 
   assert b2.name == 'identity-block'
   assert b2.nest == Nesting.NONE
-  assert b2.subblock == ['b1']
-  assert b2.subinline == ['i1', 'i2']
+  assert b2.sub == ['b1', 'i1', 'i2']
+  assert b2.subinline == []
   assert b2.parser.__doc__ == "mock docstring"
 
 
-def test_inlineone_decorator():
+def test_inline_decorator():
 
   def IdentityInline(text):
     "mock docstring"
     return ['span', text]
 
-  i = inlineone(r'.*')(IdentityInline)
+  i = inline(r'.*')(IdentityInline)
 
   assert i.name == 'identity-inline'
   assert i.nest == Nesting.FRAME
-  assert i.subinline == ['inherit']
+  assert i.subinline == ['all']
   assert i.escape == ''
-  assert i.parser[0][0] == re.compile(r'.*')
-  assert i.parser[0][1].__doc__ == 'mock docstring'
+  assert i.regex == re.compile(r'.*')
+  assert i.parser.__doc__ == 'mock docstring'
 
 
-  i = inlineone(r'\\.*', nest=Nesting.POST, escape="*", subinline=['all'])(IdentityInline)
+  i = inline(r'\\.*', nest=Nesting.POST, escape="*", sub=['all'])(IdentityInline)
 
   assert i.name == 'identity-inline'
   assert i.nest == Nesting.POST
   assert i.subinline == ['all']
   assert i.escape == '*'
-  assert i.parser[0][0] == re.compile(r'\\.*')
-  assert i.parser[0][1].__doc__ == 'mock docstring'
+  assert i.regex == re.compile(r'\\.*')
+  assert i.parser.__doc__ == 'mock docstring'
+
+
+def test_replace():
+
+  def IdentityInline(text):
+    "mock docstring"
+    return ['span', text]
+
+  i = inline(r'.*')(IdentityInline)
+
+  assert i.name == 'identity-inline'
+  assert i.nest == Nesting.FRAME
+  assert i.subinline == ['all']
+  assert i.escape == ''
+  assert i.regex == re.compile(r'.*')
+  assert i.parser.__doc__ == 'mock docstring'
+
+  newi = i._replace(name='new-name')
+
+  assert newi.name == 'new-name'
+  assert i.name == 'identity-inline'
+  assert i != newi
+  assert i is not newi

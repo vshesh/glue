@@ -37,7 +37,7 @@ def test_parseinline_post():
 
 
 def test_parseinline_none():
-  @inlineone(r'\@([^@]+)\@', nest=Nesting.NONE, subinline=[])
+  @inline(r'\@([^@]+)\@', nest=Nesting.NONE, sub=[])
   def InlineNone(groups):
     return ['p', groups[0]]
 

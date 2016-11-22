@@ -12,7 +12,7 @@ from itertools import zip_longest
 from glue import Nesting, Registry
 from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, \
   terminal_block
-from glue.elements import specialized_link, inlineone, block, Display
+from glue.elements import link, inline, inline_two, block, Display
 from glue.elements import Patterns
 
 # this module exposes basic elements and registries for common tasks.
@@ -34,19 +34,19 @@ Underline = IdenticalInlineFrame('underline', '__', 'span',
   {'style': 'text-decoration:underline;'})
 Strikethrough = IdenticalInlineFrame('strikethrough', '~', 'del')
 
-@specialized_link('')
+@link('')
 def Link(groups):
   return ['a', {'href': groups[1]}, groups[0]]
 
-@specialized_link('!')
+@link('!')
 def Image(groups):
   return ['img', {'alt': groups[0], 'src': groups[1], 'style': {'vertical-align': 'bottom'}}]
 
-@specialized_link('T')
+@link('T')
 def Tooltip(groups):
   return ['span.tooltip', groups[0], ['div.tooltip-text', groups[1]]]
 
-@inlineone(r'^(\#{1,6})([^\n]*)$', display=Display.BLOCK, nest=Nesting.POST, escape='#')
+@inline(r'^(\#{1,6})([^\n]*)$', display=Display.BLOCK, nest=Nesting.POST, escape='#')
 def Header(groups):
   return ['h' + str(len(groups[0])), groups[1].lstrip()]
 
@@ -62,7 +62,7 @@ CriticDel = MirrorInlineFrame('critic-del', '{--', 'del')
 CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span.critic.comment')
 CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
 
-@inlineone(r'(?<!\\)(?:\\\\)*\K\{~~(.*?(?<!\\)(?:\\\\)*)~>(.*?(?<!\\)(?:\\\\)*)~~}', nest=Nesting.POST)
+@inline_two('{~~', '~>', '~~\}', nest=Nesting.POST)
 def CriticSub(groups):
   return [['ins', groups[0]],['del', groups[1]]]
 

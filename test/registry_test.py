@@ -64,6 +64,7 @@ def test_registry_add():
 
   a = r + [Monospace._replace(name="mono")]
 
+  assert Monospace.name == 'monospace'
   assert Monospace.name in a
   assert 'mono' in a
   assert a[Monospace.name] == Monospace

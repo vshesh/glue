@@ -4,11 +4,7 @@ import operator as op
 from getopt import getopt
 from typing import Union
 
-import toolz as t
-import toolz.curried as tc
-from regex import Regex
-
-from glue.elements import Inline, Block, Nesting, Display
+from glue.elements import Element, Inline, Block, Nesting, Display
 from glue.html import render
 from glue.registry import Registry
 from glue.util import *
@@ -17,7 +13,7 @@ parse = lambda registry, text, topblock=None: parseblock(registry, topblock or r
 tohtml = t.compose(render, parse)
 
 def parseinline(registry:Registry,
-                element:Union[Block,Inline,str], text:str, parent=None):
+                element:Union[Element,str], text:str, parent=None):
   """
   Parses a block of text for its subscribed inline styles.
   Always returns a list of html elements.
@@ -26,15 +22,12 @@ def parseinline(registry:Registry,
   so:
   ['div', *parseinline(registry, element, text)] is what you would do.
   """
-  
+
   block = registry[element] if isinstance(element, str) else element
   subinline = list(registry.inline_subscriptions(block.subinline, parent))
   
   # a map of regexes to parsing function
-  inlines = t.pipe(subinline,
-    tc.map(lambda x: t.map(lambda p: (p[0],(p[1],x)), x.parser)),
-    t.merge,
-    lambda x: list(x.items()))
+  inlines = list({x.regex : (x.parser, x) for x in subinline}.items())
   
   # combine all escaped characters from all subscribed inline objects.
   escapes = ''.join(t.reduce(set.union,
@@ -63,7 +56,7 @@ def parseinline(registry:Registry,
   l = []
   while ind < len(text):
     m = patt.search(text, ind)
-    if m == None:
+    if m is None:
       l.append(unescape(text[ind:]))
       break
 
@@ -85,12 +78,14 @@ def parseinline(registry:Registry,
     if elem.nest == Nesting.FRAME:
       # frames are simple, by default they have inherit behavior
       # and deal with one group
-      l.append((elem, parser(parseinline(registry, block, groups[0]))))
+      l.append((elem, list(splicehtmlmap(lambda t: parseinline(
+        registry, block, t, parent), parser(groups[0]) )) ) )
     elif elem.nest == Nesting.NONE:
       l.append((elem, parser(groups)))
     elif elem.nest == Nesting.POST:
       # post requires a tree-traversal to reparse all the body elements.
-      # the only difference is that we have to
+      # the only difference is that we have to take into account the inheritance
+      # rules.
       l.append((elem, list(
         splicehtmlmap(
           lambda t: parseinline(
@@ -101,9 +96,16 @@ def parseinline(registry:Registry,
           parser(groups)))))
 
     ind = m.span()[1]
-  
+
+  print(l)
   return l
 
+
+def unpack(x):
+  if isinstance(x, tuple):
+    return [x[1][0], x[1][1], *map(unpack, x[1][2:])]
+  else:
+    return x
 
 def parseblock(registry:Registry,
                block:Block, text:str, args=None, parent=None):
@@ -119,10 +121,13 @@ def parseblock(registry:Registry,
     kw, opts = getopt(args, block.opts)
     kwopts = dict(kw)
 
+
+  print(block, text)
+
   def postparseinline(block, text, meta=False):
     html = parseinline(registry, block, text)
-    if meta: return html
-    else: return [e if isinstance(e, str) else e[1] for e in html]
+    if meta is False: return map(unpack, html)
+    return html
 
   def postparse(block, text, meta=False):
     subblocks = list(splitblocks(text))
@@ -160,12 +165,12 @@ def parseblock(registry:Registry,
     for e in blocks:
       if isinstance(e, str):
         subtext.append(e)
-      elif isinstance(e, tuple):
+      elif isinstance(e, (list, tuple)):
         substr = ('[|{}|]' if isinstance(e[0], Inline) and e[0].display is Display.INLINE else '[||{}||]').format(i)
-        subs[substr] = e[1]
+        subs[substr] = unpack(e[1])
         subtext.append(substr)
         i += 1
-
+    print('subs=', subs)
     return splicehtmlmap(
       lambda text: [subs[x] if x.startswith('[|') and x.endswith('|]') else x
                  for x in re.split(r'(\[\|\|?\d+\|?\|\])', text) if x != ''],
