@@ -5,7 +5,6 @@
     svg.chordChart g.grid {stroke: black; stroke-width: 1px;}
     svg.chordChart text.labels {fill: white;}
   </style>
-
   <script id="chordography">
     function chordMaker(B,C){var H=function(g){g=g||{};var a=[],c={cellWidth:21,cellHeight:25,dotDia:19,nutHeight:5,fontBaseline:7,fontHeight:16,barGirth:2,barHeight:9,padding:5,minSpan:4},b,u,v,x,D,y,z,w,A,E,q,r,k,m,F,G,B=function(a){for(var d=(v-1)*k,h=w?1:0,e="";h<=x;h++)e+=" M"+f(q)+" "+f(r+h*m)+" h"+f(d);a.setAttributeNS(null,"d",e)},C=function(a){for(var d=f(x*m),h=0,e="";h<v;h++)e+=" M"+f(q+h*k)+" "+f(r)+" v"+d;a.setAttributeNS(null,"d",e)},H=function(a,d,h,e){for(var l=0,n=q;l<h.length;l++,n+=
     k)if(0<h[l]){var p=document.createElementNS("http://www.w3.org/2000/svg","circle"),t=f(r+(h[l]-(w?.5:b-.5))*m);p.cx.baseVal.value=n;p.cy.baseVal.value=t;p.r.baseVal.value=c.dotDia/2;a.appendChild(p);e&&e[l]&&(p=document.createElementNS("http://www.w3.org/2000/svg","tspan"),p.setAttributeNS(null,"x",f(n)),d.appendChild(p),p.setAttributeNS(null,"y",f(t+m/2-c.fontBaseline)),p.appendChild(document.createTextNode(e[l])))}},K=function(a){var d;d=(v-1)*k;var h=f(c.nutHeight/2);d="M"+f(q)+" "+f(r)+" h -"+
@@ -69,7 +68,8 @@
       }
     },
     view: function(ctrl, props) {
-      indexMap = Object.keys(props.annotations).map((i,e) => [i,e]).reduce((acc,p) => {acc[p[0]] = p[1]; return acc;}, {});
+      indexMap = Object.keys(props.annotations).map((i,e) => [i,e]).reduce(
+        (acc,p) => {acc[p[0]] = p[1]; return acc;}, {});
       return (
         m('div.annotated-code',
           m('div.code-box',
