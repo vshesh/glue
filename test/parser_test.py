@@ -48,7 +48,6 @@ def test_parseinline_none():
 def test_parseinline_embedded():
   assert parseinline(sample, Paragraphs, 'text *bold* text') == ['text ', (Bold, ['strong', {}, 'bold']), ' text']
 
-
 # ------------------ PARSEBLOCK TESTS ----------------------------------------
 
 def test_parseblock_empty():
@@ -75,10 +74,12 @@ def test_parseblock_nestingnone():
 def IdentityBlock(text):
   return ['div', text]
 
+
 def test_parseblock_nestingsub():
   # should consume paragraphs block
   assert unwind(parseblock(Registry(IdentityBlock, Paragraphs), IdentityBlock,
                     'hello\n---paragraphs\nhello\n...\n')) == ['div', 'hello\n', ['div', ['p', 'hello']]]
+
 
 def test_parseblock_nestingsub_multiple():
   assert unwind(parseblock(sample + [IdentityBlock], IdentityBlock,

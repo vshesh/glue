@@ -9,7 +9,22 @@ from glue.html import render
 from glue.registry import Registry
 from glue.util import *
 
-parse = lambda registry, text, topblock=None: parseblock(registry, topblock or registry.top, text)
+# This module contains all the functions that parse an input text string and
+# return HTML corresponding to the page that is generated.
+
+def parse(registry, text, topblock=None):
+  """
+  Parse input text with the known blocks/inline elements in registry.
+  All config parameters are pretty much setup inside registry, although you can
+  force `parse` to use a different block as the top context block if you wish.
+
+  :param registry: the `Registry` object available
+  :param text:
+  :param topblock:
+  :return:
+  """
+  return parseblock(registry, topblock or registry.top, text)
+
 tohtml = t.compose(render, parse)
 
 def parseinline(registry:Registry,
@@ -32,7 +47,7 @@ def parseinline(registry:Registry,
   # combine all escaped characters from all subscribed inline objects.
   escapes = ''.join(t.reduce(set.union,
     (x.escape for x in subinline), set())).replace('[', '\\[').replace(']', '\\]')
-  # function that will unescape body code so eg \* -> *
+  # function that will unescape body code so eg `\\\*` -> `\*`
   unescape = ((lambda t: re.compile('\\\\(['+re.escape(escapes)+'])').sub(r'\1', t))
               if len(escapes) > 0
               else t.identity)
@@ -97,22 +112,11 @@ def parseinline(registry:Registry,
 
     ind = m.span()[1]
 
-  print(l)
   return l
 
 
-def unpack(x):
-  if isinstance(x, tuple):
-    return [x[1][0], x[1][1], *map(unpack, x[1][2:])]
-  else:
-    return x
-
-def parseblock(registry:Registry,
-               block:Block, text:str, args=None, parent=None):
-  """
-  parses text at the block level. ASSUMES VALIDATED REGISTRY.
-  minus some minor helper things (defining appropriate )
-  """
+def parseblock(registry:Registry, block:Block, text:str, args=None, parent=None):
+  """parses text at the block level. ASSUMES VALIDATED REGISTRY."""
   # handle default args
   if args is None:
     kwopts = {}
@@ -121,8 +125,6 @@ def parseblock(registry:Registry,
     kw, opts = getopt(args, block.opts)
     kwopts = dict(kw)
 
-
-  print(block, text)
 
   def postparseinline(block, text, meta=False):
     html = parseinline(registry, block, text)
@@ -170,7 +172,7 @@ def parseblock(registry:Registry,
         subs[substr] = unpack(e[1])
         subtext.append(substr)
         i += 1
-    print('subs=', subs)
+
     return splicehtmlmap(
       lambda text: [subs[x] if x.startswith('[|') and x.endswith('|]') else x
                  for x in re.split(r'(\[\|\|?\d+\|?\|\])', text) if x != ''],

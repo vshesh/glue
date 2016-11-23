@@ -205,6 +205,34 @@ def Code(text, language='python'):
                  ['script', {'key': h},
                   "hljs.highlightBlock(document.getElementById('{0}'))".format(h)]]
 
+@terminal_block()
+def AnnotatedCode(text, language='python', comment='#'):
+  """
+  A block that generates a code block where the comments are folded into
+  annotations that are revealed when hovered over.
+  See: [here](http://jsbin.com/gixaxefasu/edit?js,output) for an example.
+
+  Requires a CSS and JS asset to be included in index.html (as of now). The JS
+  component & CSS styles are available at the jsbin link above. See `index.html`
+
+  :param text: body text of the block
+  :param language: programming language the code is in
+  :param comment: the string that starts a comment in this language
+  """
+  total_annotation_lines = 0
+  code = ''
+  annotations = {}
+  annotation = ''
+  for (num,line) in enumerate(text.split('\n')):
+    if line.lstrip().startswith(comment):
+      total_annotation_lines += 1
+      annotation += line.lstrip()[len(comment):].lstrip() + '\n'
+    else:
+      code += line + '\n'
+      if len(annotation) > 0:
+        annotations[num - total_annotation_lines] = annotation
+        annotation = ''
+  return ['AnnotatedCode', {'code': code.rstrip(), 'annotations': annotations}]
 
 # TOPLEVEL - two options for what the top might look like
 # such as doing nothing and returning a div, or parsing paragraphs, but
@@ -232,5 +260,5 @@ def Paragraphs(text):
                 tc.cons('div'),
                 list)
 
-Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide, Katex, Code, GuitarChord]
+Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide, Katex, Code, GuitarChord, AnnotatedCode]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup

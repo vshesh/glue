@@ -55,6 +55,7 @@ good for things like header elements in markdown syntax, which are detected by
 regex, but are not intended to be wrapped in any other kind of block.
 
 INLINE: should be displayed like a HTML inline (think span) (default)
+
 BLOCK: should be displayed like a HTML block (think div)
 """
 # ------------------  BASE ELEMENTS --------------------------
