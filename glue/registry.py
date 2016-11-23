@@ -119,3 +119,17 @@ class Registry(dict, Mapping[str, Union[Inline, Block]]):
              for x in names if x not in ('all', 'inherit'))
     return l
 
+  def validate(self):
+    if self.TOP not in self or not isinstance(self[self.TOP], Block):
+      return False
+
+    sub = set()
+    for e in self.values():
+      sub.union(e.sub)
+      if not e.validate(): return False
+
+    for e in sub:
+      if e.name not in ('all', 'inherit') and e.name not in self:
+        return False
+
+    return True

@@ -1,6 +1,6 @@
 import pytest
 from glue.library import Bold, Italic, Monospace, CriticAdd, CriticDel, \
-  CriticComment, CriticHighlight, Link, Paragraphs
+  CriticComment, CriticHighlight, Link, Paragraphs, NoopBlock
 from glue.registry import *
 
 
@@ -98,3 +98,12 @@ def test_registry_notimplemented():
 
   with pytest.raises(TypeError):
     Registry() - Italic
+
+def test_registry_validate():
+  assert Registry().validate() == False
+  r = Registry(Monospace, Italic, Bold)
+  assert r.validate() == False
+  r2 = Registry(NoopBlock, top=NoopBlock)
+  assert r2.validate() == True
+  r2 = Registry(NoopBlock, Monospace, top=NoopBlock)
+  assert r2.validate() == True

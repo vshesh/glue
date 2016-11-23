@@ -73,7 +73,8 @@
       return (
         m('div.annotated-code',
           m('div.code-box',
-           m('pre', [...Array(props.code.split('\n').length).keys()].map((e) => {
+           m('pre.hljs', {style: "overflow-x: visible; padding: 0 3px; border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-right: 1px dotted grey"},
+           [...Array(props.code.split('\n').length).keys()].map((e) => {
              console.log(e);
              console.log(e in props.annotations);
              if (e in props.annotations) {

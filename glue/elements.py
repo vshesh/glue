@@ -135,6 +135,14 @@ class Element(abc.ABC):
         setattr(copied, k, kwargs[k])
     return copied
 
+  def validate(self) -> bool:
+    # If there's no nesting there should be no subscriptions
+    if self.nest == Nesting.NONE and self.sub != []: return False
+    # Frames should not restrict what can be put inside them, since they
+    # don't process anything inside themselves.
+    if self.nest == Nesting.FRAME and self.sub != ['inherit']: return False
+    return True
+
 
 
 class Block(Element):
@@ -237,6 +245,13 @@ class Inline(Element):
     self.display = display
     self.subinline = [x for x in (sub or ['all'])
                       if x == 'all' or x == 'inherit' or isinstance(x, Inline)]
+
+  def validate(self):
+    super(Inline, self).validate()
+    if self.display == Display.BLOCK and not (
+          self.regex.pattern.startswith('^') and self.regex.pattern.endswith('$')):
+      return False
+    return True
 
 # ----------------------- ELEMENT CONSTRUCTOR UTILITIES ----------------------
 
