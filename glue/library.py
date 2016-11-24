@@ -40,7 +40,7 @@ def Link(groups):
 
 @link('!')
 def Image(groups):
-  return ['img', {'alt': groups[0], 'src': groups[1], 'style': {'vertical-align': 'bottom'}}]
+  return ['img', {'alt': groups[0], 'src': groups[1], 'style': {'vertical-align': 'bottom', 'width': '100%'}}]
 
 @link('T')
 def Tooltip(groups):
