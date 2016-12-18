@@ -107,4 +107,6 @@ def test_parse_header():
                                      'style': {'margin': '0 auto', 'display': 'block', 'max-width': '100%'}}]]]
 
 def test_regex_clash():
-  assert unwind(parse(Standard, '__underline__')) == ['div', ['p', ['span', {'style': 'text-decoration:underline;'}, 'underline']]]
+  assert unwind(parse(Standard, '__underline__')) == [
+    'div', ['p', ['span', {'style': 'text-decoration:underline;'}, 'underline']]]
+

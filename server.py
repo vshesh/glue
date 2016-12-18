@@ -1,5 +1,5 @@
 from bottle import Bottle, get, post, static_file, run
-from app.params import params
+from app.params import params, jsonabort
 from app.staticroute import staticroutestack
 from glue import parse
 from glue.util import unwind, unpack
@@ -14,7 +14,10 @@ def index():
 @app.post('/render')
 @params(['text'])
 def render(text: str):
-  return {'template': unwind(parse(Standard, text))}
+  try:
+    return {'template': unwind(parse(Standard, text))}
+  except (ValueError, TypeError) as e:
+    jsonabort(400, str(e))
 
 staticroutestack(app, ['js', 'css'], 'static')
 
