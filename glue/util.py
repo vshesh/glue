@@ -142,8 +142,9 @@ def unpack(html):
   if isinstance(html, tuple):
     if isinstance(html[1][1], dict):
       return [html[1][0], html[1][1], *map(unpack, html[1][2:])]
-    else:
-      return [html[1][0], *map(unpack, html[1][1:])]
+    return [html[1][0], *map(unpack, html[1][1:])]
+  elif isinstance(html, list):
+    return [html[0], *map(unpack, html[1:])]
   else:
     return html
 

@@ -3,6 +3,7 @@
 # Created: 31 May 2016
 
 import uuid
+import simplejson as json
 import yaml
 import regex as re
 import toolz as t
@@ -39,8 +40,14 @@ def Link(groups):
   return ['a', {'href': groups[1]}, groups[0]]
 
 @link('!')
-def Image(groups):
-  return ['img', {'alt': groups[0], 'src': groups[1], 'style': {'vertical-align': 'bottom', 'width': '100%'}}]
+def FullImage(groups):
+  return ['img', {'alt': groups[0], 'src': groups[1], 'style': {'margin': '0 auto', 'display': 'block', 'max-width': '100%'}}]
+
+@link('P')
+def Pictogram(groups):
+  return ['span.pictogram',
+          ['img', {'alt': groups[0], 'src': groups[1]}],
+          ['span.pictoword', groups[0]]]
 
 @link('T')
 def Tooltip(groups):
@@ -51,7 +58,7 @@ def Header(groups):
   return ['h' + str(len(groups[0])), groups[1].lstrip()]
 
 StandardInline = Registry(Bold, Underline, Italic, Monospace,
-                          Strikethrough, Image, Link, Tooltip, Header)
+                          Strikethrough, FullImage, Pictogram, Tooltip, Header)
 
 # CRITIC - registry for doing annotations and critiques on the document.
 # insertion, deletion, substitution (really deletion + insertion)
@@ -106,7 +113,6 @@ def SideBySide(text):
   Uses the `|` character to separate columns, escape pipe with \| in the body.
   The columns are processed as their own blocks, and they do not need to line up.
   """
-
   return t.pipe(text.split('\n'),
                 tc.map(lambda x: re.split(' ?' + Patterns.escape.value.format('\|') + ' ?', x)),
                 lambda x: zip_longest(*x, fillvalue=''),
@@ -129,13 +135,35 @@ def Matrix(text, type='flex'):
                 tc.cons({'class': 'matrix matrix-flex' if type == 'flex' else 'matrix matrix-table'}),
                 tc.cons('div' if type == 'flex' else 'table'))
 
-# COMPONENTS - general purpose blocks for isomorphic-js components
-# works well with react/mithril etc
 
-# PHOTOS - displaying images
-# image (inline like markdown)
+# MEDIA - displaying images
+# image (inline like markdown) (see above)
+# multi-image - side by side images that have the same height despite not having
+#               the same aspect ratio. Can also take captions for each image.
+#               This is way harder than it looks without knowing the aspect ratio
+#               of each image before hand.
+
 # figures - images with captions, basically.
 # annotated image - component library image processing
+
+# audio - show an audio file, with html5 audio element (inline)
+# wavesurfer - audio with waveforms rendered to a div
+
+@block(nest=Nesting.FRAME, sub=["inline"])
+def Figure(text, caption=''):
+  return ['figure', text, ['figcaption', caption] if caption else None]
+
+@inline('@\\[(.+?'+Patterns.escape.value.format(')\\]'), nest=Nesting.NONE)
+def Audio(group):
+  """
+  `@[audio file]` creates an inline audio element with the HTML5 audio tag.
+  :param group: The audio file should be in group[0],
+   since there's only one capture group.
+  :return: audio tag with the file. proper defaults are set in case audio is not
+   supported on the user's browser.
+  """
+  return ['audio',{'controls': True, 'src': group[0]},
+          'Audio is not supported on your browser.']
 
 # STANDALONE - such as KaTeX and musicalabc, to name a few.
 
@@ -154,6 +182,10 @@ def Matrix(text, type='flex'):
 
 @terminal_block()
 def Katex(text):
+  """Integration with Khan Academy's math typsetting library.
+  Takes just the body text (which is the math) and renders it in place using
+  the API of the library.
+  """
   h = str(uuid.uuid4())
   elem = "document.getElementById('katex-{0}')".format(h)
   return ['div#katex-{0}'.format(h),
@@ -161,33 +193,8 @@ def Katex(text):
            repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), elem))[1:-1]]]
 
 
-@terminal_block()
-def GuitarChord(text):
-  """
-  Creates an svg element that draws a guitar chord based on chordography's api.
-
-  :param text: The body of the guitar chord element has up to three lines in
-   YAML syntax:
-   ```
-   title: C7b9
-   fret: x 1 1 4 5 1
-   label: x 1 1 3 4 1
-   ```
-   Only the line that says "fret" is necessary, per the chordography api.
-  :return: the html scaffolding with a small script tag injected that will
-   generate the desired chord diagram.
-  """
-  h = str(uuid.uuid4())
-  elem = "document.getElementById('guitar-chord-{0}')".format(h)
-  info = yaml.safe_load(text)
-  return ['div',
-          ['svg#guitar-chord-{0}'.format(h)],
-          ['script', {'key': h},
-           repr(
-             "chordMaker()({0}, {1})".format(elem, repr(info)))[1:-1]]]
-
 # CODE BLOCKS - styling these is really complicated for some reason
-# web library integration - there are many (hightlight.js)
+# web library integration - there are many (hightlight.js is a good example)
 # pygments using native python
 # julia formatter pseudocode (from Sexpr.jl)
 # theoretical example of using regexes to make a code highlighter.
@@ -226,13 +233,15 @@ def AnnotatedCode(text, language='python', comment='#'):
   for (num,line) in enumerate(text.split('\n')):
     if line.lstrip().startswith(comment):
       total_annotation_lines += 1
-      annotation += line.lstrip()[len(comment):].lstrip() + '\n'
+      a = line.lstrip()[len(comment):].lstrip()
+      # only add the annotation if there is actual text in the comment.
+      if len(a.strip()) > 0: annotation += a + '\n'
     else:
       code += line + '\n'
       if len(annotation) > 0:
         annotations[num - total_annotation_lines] = annotation
         annotation = ''
-  return ['AnnotatedCode', {'code': code.rstrip(), 'annotations': annotations}]
+  return ['AnnotatedCode', {'code': code.rstrip(), 'annotations': annotations, 'language': language}]
 
 # TOPLEVEL - two options for what the top might look like
 # such as doing nothing and returning a div, or parsing paragraphs, but
@@ -240,6 +249,15 @@ def AnnotatedCode(text, language='python', comment='#'):
 
 @block()
 def NoopBlock(text):
+  """A "noop" in the case of generating html means wrapping the text in a div
+  and returning it. The most basic possible block.
+
+  This block can be a good choice for a top-level entity if writing something
+  that isn't intended to have paragraphs in it and is divided some other way.
+
+  Or if you intend to just deal with everything as one large block, this works
+  well too.
+  """
   return ['div', text]
 
 @block(nest=Nesting.SUB)
@@ -260,5 +278,76 @@ def Paragraphs(text):
                 tc.cons('div'),
                 list)
 
-Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide, Katex, Code, GuitarChord, AnnotatedCode]
+# COMPONENT (in a view library, say React or mithril)
+
+@terminal_block()
+def YamlComponent(text, name):
+  """
+  You can specify your props using the YAML syntax, and create a component in a
+  view library out of it. `name` must be camel case, and upper case, for it to be
+  recognized properly by this library.
+
+  :param text: The YAML formatted props to the component
+  :param name: name of the component like `AnnotatedCode`
+  :return: [name, props] -> syntax that represents this component with these props.
+  """
+  props = yaml.safe_load(text)
+  return [name, props]
+
+@terminal_block()
+def JsonComponent(text, name):
+  props = json.loads(text)
+  return [name, props]
+
+# Domain Specific Blocks -> MUSIC related:
+
+@terminal_block()
+def GuitarChord(text):
+  """
+  Creates an svg element that draws a guitar chord based on chordography's api.
+
+  :param text: The body of the guitar chord element has up to three lines in
+   YAML syntax:
+   ```
+   title: C7b9
+   fret: x 1 1 4 5 1
+   label: x 1 1 3 4 1
+   ```
+   Only the line that says "fret" is necessary, per the chordography api.
+  :return: the html scaffolding with a small script tag injected that will
+   generate the desired chord diagram.
+  """
+  h = str(uuid.uuid4())
+  elem = "document.getElementById('guitar-chord-{0}')".format(h)
+  info = yaml.safe_load(text)
+  return ['div',
+          ['div#guitar-chord-{0}'.format(h)],
+          ['script', {'key': h},
+           repr(
+             "chordMaker()({0}, {1})".format(elem, repr(info)))[1:-1]]]
+
+@terminal_block()
+def MusicalAbc(text):
+  """Integration with musical abc, a lightweight sheet music syntax.
+  see https://github.com/paulrosen/abcjs.
+  """
+  # TODO(vshesh): abcjs uses a fixed-width svg -
+  # make it into a viewBox with variable outside width!
+  # https://github.com/paulrosen/abcjs/issues/71
+  h = 'musical-abc-' + str(uuid.uuid4())
+  elem = "document.getElementById('{0}')".format(h)
+  return ['div',
+          ['div#{0}'.format(h)],
+          ['script', {'key': h},
+             "ABCJS.renderAbc({0}, {1});".format(elem, repr(text))]]
+
+Music = Registry(GuitarChord, MusicalAbc)
+
+# Domain Specific Blocks - Charts! (using SVG, with or without D3/paths.js)
+
+
+# Registry setup
+
+Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide, Katex, Audio, MusicalAbc, GuitarChord, Code, AnnotatedCode]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup
+

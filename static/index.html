@@ -2,6 +2,31 @@
 <html>
 <head>
   <style>
+    .pictogram {
+      position: relative;
+    }
+    .pictogram > img {
+      height: 1.5em;
+      vertical-align: middle;
+    }
+    .pictogram > span.pictoword {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.4);
+      color: white;
+      display: none;
+      font-size: 75%;
+    }
+    .pictogram:hover > .pictoword {
+      display: inline;
+    }
+  </style>
+
+  <script src="https://rawgit.com/paulrosen/abcjs/master/bin/abcjs_basic_2.3-min.js"></script>
+
+  <style>
     svg.chordChart g.grid {stroke: black; stroke-width: 1px;}
     svg.chordChart text.labels {fill: white;}
   </style>
@@ -73,10 +98,8 @@
       return (
         m('div.annotated-code',
           m('div.code-box',
-           m('pre.hljs', {style: "overflow-x: visible; padding: 0 3px; border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-right: 1px dotted grey"},
+           m('pre.hljs', {style: "overflow-x: visible; margin-bottom: 0, border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-right: 1px dotted grey"},
            [...Array(props.code.split('\n').length).keys()].map((e) => {
-             console.log(e);
-             console.log(e in props.annotations);
              if (e in props.annotations) {
                return m('span.annotation',
                         {key: e, onmouseenter: ev => ctrl.annotation(props.annotations[e])},
@@ -89,7 +112,7 @@
              {key: props.code.hashCode(),
               config: elem => hljs.highlightBlock(elem)},
              props.code))),
-         m('div', ctrl.annotation() )));
+         ctrl.annotation().trim().length > 0 ? m('div.hljs', ctrl.annotation() ) : m('div') ));
     }
   }
   </script>

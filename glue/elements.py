@@ -114,7 +114,7 @@ class Element(abc.ABC):
     return True
 
   def __repr__(self):
-    return inflection.camelize(self.name)
+    return inflection.camelize(inflection.underscore(self.name))
 
   def __hash__(self):
     return self.name.__hash__()
@@ -367,7 +367,7 @@ def MirrorInlineFrame(name:str, start:str, tag:str, attr:Mapping[str,str]=None):
 def link(designation: str, nest=Nesting.POST, sub=None):
   """
   Convenience decorator for two-group inline elements that look like markdown links.
-  In other words, we expect something[group1](group2). The pattern is limited to
+  In other words, we expect `something[group1](group2)`. The pattern is limited to
   using square/round parens in that exact way.
 
   :param designation: the string that goes in front of the link. Eg, a tooltip

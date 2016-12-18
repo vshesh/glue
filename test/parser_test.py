@@ -1,6 +1,6 @@
 from glue import *
 from glue.parser import parseinline, parseblock
-from glue.library import Bold, Italic, Monospace, Link, Paragraphs
+from glue.library import Bold, Italic, Monospace, Link, Paragraphs, Standard
 from glue.util import unwind
 
 sample = Registry(Bold, Italic, Monospace, Paragraphs)
@@ -98,3 +98,13 @@ def test_parseblock_nestingpost():
 
   assert unwind(parseblock(Registry(IdentityBlock, Paragraphs), IdentityBlock,
                            'hello\n---paragraphs\nhello\n...\n')) == ['div', 'hello\n', ['div', ['p', 'hello']]]
+
+# -------------- PARSE Inline Inside a Inline element with display: block
+
+def test_parse_header():
+  assert unwind(parse(Standard, '# Header ![img](imgurl)')) == [
+    'div', ['h1', 'Header ', ['img', {'alt': 'img', 'src': 'imgurl',
+                                     'style': {'margin': '0 auto', 'display': 'block', 'max-width': '100%'}}]]]
+
+def test_regex_clash():
+  assert unwind(parse(Standard, '__underline__')) == ['div', ['p', ['span', {'style': 'text-decoration:underline;'}, 'underline']]]

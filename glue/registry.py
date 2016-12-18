@@ -1,10 +1,11 @@
+from collections import OrderedDict
 import copy
 import toolz as t
 from typing import Union, List, Mapping, Iterable
 from glue.elements import *
 
 
-class Registry(dict, Mapping[str, Union[Inline, Block]]):
+class Registry(OrderedDict, Mapping[str, Union[Inline, Block]]):
   """
   Registry class is some convenience functions tacked onto
   a dictionary that maps names (strings) to elements (Inline or Block).

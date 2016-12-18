@@ -134,3 +134,8 @@ def test_splitblocks_nestblock():
 
 def test_splitblocks_args():
   assert list(splitblocks('---block -x y z\n...')) == [['block', ['-x', 'y', 'z'], '']]
+
+# ----------------------- testing unpack ------------------------------
+
+def test_unpack():
+  assert unpack(['h1', 'blah blah', ('Image', ['img', {'src': 'imageurl'}])]) == ['h1', 'blah blah', ['img', {'src': 'imageurl'}]]

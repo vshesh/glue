@@ -12,20 +12,34 @@ from glue.util import *
 # This module contains all the functions that parse an input text string and
 # return HTML corresponding to the page that is generated.
 
-def parse(registry, text, topblock=None):
-  """
-  Parse input text with the known blocks/inline elements in registry.
+def parse(registry: Registry, text: str, topblock:Block=None):
+  """Parse input text with the known blocks/inline elements in registry.
   All config parameters are pretty much setup inside registry, although you can
   force `parse` to use a different block as the top context block if you wish.
 
   :param registry: the `Registry` object available
-  :param text:
-  :param topblock:
-  :return:
+  :param text: the text you want to parse into HTML
+  :param topblock: Block (in the registry) that is considered the outermost context of the text.
+  :return: list-style html.
   """
   return parseblock(registry, topblock or registry.top, text)
 
 tohtml = t.compose(render, parse)
+
+def render_mithril(html):
+  if html is None: return ''
+  elif isinstance(html, list):
+    if html[0][0].isupper():
+      return 'm.component({}, {})'.format(html[0], html[1])
+    elif isinstance(html[1], dict):
+      return 'm({}, {}, {})'.format(html[0], html[1], ', '.join(map(render_mithril, html[2:])))
+    return 'm({}, {})'.format(html[0], ', '.join(map(render_mithril, html[1:])))
+  elif isinstance(html, str):
+    return repr(html)
+  else:
+    raise ValueError('{} is not convertible into html'.format(html))
+
+tomithril = t.compose(render_mithril, parse)
 
 def parseinline(registry:Registry,
                 element:Union[Element,str], text:str, parent=None):
@@ -40,10 +54,10 @@ def parseinline(registry:Registry,
 
   block = registry[element] if isinstance(element, str) else element
   subinline = list(registry.inline_subscriptions(block.subinline, parent))
-  
+
   # a map of regexes to parsing function
-  inlines = list({x.regex : (x.parser, x) for x in subinline}.items())
-  
+  inlines = [(x.regex, (x.parser, x)) for x in subinline]
+
   # combine all escaped characters from all subscribed inline objects.
   escapes = ''.join(t.reduce(set.union,
     (x.escape for x in subinline), set())).replace('[', '\\[').replace(']', '\\]')
@@ -61,6 +75,7 @@ def parseinline(registry:Registry,
   # might not be efficient for very complex parsers....
   patt = re.compile('|'.join(t.map(lambda x: '(?:'+(
     x[0] if isinstance(x[0], str) else x[0].pattern)+')', inlines)), re.V1 | re.S | re.M)
+  print(patt)
 
   # how many groups are in each regex, in order, so we can assign the final
   # match to the right parser function.
