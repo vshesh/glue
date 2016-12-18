@@ -300,55 +300,38 @@ Along with the above, they also have:
 * `parser(groups) -> ['span', {'attr': 'value'}, 'something']`
     * takes the captured groups from the regex and returns html.
     * or in the case of `nest=FRAME`, takes an html body and returns more html.
-    
-Inline elements can mostly be written in the functional form, since the parser
-functions can be expressed with lambdas. However, there is a decorator
-for the situation in which you have just one regex and one accompanied parser.
-Unfortunately, decorators are a very limited form of macros.
+ 
+ Here is an example `Inline` element for italic text a la Markdown. Note
+ how much easier the decorator version is. In general, use the helper 
+ decorators and functions! It will save you a lot of raw regex writing.
 
 ```python
 # one regex example - (note, Italic is much better represented with
-# IdenticalInlineFrame('italic', '_', 'em') - this is actually boilerplate).
+# IdenticalInlineFrame('italic', '_', 'em') - this is clunky).
 @inlineone(r'(?<!\\)(?:\\\\)*\K_(.*?(?<!\\)(?:\\\\)*)_')
 def Italic(groups):
   return ['em', groups[0]]
 
 # function style
-Italic = Inline('italic', Nesting.FRAME, ['all'], '_',
-  [(re.compile(r'(?<!\\)(?:\\\\)*\K_(.*?(?<!\\)(?:\\\\)*)_'),
-    lambda groups: ['em', groups[0]])])
+Italic = Inline('italic', Nesting.FRAME, ['all'], '_', 
+    re.compile(r'(?<!\\)(?:\\\\)*\K_(.*?(?<!\\)(?:\\\\)*)_'),
+    lambda groups: ['em', groups[0]])
 ```
+
+
 
 ### Block Elements
 
-Block elements consist of:
+Block elements look like elements with:
+* `opts`: a string passed to getopts that states which flags are allowed
+  as kwargs options for this block. (eg, language for code block).
 
-* `name` the name of the element - should be in dash-case, like `block-name`
-* `nest` how to nest other blocks AND other inline elements
-  * in the future, this may need to be separate in case someone desires
-    different policies for nesting blocks and inlines.
-    `block: NONE` and `inline: POST` comes to mind as being probable.
-  * this may also be implemented as new nesting types eg, `INLINE_ONLY`,
-    but that's easy to do with `nest:POST`, `subblock: []` as well.
-* `subblock` what other block elements are legal inside this block element.
-  * `inherit` is a special keyword here, that inherits from the parent.
-  * `all` is a special keyword that subscribes to ALL block elements in the registry.
-* `subinline` what other inline elements are legal inside this block element.
-  * `inherit` is a special keyword here, that inherits from the parent.
-  * `all` is a special keyword that subscribes to ALL block elements in the registry.
-* `parser(text) -> ['div', ['p', ...]]` a parser function that returns a list
-  form of html that can be parsed by the library [cottonmouth](https://github.com/nosamanuel/cottonmouth).
-  * note: I ported cottonmouth to python3 and then added the ability to define
-    attributes that are dictionaries that will be made into style like elements.
-    So `['div', {'attr': {'x':'y'}}]` becomes `<div attr="x:y;">`. It is
-    particularly useful when trying to define inline css on the returned elements.
-    
-I recommend using the decorator I wrote to write these, since the block parser
+    I recommend using the decorator to write these, since the block parser
 functions tend not to be trivial, but you can do it function style, too.
 
 ```python
 # decorator style
-@block()
+@block() # you can override defaults eg: @block(nest=Nest.SUB)
 def Paragraphs(text):
   """Very simple paragraphs component that renders blocks of text with
   line break in the middle (\\n\\n) as separate <p></p> elements.
@@ -362,13 +345,14 @@ def paragraphs_parser(text):
   """
   return ['div', *map(lambda x: ['p', x.strip()], text.split('\n\n'))]
 
-Paragraphs = Block('paragraphs', Nesting.POST, ['all'], ['all'], paragraphs_parser)
+Paragraphs = Block(name='paragraphs', nest=Nesting.POST, sub=['all'], parser=paragraphs_parser)
 ```
 
-You can see how the decorator style is easier, since it auto-calculates the
+You can see how the decorator style is easier, since it auto-computes the
 name, gives you sane defaults for the nesting,
 and doesn't require you to think up *another* name for the parser.
-Still, option exists, and is useful for writing functions that generate `Block`s.
+Still, the raw option exists, and is useful for writing functions that 
+generate `Block`s, such as in elements.py.
 
 ### Registry
 
