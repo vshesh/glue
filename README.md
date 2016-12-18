@@ -195,7 +195,7 @@ Full documentation for the components that come bundled with glue are
 forthcoming, but for now you can read the library.py file to see the full
 details.
 
-To do this parsing, just run `echo file | python -m glue` to see html
+To do this parsing, just run `echo file | python3 -m glue` to see html
 be spit out. 
 
 ## Use Case 2: Create/Extend a Registry
