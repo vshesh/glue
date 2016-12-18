@@ -1,9 +1,11 @@
 import abc
 import enum
 import copy
+import uuid
 from enum import Enum
 from typing import Mapping, Union, Set, Callable
 
+import functools
 import inflection
 import regex as re
 
@@ -298,6 +300,22 @@ def terminal_block(opts=''):
   same name. See Block for details.
   """
   return block(Nesting.NONE, [], opts)
+
+def standalone_integration(outer_elem='div', inner_elem='div'):
+  def standalone_integration_wrapper(f):
+    @terminal_block()
+    @functools.wraps(f)
+    def standalone_block(text):
+      docid = f.__name__ + '-' + str(uuid.uuid4())
+      elem = "document.getElementById('{0}')".format(docid);
+
+      return [outer_elem + '.' + f.__name__,
+              [inner_elem + '#{0}'.format(docid)],
+              ['script', {'key': docid}, f(text, docid=docid, elem=elem)]]
+    return standalone_block
+
+  return standalone_integration_wrapper
+
 
 def inline(regex, nest=Nesting.FRAME, sub=None, escape='', display=Display.INLINE):
   """

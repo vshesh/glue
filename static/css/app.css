@@ -8,6 +8,10 @@ html, body, #container, #container > div, #input {
   width: 100%;
 }
 
+#container, #container > div {
+  overflow: hidden;
+}
+
 textarea {
   border: none;
   height: 100%;

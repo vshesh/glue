@@ -3,6 +3,8 @@
 # Created: 31 May 2016
 
 import uuid
+
+import functools
 import simplejson as json
 import yaml
 import regex as re
@@ -12,7 +14,7 @@ from itertools import zip_longest
 
 from glue import Nesting, Registry
 from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, \
-  terminal_block
+  terminal_block, standalone_integration
 from glue.elements import link, inline, inline_two, block, Display
 from glue.elements import Patterns
 
@@ -146,12 +148,12 @@ def Matrix(text, type='flex'):
 # figures - images with captions, basically.
 # annotated image - component library image processing
 
-# audio - show an audio file, with html5 audio element (inline)
-# wavesurfer - audio with waveforms rendered to a div
-
 @block(nest=Nesting.FRAME, sub=["inline"])
 def Figure(text, caption=''):
   return ['figure', text, ['figcaption', caption] if caption else None]
+
+# audio - show an audio file, with html5 audio element (inline)
+# wavesurfer - audio with waveforms rendered to a div
 
 @inline('@\\[(.+?'+Patterns.escape.value.format(')\\]'), nest=Nesting.NONE)
 def Audio(group):
@@ -180,17 +182,13 @@ def Audio(group):
 
 # #2 is the best compromise and that is what is included with the standard library.
 
-@terminal_block()
-def Katex(text):
+@standalone_integration()
+def Katex(text, docid, elem):
   """Integration with Khan Academy's math typsetting library.
   Takes just the body text (which is the math) and renders it in place using
   the API of the library.
   """
-  h = str(uuid.uuid4())
-  elem = "document.getElementById('katex-{0}')".format(h)
-  return ['div#katex-{0}'.format(h),
-          ['script', {'key': h},
-           repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), elem))[1:-1]]]
+  return repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), elem))[1:-1]
 
 
 # CODE BLOCKS - styling these is really complicated for some reason
@@ -284,7 +282,7 @@ def Paragraphs(text):
 def YamlComponent(text, name):
   """
   You can specify your props using the YAML syntax, and create a component in a
-  view library out of it. `name` must be camel case, and upper case, for it to be
+  js view library out of it. `name` must be camel case, and upper case, for it to be
   recognized properly by this library.
 
   :param text: The YAML formatted props to the component
@@ -301,8 +299,8 @@ def JsonComponent(text, name):
 
 # Domain Specific Blocks -> MUSIC related:
 
-@terminal_block()
-def GuitarChord(text):
+@standalone_integration()
+def GuitarChord(text, docid, elem):
   """
   Creates an svg element that draws a guitar chord based on chordography's api.
 
@@ -317,29 +315,16 @@ def GuitarChord(text):
   :return: the html scaffolding with a small script tag injected that will
    generate the desired chord diagram.
   """
-  h = str(uuid.uuid4())
-  elem = "document.getElementById('guitar-chord-{0}')".format(h)
   info = yaml.safe_load(text)
-  return ['div',
-          ['div#guitar-chord-{0}'.format(h)],
-          ['script', {'key': h},
-           repr(
-             "chordMaker()({0}, {1})".format(elem, repr(info)))[1:-1]]]
+  return repr("chordMaker()({0}, {1})".format(elem, repr(info)))[1:-1]
 
-@terminal_block()
-def MusicalAbc(text):
+@standalone_integration()
+def MusicalAbc(text, docid, elem):
   """Integration with musical abc, a lightweight sheet music syntax.
   see https://github.com/paulrosen/abcjs.
   """
-  # TODO(vshesh): abcjs uses a fixed-width svg -
-  # make it into a viewBox with variable outside width!
-  # https://github.com/paulrosen/abcjs/issues/71
-  h = 'musical-abc-' + str(uuid.uuid4())
-  elem = "document.getElementById('{0}')".format(h)
-  return ['div',
-          ['div#{0}'.format(h)],
-          ['script', {'key': h},
-             "ABCJS.renderAbc({0}, {1});".format(elem, repr(text))]]
+  return "ABCJS.renderAbc({0}, {1}); setViewBox('{2}');".format(elem, repr(text), docid)
+
 
 Music = Registry(GuitarChord, MusicalAbc)
 

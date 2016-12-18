@@ -24,7 +24,26 @@
     }
   </style>
 
-  <script src="https://rawgit.com/paulrosen/abcjs/master/bin/abcjs_basic_2.3-min.js"></script>
+  <script>
+  function getStyleProp(elem, prop){
+    if(window.getComputedStyle)
+        return window.getComputedStyle(elem, null).getPropertyValue(prop);
+    else if(elem.currentStyle) return elem.currentStyle[prop]; //IE
+  }
+
+  function setViewBox(selector) {
+    var el = document.getElementById(selector);
+
+    var height = parseFloat(getStyleProp(el, 'height'));
+    var width = parseFloat(getStyleProp(el, 'width'));
+    el.removeAttribute('style');
+    var svg = el.firstChild;
+    svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+    svg.removeAttribute("height");
+    svg.removeAttribute("width");
+  }
+  </script>
+  <script src="https://rawgit.com/paulrosen/abcjs/master/bin/abcjs_basic_midi_3.0-min.js"></script>
 
   <style>
     svg.chordChart g.grid {stroke: black; stroke-width: 1px;}
