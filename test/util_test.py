@@ -1,4 +1,5 @@
 from glue.util import *
+import pytest
 
 
 # ------------------------ general utilities testing -------------------
@@ -134,6 +135,15 @@ def test_splitblocks_nestblock():
 
 def test_splitblocks_args():
   assert list(splitblocks('---block -x y z\n...')) == [['block', ['-x', 'y', 'z'], '']]
+
+
+def test_splitblocks_error():
+  with pytest.raises(ValueError):
+    splitblocks('...')
+
+  with pytest.raises(ValueError) as e:
+    splitblocks('---b\n...\n...\n')
+  assert 'line 3' in str(e.value)
 
 # ----------------------- testing unpack ------------------------------
 
