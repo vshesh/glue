@@ -120,3 +120,4 @@ def test_macroexpand(s: str):
   assert macroexpand({'x': 'x'}, s) == s
   assert macroexpand({'x': 'x'}, '${x} ' + s) == 'x ' + s
   assert macroexpand({'x': 'x'}, s + ' ${x}') == s + ' x'
+  assert macroexpand({'x': 'x ${y}', 'y': 'y'}, '${x} ' + s) == 'x y ' + s
