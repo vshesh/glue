@@ -1,5 +1,7 @@
+import pytest
+
 from glue import *
-from glue.parser import parseinline, parseblock
+from glue.parser import parseinline, parseblock, macroexpand
 from glue.library import Bold, Italic, Monospace, Link, Paragraphs, Standard
 from glue.util import unwind
 
@@ -25,9 +27,9 @@ def test_parseinline_basic():
     (Bold, ['strong', {}, 'text']),
     (Bold, ['strong', {}, 'text2'])]
 
-
-def test_parseinline_multiline():
-  assert parseinline(sample, Paragraphs, '*te\nxt*') == [(Bold, ['strong', {}, 'te\nxt'])]
+@pytest.mark.randomize(str_attrs=('digits', 'whitespace', 'ascii_letters'))
+def test_parseinline_multiline(s1: str, s2: str):
+  assert parseinline(sample, Paragraphs, '*{}\n{}*'.format(s1, s2)) == [(Bold, ['strong', {}, s1 + '\n' + s2])]
 
 def test_parseinline_post():
   assert parseinline(sample + [Link], Paragraphs,
@@ -106,7 +108,15 @@ def test_parse_header():
     'div', ['h1', 'Header ', ['img', {'alt': 'img', 'src': 'imgurl',
                                      'style': {'margin': '0 auto', 'display': 'block', 'max-width': '100%'}}]]]
 
-def test_regex_clash():
-  assert unwind(parse(Standard, '__underline__')) == [
-    'div', ['p', ['span', {'style': 'text-decoration:underline;'}, 'underline']]]
+@pytest.mark.randomize(str_attrs=('digits', 'whitespace', 'ascii_letters'))
+def test_regex_clash(s: str):
+  assert unwind(parse(Standard, '__'+s+'__')) == [
+    'div', ['p', ['span', {'style': 'text-decoration:underline;'}, s]]]
 
+# ------------- MACROExpand test
+
+@pytest.mark.randomize(str_attrs=('digits', 'punctuation', 'whitespace', 'ascii_uppercase'))
+def test_macroexpand(s: str):
+  assert macroexpand({'x': 'x'}, s) == s
+  assert macroexpand({'x': 'x'}, '${x} ' + s) == 'x ' + s
+  assert macroexpand({'x': 'x'}, s + ' ${x}') == s + ' x'

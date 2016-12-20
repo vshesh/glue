@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from typing import Mapping
 import operator as op
 from getopt import getopt
 from typing import Union
@@ -11,19 +12,6 @@ from glue.util import *
 
 # This module contains all the functions that parse an input text string and
 # return HTML corresponding to the page that is generated.
-
-def parse(registry: Registry, text: str, topblock:Block=None):
-  """Parse input text with the known blocks/inline elements in registry.
-  All config parameters are pretty much setup inside registry, although you can
-  force `parse` to use a different block as the top context block if you wish.
-
-  :param registry: the `Registry` object available
-  :param text: the text you want to parse into HTML
-  :param topblock: Block (in the registry) that is considered the outermost context of the text.
-  :return: list-style html.
-  """
-  return parseblock(registry, topblock or registry.top, text)
-
 
 def parseinline(registry:Registry,
                 element:Union[Element,str], text:str, parent=None):
@@ -175,3 +163,51 @@ def parseblock(registry:Registry, block:Block, text:str, args=None, parent=None)
       lambda text: [subs[x] if x.startswith('[|') and x.endswith('|]') else x
                  for x in re.split(r'(\[\|\|?\d+\|?\|\])', text) if x != ''],
       block.parser(''.join(subtext), *opts, **kwopts))
+
+
+def parse(registry: Registry, text: str, topblock:Block=None):
+  """Parse input text with the known blocks/inline elements in registry.
+  All config parameters are pretty much setup inside registry, although you can
+  force `parse` to use a different block as the top context block if you wish.
+
+  :param registry: the `Registry` object available
+  :param text: the text you want to parse into HTML
+  :param topblock: Block (in the registry) that is considered the outermost context of the text.
+  :return: list-style html.
+  """
+  return parseblock(registry, topblock or registry.top, text)
+
+
+macro_pattern = re.compile(r'(?<!\\)(?:\\\\)*\K\$\{([\w-\.]+)\}')
+def macroexpand1(macros: Mapping[str, str], s: str):
+  """
+  `macroexpand1` takes the variable and expands all macros in it ONE time.
+  :param macros: mapping of macro name to output, which can include more macros.
+  :param s: the text that needs to be expanded.
+  :return: a new string with one level of expanding done.
+  """
+  expanded = ''
+  i = 0
+  for m in re.finditer(macro_pattern, s):
+    expanded += s[i:m.start()] + macros[m.group(1)]
+    i = m.end()
+  expanded += s[i:len(s)]
+
+  if expanded == '': return s
+  return expanded
+
+def macroexpand(macros: Mapping[str, str], s:str):
+  """
+  Does `macroexpand1` until there are no more macros left to expand.
+  :param macros: mapping of macro name to output, which can include more macros.
+  :param s: the text that needs to be expanded.
+  :return: completely expanded string.
+  """
+
+  expanded = s
+  next = macroexpand1(macros, expanded)
+  while expanded != next:
+    expanded = next
+    next = macroexpand1(macros, expanded)
+
+  return expanded
