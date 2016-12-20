@@ -4,9 +4,11 @@ toolz
 PyYAML
 
 bottle
+bs4
 simplejson
 
 pytest
 pytest-cov
+pytest
 coveralls
-bs4
+pytest-quickcheck
