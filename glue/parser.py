@@ -109,7 +109,7 @@ def parseblock(registry:Registry, block:Block, text:str, args=None, parent=None)
     opts = []
   else:
     kw, opts = getopt(args, block.opts)
-    kwopts = dict(kw)
+    kwopts = dict((e[0].lstrip('-'), True if e[1] == '' else e[1]) for e in kw)
 
 
   def postparseinline(block, text, meta=False):
@@ -211,3 +211,6 @@ def macroexpand(macros: Mapping[str, str], s:str):
     next = macroexpand1(macros, expanded)
 
   return expanded
+
+def parsemacros(s: str):
+  return map(lambda x: [y.strip() for y in x.split('=', maxsplit=1)], s.split('\n'))

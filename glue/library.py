@@ -14,7 +14,7 @@ from itertools import zip_longest
 
 from glue import Nesting, Registry
 from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, \
-  terminal_block, standalone_integration
+  terminal_block, standalone_integration, AssetType, asset_inline, asset_url
 from glue.elements import link, inline, inline_two, block, Display
 from glue.elements import Patterns
 
@@ -41,9 +41,18 @@ Strikethrough = IdenticalInlineFrame('strikethrough', '~', 'del')
 def Link(groups):
   return ['a', {'href': groups[1]}, groups[0]]
 
+@link('!!')
+def InlineImage(groups):
+  return ['img', {'alt': groups[0], 'src': groups[1],
+                  'style': {'display': 'inline-block',
+                            'vertical-align': 'middle',
+                            'max-width': '100%'}}]
+
 @link('!')
 def FullImage(groups):
-  return ['img', {'alt': groups[0], 'src': groups[1], 'style': {'margin': '0 auto', 'display': 'block', 'max-width': '100%'}}]
+  return ['img', {'alt': groups[0], 'src': groups[1],
+                  'style': {'margin': '0 auto', 'display': 'block',
+                            'max-width': '100%'}}]
 
 @link('P')
 def Pictogram(groups):
@@ -60,7 +69,7 @@ def Header(groups):
   return ['h' + str(len(groups[0])), groups[1].lstrip()]
 
 StandardInline = Registry(Bold, Underline, Italic, Monospace,
-                          Strikethrough, FullImage, Pictogram, Tooltip, Header)
+                          Strikethrough, Link, InlineImage, FullImage, Pictogram, Tooltip, Header)
 
 # CRITIC - registry for doing annotations and critiques on the document.
 # insertion, deletion, substitution (really deletion + insertion)
@@ -73,9 +82,9 @@ CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
 
 @inline_two('{~~', '~>', '~~\}', nest=Nesting.POST)
 def CriticSub(groups):
-  return [['ins', groups[0]],['del', groups[1]]]
+  return [['del', groups[0]],['ins', groups[1]]]
 
-CriticMarkup = Registry(CriticAdd, CriticDel, CriticComment, CriticHighlight, CriticSub)
+CriticMarkup = Registry(CriticSub, CriticAdd, CriticDel, CriticComment, CriticHighlight)
 
 # MARKDOWN - registry that contains standard definitions according to the
 # markdown syntax style. These are *different* from the STANDARD definitions
@@ -87,20 +96,89 @@ MDLodashBold = MirrorInlineFrame('md-lodash-bold', '__', 'strong')
 MDStarItalic = MirrorInlineFrame('md-star-italic', '*', 'em')
 MDLodashItalic = MirrorInlineFrame('md-lodash-italic', '_', 'em')
 
-MarkdownInline = (StandardInline - [Bold, Italic]) + [
+MarkdownInline = (StandardInline - [Bold, Italic, Underline]) + [
   MDStarBold, MDLodashBold, MDStarItalic, MDLodashItalic]
+
+# Standard Blocks:
+
+@asset_inline(AssetType.CSS, '''
+.blockquote {
+  margin-left: 10px;
+  padding-left: 5px;
+  font-size: 150%;
+  border-left: 5px solid gray;
+}''')
+@block(Nesting.SUB)
+def Blockquote(text: str):
+  r = Paragraphs(text)
+  r[0] += '.blockquote'
+  return r
 
 # LISTS - blocks that allow defining lists.
 # ordered list, unordered list, outline
 
-# ---list
-# as;fkjasdf
-#   as;dkfjas
-# a sfa sfas;fkj sdf
-#   as;dkfljas
-#   asfjas;kdfj
-#     asdlfjasldfkj
-# ...
+
+def process_list(l, root: str='ul'):
+  """
+
+  :param l: a list like the one returned by the below `List` element.
+  :param root: what element wraps the list (`ul`, `ol`, etc).
+  :return: HTML that represents the list `l`. (cottonmouth style).
+  """
+  if isinstance(l[0], list):
+    raise NotImplementedError('Sublist found as first element of the list. '
+      'Sublists must come after another list element, as per the HTML5 spec.')
+  acc = [root]
+  for e in l:
+    if isinstance(e, str):
+      acc.append(['li', e])
+    elif isinstance(e, list):
+      acc[-1].append(process_list(e, root))
+  return acc
+
+@block(opts="o")
+def List(text, o:bool=False):
+  """
+  Basic unordered list - should just output a `ul` element with `li` underneath.
+  Nested lists are handled, and >2 spaces of indentation will start a sublist.
+  This list element does NOT allow for any kind of 'bullet' in front of the items
+  as of now.
+
+  Example:
+    ---list
+    as;fkjasdf
+      as;dkfjas
+    a sfa sfas;fkj sdf
+      as;dkfljas
+      asfjas;kdfj
+        asdlfjasldfkj
+    ...
+
+  :param text: body text of the list
+  :param o: whether list is ordered, in which case an `ol` is returned instead of a `ul`.
+  to the ul or ol type of element.
+  :return: a list element
+  """
+  items = []
+  pos = -1
+  for line in text.split('\n'):
+    if line.strip() == "": continue
+    p = len(line) - len(line.lstrip(' '))
+    if p > pos:
+      items.append([line.strip()])
+    elif p < pos:
+      item = items.pop()
+      items[-1].append(item)
+      items[-1].append(line.strip())
+    else:
+      items[-1].append(line.strip())
+    pos = p
+  # turtle down remaining lists.
+  while len(items) > 1:
+    items[-2].append(items[-1])
+    items.pop()
+
+  return process_list(items[0], 'ol' if o else 'ul')
 
 
 # TABLES - blocks that result in some kind of tabular form
@@ -132,8 +210,8 @@ def Matrix(text, type='flex'):
   return t.pipe(text.split('\n'),
                 tc.map(lambda x: re.split(' ?' + Patterns.escape.value.format('\|') + ' ?', x)),
                 tc.map(lambda x: ['div' if type == 'flex' else 'tr',
-                                  {'style': {'display':'flex'}},
-                                  *t.map(lambda y: ['span' if type == 'flex' else 'td', {'flex': 1}, y], x)]),
+                                  {'style': {'display':'flex'} if type == 'flex' else {}},
+                                  *t.map(lambda y: ['span' if type == 'flex' else 'td', {'flex': 1} if type == 'flex' else {}, y], x)]),
                 tc.cons({'class': 'matrix matrix-flex' if type == 'flex' else 'matrix matrix-table'}),
                 tc.cons('div' if type == 'flex' else 'table'))
 
@@ -333,6 +411,6 @@ Music = Registry(GuitarChord, MusicalAbc)
 
 # Registry setup
 
-Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [SideBySide, Katex, Audio, MusicalAbc, GuitarChord, Code, AnnotatedCode]
+Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [Blockquote, List, SideBySide, Matrix, Katex, Audio, MusicalAbc, GuitarChord, Code, AnnotatedCode]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup
 

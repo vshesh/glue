@@ -1,8 +1,7 @@
 import pytest
 
-from glue import *
-from glue.parser import parseinline, parseblock, macroexpand
-from glue.library import Bold, Italic, Monospace, Link, Paragraphs, Standard
+from glue.parser import *
+from glue.library import Bold, Italic, Monospace, Link, Paragraphs, Standard, block, inline
 from glue.util import unwind
 
 sample = Registry(Bold, Italic, Monospace, Paragraphs)
@@ -121,3 +120,7 @@ def test_macroexpand(s: str):
   assert macroexpand({'x': 'x'}, '${x} ' + s) == 'x ' + s
   assert macroexpand({'x': 'x'}, s + ' ${x}') == s + ' x'
   assert macroexpand({'x': 'x ${y}', 'y': 'y'}, '${x} ' + s) == 'x y ' + s
+
+@pytest.mark.randomize(str_attrs=('digits', 'ascii_uppercase'))
+def test_parsemacros(name: str, text: str):
+  assert unwind(parsemacros('{} = {}'.format(name, text))) == [[name, text]]

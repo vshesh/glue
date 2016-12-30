@@ -13,7 +13,7 @@ import regex as re
 
 def makename(name: str) -> str:
   """Turns a capital camelcase name into a dasherized name for block detection.
-  Convenience function for blocks, mostly.
+  Used as the logic for autogenerating the `name` attribute of an `Element`.
   """
   return inflection.dasherize(inflection.underscore(name))
 
@@ -26,7 +26,7 @@ class Patterns(Enum):
   something before and after the group).
   """
   escape = '(?<!\\\\)(?:\\\\\\\\)*{0}'
-  single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.+?(?<!\\\\)(?:\\\\\\\\)*){1}'
+  single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'
   link = r'(?<!\\)(?:\\\\)*\K{0}\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
   double_group = r'(?<!\\)(?:\\\\)*\K\{0}(.*?(?<!\\)(?:\\\\)*){1}(.*?(?<!\\)(?:\\\\)*){2}'
 
@@ -60,6 +60,20 @@ INLINE: should be displayed like a HTML inline (think span) (default)
 
 BLOCK: should be displayed like a HTML block (think div)
 """
+
+
+AssetType = Enum('AssetType', 'JS CSS')
+AssetType.__doc__ = """
+There are at least two kinds of assets - the ones that are scripts
+(eg, `<script src="blah blah"></script>`), and the ones that are CSS
+(eg `<link rel="stylesheet" type="text/css" href="blah blah"/>`).
+
+Accordingly there are two values for this Enum so far:
+
+JS: something written in the JS language
+CSS: a stylesheet written in CSS
+SCSS: a stylesheet written in SCSS, preprocessed through libsass.
+"""
 # ------------------  BASE ELEMENTS --------------------------
 
 
@@ -68,7 +82,7 @@ class Element(abc.ABC):
   Base class for all elements, which itself is really just a parser function
   augmented with some necessary data to plug into the glue system.
 
-  There are three instance variables:
+  There are four instance variables:
 
   `nest` is the nesting policy. It controls in which order the sub-blocks/inline
   elements are parsed. See the `Nesting` enum for more information on what the
@@ -88,11 +102,19 @@ class Element(abc.ABC):
   semantics for each of the subclasses, and different signatures as well
   depending on what they are parsing and how.
 
+  `assets` is a set of strings each of which is a valid HTML tag (plus contents)
+  that adds an asset such as a script (JS) or stylesheet (CSS) to the page.
+  It is recommended that you use the helpers to construct these, rather than
+  go through the tedious process of trying to write it out yourself.
+
   An additional property is:
 
   `name` is the name of the element. The name has two uses - it becomes the key
   for the element in the registry, and it also is the 'dispatch' (think like a
-  function call) for the block.
+  function call) for the block. The name is auto-generated for the sake of
+  sanity by taking a camelcase name (which is consistent with python naming style)
+  and converting it into something dash-separated so that it's easier to type
+  into the editor.
 
   ```
   ---block
@@ -126,6 +148,7 @@ class Element(abc.ABC):
     self.sub = sub
     self.parser = parser
     self.name = makename(self.parser.__name__)
+    self.assets = set()
 
   def __call__(self, *args, **kwargs):
     return self.parser(*args, **kwargs)
@@ -145,6 +168,8 @@ class Element(abc.ABC):
     if self.nest == Nesting.FRAME and self.sub != ['inherit']: return False
     return True
 
+  def add_asset(self, asset: str):
+    self.assets.add(asset)
 
 
 class Block(Element):
@@ -255,6 +280,24 @@ class Inline(Element):
       return False
     return True
 
+# ---------------------- ASSET CONSTRUCTOR UTILITIES -------------------------
+
+def asset_url(type: AssetType, url: str):
+  def asset_url_helper(elem: Element):
+    elem.add_asset('<script src="{0}"></script>'.format(url)
+                   if type == AssetType.JS
+                   else '<link rel="stylesheet" href="{0}"/>'.format(url))
+    return elem
+  return asset_url_helper
+
+def asset_inline(type: AssetType, contents: str):
+  def asset_inline_helper(elem: Element):
+    elem.add_asset('<script type="text/javascript">\n{0}\n</script>'.format(contents)
+                   if type == AssetType.JS
+                   else '<style>\n{0}\n</style>'.format(contents))
+    return elem
+  return asset_inline_helper
+
 # ----------------------- ELEMENT CONSTRUCTOR UTILITIES ----------------------
 
 # Having these as decorators allows for a simpler way of defining blocks, at
@@ -306,10 +349,10 @@ def standalone_integration(outer_elem='div', inner_elem='div'):
     @terminal_block()
     @functools.wraps(f)
     def standalone_block(text):
-      docid = f.__name__ + '-' + str(uuid.uuid4())
+      docid = makename(f.__name__) + '-' + str(uuid.uuid4())
       elem = "document.getElementById('{0}')".format(docid);
 
-      return [outer_elem + '.' + f.__name__,
+      return [outer_elem + '.' + makename(f.__name__),
               [inner_elem + '#{0}'.format(docid)],
               ['script', {'key': docid}, f(text, docid=docid, elem=elem)]]
     return standalone_block

@@ -31,7 +31,7 @@ textarea {
 
 /* avenir white css */
 #rendered {
-	font-family: "Avenir Next", Helvetica, Arial, sans-serif;
+	font-family: "M+ 2p", Helvetica, Arial, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -102,24 +102,13 @@ button, #ws {
 }
 
 code, pre, #ws, #message {
-	font-family: Monaco;
-	font-size: 10pt;
+	font-family: "M+ 1m", monospace;
 	border-radius: 3px;
 	color: inherit;
-}
-
-code {
-	margin: 0 2px;
-	padding: 0 5px;
 }
 
 pre > code {
 	margin: 0;
 	padding: 0;
+	line-height: 1.2em
 }
-
-#ws { background-color: #f8f8f8; }
-
-.send { color:#77bb77; }
-.server { color:#7799bb; }
-.error { color:#AA0000; }

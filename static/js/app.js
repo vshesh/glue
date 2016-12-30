@@ -15,6 +15,9 @@ var componentMap = {
 
 function makeElem(html) {
   if (_.isArray(html)) {
+    if (_.isArray(html[0])) {
+      return _.map(html, makeElem);
+    }
     if (/^[A-Z][a-zA-Z0-9_]*$/.test(html[0])) {
       return _.concat([m.component(eval(html[0]), html[1])], _.map(html.slice(2), makeElem));
     }
