@@ -14,7 +14,7 @@ def test_header():
   assert unwind(parse(Registry(Paragraphs, Header), '# h1\n## h2\n### h3', Paragraphs)) == ['div', ['h1', 'h1'], ['h2', 'h2'], ['h3', 'h3']]
 
 def test_criticsub():
-  assert unwind(parse(Registry(Paragraphs, CriticSub), '{~~a~>b~~}', Paragraphs)) == ['div', ['p', [['ins', 'a'], ['del', 'b']]]]
+  assert unwind(parse(Registry(Paragraphs, CriticSub), '{~~a~>b~~}', Paragraphs)) == ['div', ['p', [['del', 'a'], ['ins', 'b']]]]
 
 def test_sidebyside():
   assert list(SideBySide('c | x')) == ['div', {'style': {'display': 'flex'}}, ['div', {'style': {'flex': '1'}}, 'c'], ['div', {'style': {'flex': '1'}}, 'x']]
@@ -47,9 +47,9 @@ def test_matrix():
                                       ['span', {'flex': 1}, 'x']]]
 
   assert unwind(Matrix('c | x', type='matrix')) == ['table', {'class': 'matrix matrix-table'},
-                                     ['tr', {'style': {'display': 'flex'}},
-                                      ['td', {'flex': 1}, 'c'],
-                                      ['td', {'flex': 1}, 'x']]]
+                                     ['tr', {'style': {}},
+                                      ['td', {}, 'c'],
+                                      ['td', {}, 'x']]]
 
 
 def test_noop():
