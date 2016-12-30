@@ -53,13 +53,71 @@ def FullImage(groups):
   return ['img', {'alt': groups[0], 'src': groups[1],
                   'style': {'margin': '0 auto', 'display': 'block',
                             'max-width': '100%'}}]
-
+@asset_inline(AssetType.CSS, '''
+.pictogram {
+  position: relative;
+}
+.pictogram > img {
+  height: 1.5em;
+  vertical-align: middle;
+}
+.pictogram > span.pictoword {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.4);
+  color: white;
+  display: none;
+  font-size: 75%;
+}
+.pictogram:hover > .pictoword {
+  display: inline;
+}
+''')
 @link('P')
 def Pictogram(groups):
   return ['span.pictogram',
           ['img', {'alt': groups[0], 'src': groups[1]}],
           ['span.pictoword', groups[0]]]
 
+@asset_inline(AssetType.CSS, '''
+  .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: 1px dotted black;
+  }
+
+  .tooltip .tooltip-text {
+      visibility: hidden;
+      min-width: 100%;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-5px);
+  }
+
+  .tooltip .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: black transparent transparent transparent;
+  }
+
+  .tooltip:hover .tooltip-text {
+      visibility: visible;
+  }
+  ''')
 @link('T')
 def Tooltip(groups):
   return ['span.tooltip', groups[0], ['div.tooltip-text', groups[1]]]
@@ -260,6 +318,9 @@ def Audio(group):
 
 # #2 is the best compromise and that is what is included with the standard library.
 
+@asset_inline(AssetType.CSS, '.katex {position: relative;}')
+@asset_url(AssetType.CSS, 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css')
+@asset_url(AssetType.JS, 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js')
 @standalone_integration()
 def Katex(text, docid, elem):
   """Integration with Khan Academy's math typsetting library.
@@ -275,6 +336,10 @@ def Katex(text, docid, elem):
 # julia formatter pseudocode (from Sexpr.jl)
 # theoretical example of using regexes to make a code highlighter.
 
+@asset_url(AssetType.CSS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/atom-one-light.min.css")
+@asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js")
+@asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/julia.min.js")
+@asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/haskell.min.js")
 @terminal_block()
 def Code(text, language='python'):
   """
@@ -288,6 +353,26 @@ def Code(text, language='python'):
                  ['script', {'key': h},
                   "hljs.highlightBlock(document.getElementById('{0}'))".format(h)]]
 
+@asset_inline(AssetType.CSS, '''
+  div.annotated-code .code-box {
+    display: flex;
+  }
+  div.annotated-code .code-box pre {
+    flex: 1;
+  }
+  div.annotated-code .code-box pre:first-child {
+    flex: 0;
+    padding-top: 0.5em;
+  }
+  div.annotated-code .code-box pre:first-child span {
+    padding: 0 3px;
+  }
+  div.annotated-code .code-box pre:first-child span:hover {
+    background-color: black;
+    color: white;
+  }
+''')
+@asset_url(AssetType.JS, '/js/annotated-code.js')
 @terminal_block()
 def AnnotatedCode(text, language='python', comment='#'):
   """
@@ -377,6 +462,11 @@ def JsonComponent(text, name):
 
 # Domain Specific Blocks -> MUSIC related:
 
+@asset_inline(AssetType.CSS, '''
+svg.chordChart g.grid {stroke: black; stroke-width: 1px;}
+svg.chordChart text.labels {fill: white;}
+''')
+@asset_url(AssetType.JS, '/js/chordography.js')
 @standalone_integration()
 def GuitarChord(text, docid, elem):
   """
@@ -396,6 +486,26 @@ def GuitarChord(text, docid, elem):
   info = yaml.safe_load(text)
   return repr("chordMaker()({0}, {1})".format(elem, repr(info)))[1:-1]
 
+@asset_inline(AssetType.JS, '''
+function getStyleProp(elem, prop){
+  if(window.getComputedStyle)
+      return window.getComputedStyle(elem, null).getPropertyValue(prop);
+  else if(elem.currentStyle) return elem.currentStyle[prop]; //IE
+}
+
+function setViewBox(selector) {
+  var el = document.getElementById(selector);
+
+  var height = parseFloat(getStyleProp(el, 'height'));
+  var width = parseFloat(getStyleProp(el, 'width'));
+  el.removeAttribute('style');
+  var svg = el.firstChild;
+  svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+  svg.removeAttribute("height");
+  svg.removeAttribute("width");
+}
+''')
+@asset_url(AssetType.JS, 'https://rawgit.com/paulrosen/abcjs/master/bin/abcjs_basic_midi_3.0-min.js')
 @standalone_integration()
 def MusicalAbc(text, docid, elem):
   """Integration with musical abc, a lightweight sheet music syntax.

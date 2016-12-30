@@ -1,4 +1,7 @@
-from bottle import Bottle, get, post, static_file, run
+import bottle
+bottle.TEMPLATE_PATH.append('./static/templates')
+
+from bottle import Bottle, static_file, template, run
 from app.params import params, jsonabort
 from app.staticroute import staticroutestack
 from glue import parse
@@ -22,5 +25,9 @@ def render(text: str):
 staticroutestack(app, ['js', 'css'], 'static')
 
 if __name__ == '__main__':
+  # generate index.html
+  with open('./static/index.html', 'w') as index:
+    index.write(template('index', assets=Standard.assets))
+
   run(app, host='localhost', port='8000', reloader=True,
       debug=True)

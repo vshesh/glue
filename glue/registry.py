@@ -120,6 +120,16 @@ class Registry(OrderedDict, Mapping[str, Union[Inline, Block]]):
              for x in names if x not in ('all', 'inherit'))
     return l
 
+  @property
+  def assets(self) -> str:
+    """
+    Returns all the assets of every element in the registry combined as a string.
+    Each asset is kept in its own tag, with no concatenation of scripts or
+    stylesheets.
+    :return: a string which contains all the assets, to be put into an HTML template.
+    """
+    return '\n\n\n'.join('\n'.join(item[1].assets) for item in self.items() if len(item[1].assets) > 0)
+
   def validate(self):
     if self.TOP not in self or not isinstance(self[self.TOP], Block):
       return False

@@ -169,7 +169,7 @@ class Element(abc.ABC):
     return True
 
   def add_asset(self, asset: str):
-    self.assets.add(asset)
+    self.assets.add(asset.strip())
 
 
 class Block(Element):
