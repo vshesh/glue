@@ -11,7 +11,7 @@ function loadJS(file) {
   return jsElm;
 }
 
-loadJS('/js/tour.js').onload = function() {
+loadJS('/glue/js/tour.js').onload = function() {
   m.route(document.getElementById('container'), '/', {
     '/': Tour,
   })
