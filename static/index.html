@@ -79,11 +79,11 @@
 </style>
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"/>
 <style>
 .katex {position: relative;}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"></script>
 
 
 <script src="https://rawgit.com/paulrosen/abcjs/master/bin/abcjs_basic_midi_3.0-min.js"></script>
@@ -119,37 +119,38 @@ svg.chordChart text.labels {fill: white;}
 </style>
 
 
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/atom-one-light.min.css"/>
-<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/julia.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/haskell.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/julia.min.js"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/atom-one-light.min.css"/>
 
 
+<script src="/js/annotated-code.js"></script>
 <style>
 
-  div.annotated-code .code-box {
+  .annotated-code .code-box {
     display: flex;
   }
-  div.annotated-code .code-box pre {
+  .annotated-code .code-box > pre {
     flex: 1;
+    margin: 0;
   }
-  div.annotated-code .code-box pre:first-child {
+  .annotated-code .code-box pre:first-child {
     flex: 0;
     padding-top: 0.5em;
   }
-  div.annotated-code .code-box pre:first-child span {
+  .annotated-code .code-box pre:first-child span {
     padding: 0 3px;
   }
-  div.annotated-code .code-box pre:first-child span:hover {
+  .annotated-code .code-box pre:first-child span:hover {
     background-color: black;
     color: white;
   }
 
 </style>
-<script src="/js/annotated-code.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.13.1/lodash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mithril/0.2.5/mithril.min.js"></script>
-
+  <link href="https://fonts.googleapis.com/css?family=Lato|Open+Sans|PT+Sans" rel="stylesheet">
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>

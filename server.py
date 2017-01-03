@@ -4,7 +4,8 @@ bottle.TEMPLATE_PATH.append('./static/templates')
 from bottle import Bottle, static_file, template, run
 from app.params import params, jsonabort
 from app.staticroute import staticroutestack
-from glue import parse
+import glue
+from glue import parse, tohtml
 from glue.util import unwind, unpack
 from glue.library import Standard
 
@@ -23,6 +24,17 @@ def render(text: str):
     jsonabort(400, str(e))
 
 staticroutestack(app, ['js', 'css'], 'static')
+
+@app.get('/example')
+@params(['path'])
+def example(path: str):
+  try:
+    with open('./static/examples/' + path + '.txt') as file:
+      r = parse(Standard, file.read())
+      return glue.codegen.render(unwind(r))
+  except (ValueError, TypeError) as e:
+    jsonabort(400, str(e))
+
 
 if __name__ == '__main__':
   # generate index.html

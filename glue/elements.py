@@ -148,7 +148,7 @@ class Element(abc.ABC):
     self.sub = sub
     self.parser = parser
     self.name = makename(self.parser.__name__)
-    self.assets = set()
+    self.assets = []
 
   def __call__(self, *args, **kwargs):
     return self.parser(*args, **kwargs)
@@ -169,7 +169,7 @@ class Element(abc.ABC):
     return True
 
   def add_asset(self, asset: str):
-    self.assets.add(asset.strip())
+    self.assets.append(asset.strip())
 
 
 class Block(Element):

@@ -16,22 +16,26 @@ var AnnotatedCode = {
     }
   },
   view: function(ctrl, props) {
-    indexMap = Object.keys(props.annotations).map((i,e) => [i,e]).reduce(
+    var indexMap = Object.keys(props.annotations).map((i,e) => [i,e]).reduce(
       (acc,p) => {acc[p[0]] = p[1]; return acc;}, {});
     return (
       m('div.annotated-code',
         m('div.code-box',
-         m('pre.hljs', {style: "overflow-x: visible; margin-bottom: 0, border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-right: 1px dotted grey"},
-         [...Array(props.code.split('\n').length).keys()].map((e) => {
+         m('pre.hljs', {
+           style: "overflow-x: visible; border-right: 1px dotted grey",
+           // the key has to change when the annotations object change, or when the code changes.
+           key: Object.keys(props.annotations).reduce((acc,x) => acc + ' ' + x, '') + Object.values(props.annotations).reduce((acc,x) => acc + x, '').hashCode() + props.code.hashCode()},
+         [...Array(props.code.trim().split('\n').length).keys()].map((e) => {
            if (e in props.annotations) {
              return m('span.annotation',
-                      {key: e, onmouseenter: ev => ctrl.annotation(props.annotations[e])},
+                      {key: e,
+                       onmouseenter: ev => ctrl.annotation(props.annotations[e])},
                       indexMap[e] + '\n')
            } else {
              return '\n'
            }
          })),
-         m('pre', m('code.python',
+         m('pre', m('code.language-'+props.language,
            {key: props.code.hashCode(),
             config: elem => hljs.highlightBlock(elem)},
            props.code))),

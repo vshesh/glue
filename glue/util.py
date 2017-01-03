@@ -63,7 +63,7 @@ def fills(quantities, n):
 
 def splitblocks(text:str):
   # tokenize
-  tokens = re.split(re.compile(r'^(?:(---[\w_=\- \.]*)|(\.\.\.))[ \t]*(?:\n|$)', re.M), text)
+  tokens = re.split(re.compile(r'^(?:(---[\w_=\- \.]+)|(\.\.\.))[ \t]*(?:\n|$)', re.M), text)
 
   l = []
   token = ''
@@ -86,7 +86,7 @@ def splitblocks(text:str):
         token += tokens[i+1] + "\n"
       i += 2
       lineno += 1
-    elif tokens[i].startswith('---'):
+    elif re.match(r'^---[\w_=\- \.]+$', tokens[i]):
       # begin of a new block
       level += 1
       if level == 1:

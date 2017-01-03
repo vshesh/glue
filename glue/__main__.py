@@ -1,5 +1,5 @@
 import sys
-from glue.parser import tohtml
+from glue.codegen import tohtml
 from glue.library import Standard
 from bs4 import BeautifulSoup
 

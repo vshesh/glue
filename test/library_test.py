@@ -28,23 +28,23 @@ def test_sidebyside():
 def test_matrix():
   assert unwind(Matrix('c | x')) == ['div', {'class': 'matrix matrix-flex'},
                                      ['div', {'style': {'display': 'flex'}},
-                                      ['span', {'flex': 1}, 'c'],
-                                      ['span', {'flex': 1}, 'x']]]
+                                      ['span', {'style': {'flex': 1}}, 'c'],
+                                      ['span', {'style': {'flex': 1}}, 'x']]]
 
   assert unwind(Matrix('c|x')) == ['div', {'class': 'matrix matrix-flex'},
                                      ['div', {'style': {'display': 'flex'}},
-                                      ['span', {'flex': 1}, 'c'],
-                                      ['span', {'flex': 1}, 'x']]]
+                                      ['span', {'style': {'flex': 1}}, 'c'],
+                                      ['span', {'style': {'flex': 1}}, 'x']]]
 
   assert unwind(Matrix('c| x')) == ['div', {'class': 'matrix matrix-flex'},
                                      ['div', {'style': {'display': 'flex'}},
-                                      ['span', {'flex': 1}, 'c'],
-                                      ['span', {'flex': 1}, 'x']]]
+                                      ['span', {'style': {'flex': 1}}, 'c'],
+                                      ['span', {'style': {'flex': 1}}, 'x']]]
 
   assert unwind(Matrix('c |x')) == ['div', {'class': 'matrix matrix-flex'},
                                      ['div', {'style': {'display': 'flex'}},
-                                      ['span', {'flex': 1}, 'c'],
-                                      ['span', {'flex': 1}, 'x']]]
+                                      ['span', {'style': {'flex': 1}}, 'c'],
+                                      ['span', {'style': {'flex': 1}}, 'x']]]
 
   assert unwind(Matrix('c | x', type='matrix')) == ['table', {'class': 'matrix matrix-table'},
                                      ['tr', {'style': {}},

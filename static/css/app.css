@@ -110,5 +110,8 @@ code, pre, #ws, #message {
 pre > code {
 	margin: 0;
 	padding: 0;
-	line-height: 1.2em
+}
+
+pre {
+  line-height: 1.2em
 }

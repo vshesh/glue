@@ -251,7 +251,7 @@ def SideBySide(text):
   Uses the `|` character to separate columns, escape pipe with \| in the body.
   The columns are processed as their own blocks, and they do not need to line up.
   """
-  return t.pipe(text.split('\n'),
+  return t.pipe(text.rstrip('\n').split('\n'),
                 tc.map(lambda x: re.split(' ?' + Patterns.escape.value.format('\|') + ' ?', x)),
                 lambda x: zip_longest(*x, fillvalue=''),
                 tc.map(lambda x: ['div', {'style': {'flex': '1'}}, '\n'.join(x)]),
@@ -269,7 +269,7 @@ def Matrix(text, type='flex'):
                 tc.map(lambda x: re.split(' ?' + Patterns.escape.value.format('\|') + ' ?', x)),
                 tc.map(lambda x: ['div' if type == 'flex' else 'tr',
                                   {'style': {'display':'flex'} if type == 'flex' else {}},
-                                  *t.map(lambda y: ['span' if type == 'flex' else 'td', {'flex': 1} if type == 'flex' else {}, y], x)]),
+                                  *t.map(lambda y: ['span' if type == 'flex' else 'td', {'style': {'flex': 1}} if type == 'flex' else {}, y], x)]),
                 tc.cons({'class': 'matrix matrix-flex' if type == 'flex' else 'matrix matrix-table'}),
                 tc.cons('div' if type == 'flex' else 'table'))
 
@@ -284,9 +284,15 @@ def Matrix(text, type='flex'):
 # figures - images with captions, basically.
 # annotated image - component library image processing
 
-@block(nest=Nesting.FRAME, sub=["inline"])
-def Figure(text, caption=''):
-  return ['figure', text, ['figcaption', caption] if caption else None]
+@block()
+def Figure(text):
+  split = text.split('\n', maxsplit=1)
+  if len(split) == 1:
+    caption = None
+    body = split[0]
+  else: #len(split) == 2
+    caption, body = split
+  return ['figure', body, (['figcaption', caption] if caption else None)]
 
 # audio - show an audio file, with html5 audio element (inline)
 # wavesurfer - audio with waveforms rendered to a div
@@ -336,10 +342,31 @@ def Katex(text, docid, elem):
 # julia formatter pseudocode (from Sexpr.jl)
 # theoretical example of using regexes to make a code highlighter.
 
+@block()
+def CodeBySide(text, language='md'):
+  """
+  A nifty component for showing off GLUE examples. Will render anything you
+  put in the environment per usual, and also display the raw text in a code box
+  to the side in a flex layout. It can be done manually with side-by-side, but
+  that required repeating yourself. This component allows you to be DRY about it.
+
+  Note that this component has a dependency on the existence of the `Code`
+  component.
+
+  :param text: body text of the component
+  :param language: programming language to display the insides in. markdown is
+                   default to accommodate glue components.
+  :return: a flex-box row with a rendered component, and the code to make it
+           happen side by side.
+  """
+  return ['div', {'style': {'display': 'flex', 'align-items': 'center'}},
+          ['div', {'style': {'flex': 1}}, text],
+          ['div', {'style': {'flex': 1}}, '---code ' + language + '\n' + text.rstrip('\n') + '\n...']]
+
 @asset_url(AssetType.CSS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/atom-one-light.min.css")
-@asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js")
 @asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/julia.min.js")
 @asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/haskell.min.js")
+@asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js")
 @terminal_block()
 def Code(text, language='python'):
   """
@@ -354,20 +381,21 @@ def Code(text, language='python'):
                   "hljs.highlightBlock(document.getElementById('{0}'))".format(h)]]
 
 @asset_inline(AssetType.CSS, '''
-  div.annotated-code .code-box {
+  .annotated-code .code-box {
     display: flex;
   }
-  div.annotated-code .code-box pre {
+  .annotated-code .code-box > pre {
     flex: 1;
+    margin: 0;
   }
-  div.annotated-code .code-box pre:first-child {
+  .annotated-code .code-box pre:first-child {
     flex: 0;
     padding-top: 0.5em;
   }
-  div.annotated-code .code-box pre:first-child span {
+  .annotated-code .code-box pre:first-child span {
     padding: 0 3px;
   }
-  div.annotated-code .code-box pre:first-child span:hover {
+  .annotated-code .code-box pre:first-child span:hover {
     background-color: black;
     color: white;
   }
@@ -463,11 +491,11 @@ def JsonComponent(text, name):
 # Domain Specific Blocks -> MUSIC related:
 
 @asset_inline(AssetType.CSS, '''
-svg.chordChart g.grid {stroke: black; stroke-width: 1px;}
-svg.chordChart text.labels {fill: white;}
+.chordChart g.grid {stroke: black; stroke-width: 1px;}
+.chordChart text.labels {fill: white;}
 ''')
 @asset_url(AssetType.JS, '/js/chordography.js')
-@standalone_integration()
+@standalone_integration(inner_elem='svg')
 def GuitarChord(text, docid, elem):
   """
   Creates an svg element that draws a guitar chord based on chordography's api.
@@ -521,6 +549,6 @@ Music = Registry(GuitarChord, MusicalAbc)
 
 # Registry setup
 
-Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [Blockquote, List, SideBySide, Matrix, Katex, Audio, MusicalAbc, GuitarChord, Code, AnnotatedCode]
+Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [Blockquote, List, CodeBySide, SideBySide, Matrix, Katex, Figure, Audio, MusicalAbc, GuitarChord, Code, AnnotatedCode, JsonComponent, YamlComponent]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup
 

@@ -145,7 +145,14 @@ def test_splitblocks_error():
     splitblocks('---b\n...\n...\n')
   assert 'line 3' in str(e.value)
 
+def test_splitblocks_sidebyside():
+  assert splitblocks(
+    '---side-by-side\n---list |\nfirst item | hello  \n... | \n...') == [
+           ['side-by-side', [], '---list |\nfirst item | hello  \n... | \n']]
+
 # ----------------------- testing unpack ------------------------------
 
 def test_unpack():
-  assert unpack(['h1', 'blah blah', ('Image', ['img', {'src': 'imageurl'}])]) == ['h1', 'blah blah', ['img', {'src': 'imageurl'}]]
+  assert unpack(
+    ['h1', 'blah blah', ('Image', ['img', {'src': 'imageurl'}])]) == [
+    'h1', 'blah blah', ['img', {'src': 'imageurl'}]]
