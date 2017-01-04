@@ -6,7 +6,7 @@ import uuid
 
 import functools
 import simplejson as json
-import yaml
+import ruamel.yaml as yaml
 import regex as re
 import toolz as t
 import toolz.curried as tc
@@ -551,4 +551,3 @@ Music = Registry(GuitarChord, MusicalAbc)
 
 Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [Blockquote, List, CodeBySide, SideBySide, Matrix, Katex, Figure, Audio, MusicalAbc, GuitarChord, Code, AnnotatedCode, JsonComponent, YamlComponent]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup
-

@@ -1,0 +1,102 @@
+# GLUE
+Extensible plain text syntax - write any static webpage you'd like.
+
+## Why did you bother?
+
+I like Markdown a lot. It makes writing static documents a lot easier, esp. for
+people who have some experience writing code.
+
+However, Markdown is super basic. I end up writing quite a bit of raw HTML in my
+markdown documents, mostly because of missing plugins/styling.
+Math is an excellent example. I have to write
+`<div class="math"> [math here] </div>` in my documents, and then add a script
+tag to include `katex`, which is really annoying. Another good example is images,
+which have no default styling, meaning I have to wrap them in another div and
+type the styling myself. Doing this for every image leads to lots of copy
+pasting, which is boring and a waste of time.
+
+Markdown has also inspired many other plain text domain-specific languages.
+There's languages for [sheet music](http://abcnotation.com), [flowcharts]
+(http://knsv.github.io/mermaid/), [math](https://khan.github.io/KaTeX), and much
+much more out there. No way to include these into the original
+markdown syntax, unless the person writing your parser thought to include it in
+there. I always feel gimped when trying to express myself using
+Markdown - not everything is a list or a blockquote.
+
+What I'd like to be able to do is write my own extensions to Markdown and have
+them included into the syntax of my parser, with minimal fuss. There
+are some "extensible" markdown editors out there, but I couldn't make sense of
+how to extend them (and I don't use PHP or Ruby, which is what most of
+them seemed to be written in). Basically, nothing I'd seen was done well enough
+to warrant my using it.
+
+I also noticed that many of these "extensions" required assets - small JS/CSS
+snippets - to be included so that they functioned properly, which made
+them a lot like components in a real application, and no Markdown parser out
+there handled generating the proper kinds of header files (no, not even
+Pandoc). I got really fed up dealing with arcane ASTs that didn't make sense,
+and generally trying to muck around with the inside of parsers.
+
+## Ok, so how does GLUE help?
+
+*GLUE* is a combination of a few things:
+
+---list
+*CLI Parser*: the ability to read a file of text and convert it to HTML (or a React/Mithril template)
+*Library*: a bundle of components that comes built-in
+  Of course, you can change any of the components to suit yourself.
+  The library is divided into *Registry*s, each of which house components for a particular domain. You can take only the ones you need to keep the parser fast.
+*Constructors*: a bundle of functions/decorators that make it really, really easy to build your own components.
+...
+
+Each thing facilitates one major use case of *GLUE*.
+
+## Use case 1: Parse some text
+
+For those of you who just want to use *GLUE* to write yourself some content -
+
+---code bash
+$ cat your-file | python3 -m glue
+...
+
+Will spit out html!
+
+Sometimes, you need a template - I have support for react and mithril templates, so far:
+
+---code bash
+$ cat your-file | python3 -m glue -l [mithril|react] ComponentName
+...
+
+`-l` or `--language` both work. Now you will get a file that creates a mithril component.
+
+This is a really bare bones intro - see the
+[Tour of the Standard Registry](/tour) to learn more about what components are
+available to you to write your document.
+
+## Use case 2: Write your own
+
+## Legal
+
+Licensed under the GPLv3. I don't speak legalese, so let me go ahead and include
+the spirit of what I want:
+
+---list
+If you improve the *parser* or the *library* of components, I'd like that to be open source under GPLv3. Basically since I provided those things to you, I'd like you to provide your work back to the world. This includes:
+  improving the basic parser components (elements, parser, codegen, registry, main file).
+  improving the components in the library.py file.
+If you write *your own component or registry*, that's your buisness. You can keep that to yourself, although it would be _nice_ if you put it up for all of us to enjoy!
+...
+
+
+The html.py file is a port of
+[cottonmouth](https://github.com/nosamanuel/cottonmouth), which I ported to
+python3 and improved a bit by adding ability to define the style attribute as a
+dictionary.
+
+
+
+
+
+
+
+
