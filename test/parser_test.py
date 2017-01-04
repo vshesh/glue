@@ -109,8 +109,11 @@ def test_parse_header():
 
 @pytest.mark.randomize(str_attrs=('digits', 'whitespace', 'ascii_letters'))
 def test_regex_clash(s: str):
+
   assert unwind(parse(Standard, '__'+s+'__')) == [
-    'div', ['p', ['span', {'style': 'text-decoration:underline;'}, s]]]
+    'div', ['p', ['span', {'style': 'text-decoration:underline;'}, s]]] if len(s) > 0 else [
+    'div', ['p' ['span', {'style': 'text-decoration:underline;'}]]]
+
 
 # ------------- MACROExpand test
 
