@@ -376,7 +376,7 @@ def Code(text, language='python'):
   :return: HTML code that will render a nice syntax highlighted code block.
   """
   h = str(uuid.uuid4())
-  return ['pre', ['code#{0}'.format(h), {'class': 'language-' + language}, text],
+  return ['pre', ['code#{0}.language-{1}'.format(h, language), text],
                  ['script', {'key': h},
                   "hljs.highlightBlock(document.getElementById('{0}'))".format(h)]]
 

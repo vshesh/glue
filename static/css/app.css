@@ -74,7 +74,11 @@ hr {
 	background-color: #CCCCCC;
 }
 
-p, blockquote, ul, ol, dl, li, table, pre {
+ul, ol, dl, li {
+  margin: 5px 0;
+}
+
+p, blockquote, table, pre {
 	margin: 15px 0;
 }
 

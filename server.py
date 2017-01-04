@@ -40,6 +40,8 @@ if __name__ == '__main__':
   # generate index.html
   with open('./static/index.html', 'w') as index:
     index.write(template('index', assets=Standard.assets))
+  with open('./gh-pages/index.html', 'w') as index:
+    index.write(template('index', assets=Standard.assets))
 
   run(app, host='localhost', port='8000', reloader=True,
       debug=True)
