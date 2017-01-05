@@ -1,10 +1,15 @@
+import pytest
 
 from glue import parse
 from glue.library import *
 from glue.util import unwind
 
-def test_bold():
-  assert unwind(parse(Registry(NoopBlock, Bold), '*bold*', NoopBlock)) == ['div', ['strong', {}, 'bold']]
+
+@pytest.mark.randomize(choices=('digits', 'whitespace', 'ascii_letters'))
+def test_singlegroups(s: str):
+  assert unwind(parse(Registry(NoopBlock, Bold), '*'+s+'*', NoopBlock)) == ['div', ['strong', {}, s]]
+  assert unwind(parse(Registry(NoopBlock, Italic), '_'+s+'_', NoopBlock)) == ['div', ['em', {}, s]]
+  assert unwind(parse(Registry(NoopBlock, Monospace), '`'+s+'`', NoopBlock)) == ['div', ['code', {}, s]]
 
 def test_tooltip():
   assert unwind(
@@ -19,7 +24,8 @@ def test_header():
            'div', ['h1', 'h1'], ['h2', 'h2'], ['h3', 'h3']]
 
 def test_criticsub():
-  assert unwind(parse(Registry(Paragraphs, CriticSub), '{~~a~>b~~}', Paragraphs)) == ['div', ['p', [['del', 'a'], ['ins', 'b']]]]
+  assert unwind(parse(Registry(Paragraphs, CriticSub), '{~~a~>b~~}', Paragraphs)) == [
+    'div', ['p', [['del', 'a'], ['ins', 'b']]]]
 
 def test_sidebyside():
   assert list(SideBySide('c | x')) == ['div', {'style': {'display': 'flex'}},

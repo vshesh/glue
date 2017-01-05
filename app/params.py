@@ -144,8 +144,8 @@ def params(keys=[], opts={}, strict=True):
 
       # python 3.5+ type checking, replace known types with variables.
       if sys.version_info[0] >= 3 and sys.version_info[1] >= 5:
+        ann = req_fun.__annotations__
         for (k,v) in p.items():
-          ann = req_fun.__annotations__
           if k in ann:
             try:
               p[k] = ann[k](v)
