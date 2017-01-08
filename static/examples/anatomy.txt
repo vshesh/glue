@@ -1,0 +1,183 @@
+# Anatomy of an Element
+
+Here you can learn all about the common ways to write an `Element`.
+
+This article is structured by first giving you the full list of available options, followed by some "case studies" into how some of the components of the standard library were written and how you might write your own.
+
+Here is a template for the definition of an Element (hover over numbers in left gutter for more info):
+
+---annotated-code
+# Some assets are loaded over the network - you can define them with
+# this decorator.
+@asset_url(AssetType.JS, 'http://example.com')
+# Other assets (mostly CSS) are small snippets that you can just embed
+# directly into the definition. For a more programmatic way to define
+# css properties, see [`glue/css.py`](https://github.com/vshesh/glue/blob/master/glue/css.py).
+@asset_inline(AssetType.CSS, '.element {property: value}')
+# You have many options for what kind of element you are dealing with,
+# look at the Cheatsheet below for a list of all of them.
+@block(opts='xy:')
+# Blocks take the contents as their first (and only) mandatory argument, and
+# then any further options that are allowed.
+def Element(text: str, x: bool=False, y: str=''):
+  return ['div', text]
+...
+
+## Cheatsheet
+
+For all the options you have at your fingertips. You diabolical genius, you.
+
+### `Inline`
+
+#### `IdenticalInline(name: str, s: str, tag: str, attr: dict)`
+
+The most basic kind of `Inline` Element looks like:
+
+---code
+[SOMETHING]text[SOMETHING]
+Eg:
+*text*
+_text_
+__text__
+...
+
+It's some character(s) followed by the contents, followed by the SAME character(s) again. The resultant HTML looks like `<tag ...attrs>text</tag>`. As you can imagine, configuring this is as easy as choosing the tag you want and the associated styles.
+
+Poster children for this type of inline element are `Bold` (\*text\*), `Italic`, `Underline`, `Monospace`, `Strikethrough`, the most basic styles in text editing. Here is how they're made:
+
+---code
+Bold = IdenticalInline('bold', '*', 'strong')
+Italic = IdenticalInline('italic', '_', 'em')
+Monospace = IdenticalInline('monospace', '`', 'code')
+Underline = IdenticalInline('underline', '__', 'span', {'style': 'text-decoration:underline;'})
+Strikethrough = IdenticalInline('strikethrough', '~', 'del')
+...
+
+Let's say you want to add a new element in this vein - HTML5 has a `<sup>` (superscript) tag, and you want to include that syntax. You would like superscript text to look like this in your input: `^text^`. How do you write the component to make this happen?
+
+---code
+Superscript = IdenticalInlineFrame('superscript', '^', 'sup')
+...
+
+That's all, folks! Now you can type `^superscript^` and it will be converted just the way you want.
+
+
+#### `MirrorInline(name:str, start:str, tag:str, attr: dict)`
+
+A slightly more general case of `IdenticalInlineFrame` for when you want the same thing to start and end your element, just flipped. This element will flip `(), [], {}, <>` pairs in the start string to compute what the end string should look like.
+
+Critic Markup allows you to highlight text using the syntax `\{==text==}`. How would you write this?
+
+---code python
+CriticMark = MirrorInline('critic-mark', '{==', 'mark')
+...
+
+And it {==works==}, too!
+
+
+#### `SingleGroupInline(name: str, start: str, end: str, tag: str, attr: dict)`
+
+A slightly more general version of `Identical/MirrorInline`, this allows you to do the same thing, but with different `start` and `end` characters.
+
+Eg, let's say you want to modify the superscript element above so it looks like Latex (`\^{superscript}`). How would you do that?
+
+---code
+Superscript = SingleGroupInlineFrame('superscript', '^{', '}', 'sup')
+...
+
+While we're at it, why not throw in subscript, too?
+
+---code
+Subscript = SingleGroupInlineFrame('subscript', '_{', '}', 'sub')
+...
+
+When you implement these elements, they look like^{this} and_{this}!
+Here is the chemical formula for glucose: C_{6}H_{12}O_{6}.
+
+#### `@inline_one(start: str, end: str)`
+
+General purpose element for `Inline` elements that only capture one group.
+Start and end are for the text that goes before and after the capture group, respectively.
+
+For example, markdown allows you to put a link in place by surrounding it with angle brackets. Eg, `<google.com>`.  How do you add this syntax to GLUE?
+
+---code
+@inline_one('<', '>')
+def LinkInPlace(groups):
+  return ['a', {'href': groups[0]}, groups[0]]
+...
+
+
+
+#### `@link(designation: str, nest=Nesting.POST, sub=None)`
+
+For elements that take on the syntax of a markdown link, preceded by some characters (`designation`).
+For example, you can copy Markdown for `<img>` tags by doing:
+
+---code
+@link('!') # so the syntax is ![alt](url)
+def Image(groups):
+  return ['img', {'alt': groups[0]}, groups[1]]
+...
+
+`Link` itself is implemented this way:
+---code
+@link('') # so the syntax is [text](url)
+def Link(groups):
+  return ['a', {'href': groups[1]}, groups[0]]
+...
+
+There are others, like `Tooltip` that benefit from this syntax. Basically, if you want two capture groups in your inline element, and you don't want to deal with the fuss of `@inline_two` (which is coming up), you can just use `@link` with some designation that isn't taken yet.
+
+#### `@inline_two(start: str, mid: str, end: str, nest=Nesting.POST, sub=None)`
+
+#### `@inline(regex, nest=Nesting.FRAME, sub=None, escape='', display=Display.INLINE)`
+
+
+### Block
+
+#### `@standalone_integration(inner\_elem='div', outer\_elem='div')`
+
+#### `@terminal_block(opts)`
+
+#### `@block(nest, sub, opts)`
+
+## Add some assets
+
+Assets are snippets of CSS and JS that make life interesting for our components. Adding them to any `Element` is really easy:
+
+### `@asset_url(type: AssetType, url: str)`
+
+Say you are writing a component to display math (using Katex) - only one problem: you need the math library! It's located _somewhere_ on the internet, so we can just add the asset as a URL:
+
+---code python
+from elements import asset_url, standalone_integration, AssetType
+
+@asset_url(AssetType.CSS, '//cdnjs.com/katex/0.6.0/katex.min.css')
+@asset_url(AssetType.JS, '//cdnjs.com/katex/0.6.0/katex.min.js')
+@standalone_integration()
+def Katex(contents, docid, elem):
+  return repr('katex.render(... blah blah ...)'.format(contents, elem)
+...
+
+Done! Now Katex is bundled with the necessary assets. In fact, this is pretty much exactly how `Katex` looks in `library.py`.
+
+### `@asset_inline(type: AssetType, contents: str)`
+
+Sometimes you just need a quick style or two that would be a pain to keep track of in other places, like your application style sheets.
+You can just add them inline, like so:
+
+---code python
+from elements import asset_url, standalone_integration, AssetType
+
+# This line right here:
+@asset_inline(AssetType.CSS, '.katex{ position: relative}')
+@asset_url(AssetType.CSS, '//cdnjs.com/katex/0.6.0/katex.min.css')
+@asset_url(AssetType.JS, '//cdnjs.com/katex/0.6.0/katex.min.js')
+@standalone_integration()
+def Katex(contents, docid, elem):
+  return repr('katex.render(... blah blah ...)'.format(contents, elem)
+...
+
+This way you can see the whole of the component in one place. There's no need to run around looking for where to change something.
+

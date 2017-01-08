@@ -13,10 +13,7 @@ import toolz.curried as tc
 from itertools import zip_longest
 
 from glue import Nesting, Registry
-from glue.elements import IdenticalInlineFrame, MirrorInlineFrame, \
-  terminal_block, standalone_integration, AssetType, asset_inline, asset_url
-from glue.elements import link, inline, inline_two, block, Display
-from glue.elements import Patterns
+from glue.elements import *
 
 # this module exposes basic elements and registries for common tasks.
 # it's designed to have feature parity with markdown, or a more sensible
@@ -30,12 +27,15 @@ from glue.elements import Patterns
 # link, tooltip
 # headers
 
-Bold = IdenticalInlineFrame('bold', '*', 'strong')
-Italic = IdenticalInlineFrame('italic', '_', 'em')
-Monospace = IdenticalInlineFrame('monospace', '`', 'code')
-Underline = IdenticalInlineFrame('underline', '__', 'span',
-  {'style': 'text-decoration:underline;'})
-Strikethrough = IdenticalInlineFrame('strikethrough', '~', 'del')
+Bold = IdenticalInline('bold', '*', 'strong')
+Italic = IdenticalInline('italic', '_', 'em')
+Monospace = IdenticalInline('monospace', '`', 'code')
+Underline = IdenticalInline('underline', '__', 'span',
+                            {'style': 'text-decoration:underline;'})
+Strikethrough = IdenticalInline('strikethrough', '~', 'del')
+
+Superscript = SingleGroupInline('superscript', '^{', '}', 'sup')
+Subscript = SingleGroupInline('subscript', '_{', '}', 'sub')
 
 @link('')
 def Link(groups):
@@ -53,6 +53,7 @@ def FullImage(groups):
   return ['img', {'alt': groups[0], 'src': groups[1],
                   'style': {'margin': '0 auto', 'display': 'block',
                             'max-width': '100%'}}]
+
 @asset_inline(AssetType.CSS, '''
 .pictogram {
   position: relative;
@@ -126,17 +127,17 @@ def Tooltip(groups):
 def Header(groups):
   return ['h' + str(len(groups[0])), groups[1].lstrip()]
 
-StandardInline = Registry(Bold, Underline, Italic, Monospace,
+StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic, Monospace,
                           Strikethrough, Link, InlineImage, FullImage, Pictogram, Tooltip, Header)
 
 # CRITIC - registry for doing annotations and critiques on the document.
 # insertion, deletion, substitution (really deletion + insertion)
 # highlighting, and comments.
 
-CriticAdd = MirrorInlineFrame('critic-add', '{++', 'ins')
-CriticDel = MirrorInlineFrame('critic-del', '{--', 'del')
-CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span.critic.comment')
-CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
+CriticAdd = MirrorInline('critic-add', '{++', 'ins')
+CriticDel = MirrorInline('critic-del', '{--', 'del')
+CriticComment = MirrorInline('critic-comment', '{>>', 'span.critic.comment')
+CriticHighlight = MirrorInline('critic-highlight', '{==', 'mark')
 
 @inline_two('{~~', '~>', '~~\}', nest=Nesting.POST)
 def CriticSub(groups):
@@ -149,10 +150,10 @@ CriticMarkup = Registry(CriticSub, CriticAdd, CriticDel, CriticComment, CriticHi
 # in that they have redundancy and aren't capable of showing off as many styles.
 # bold, italic, monospace, link
 
-MDStarBold = MirrorInlineFrame('md-star-bold', '**', 'strong')
-MDLodashBold = MirrorInlineFrame('md-lodash-bold', '__', 'strong')
-MDStarItalic = MirrorInlineFrame('md-star-italic', '*', 'em')
-MDLodashItalic = MirrorInlineFrame('md-lodash-italic', '_', 'em')
+MDStarBold = MirrorInline('md-star-bold', '**', 'strong')
+MDLodashBold = MirrorInline('md-lodash-bold', '__', 'strong')
+MDStarItalic = MirrorInline('md-star-italic', '*', 'em')
+MDLodashItalic = MirrorInline('md-lodash-italic', '_', 'em')
 
 MarkdownInline = (StandardInline - [Bold, Italic, Underline]) + [
   MDStarBold, MDLodashBold, MDStarItalic, MDLodashItalic]
@@ -259,6 +260,7 @@ def SideBySide(text):
                 tc.cons('div'),
                 list)
 
+@asset_inline(AssetType.CSS, '.matrix {margin: 0 auto}')
 @block()
 def Matrix(text, type='flex'):
   """Displays a table or flexbox style grid of values.
@@ -270,8 +272,8 @@ def Matrix(text, type='flex'):
                 tc.map(lambda x: ['div' if type == 'flex' else 'tr',
                                   {'style': {'display':'flex'} if type == 'flex' else {}},
                                   *t.map(lambda y: ['span' if type == 'flex' else 'td', {'style': {'flex': 1}} if type == 'flex' else {}, y], x)]),
-                tc.cons({'class': 'matrix matrix-flex' if type == 'flex' else 'matrix matrix-table'}),
-                tc.cons('div' if type == 'flex' else 'table'))
+                tc.cons('div.matrix.matrix-flex' if type == 'flex' else 'table.matrix.matrix-table'),
+                list)
 
 
 # MEDIA - displaying images
@@ -297,7 +299,7 @@ def Figure(text):
 # audio - show an audio file, with html5 audio element (inline)
 # wavesurfer - audio with waveforms rendered to a div
 
-@inline('@\\[(.+?'+Patterns.escape.value.format(')\\]'), nest=Nesting.NONE)
+@inline('@\\{(.+?'+Patterns.escape.value.format(')\\}'), nest=Nesting.NONE)
 def Audio(group):
   """
   `@[audio file]` creates an inline audio element with the HTML5 audio tag.

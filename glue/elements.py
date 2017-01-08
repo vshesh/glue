@@ -10,6 +10,8 @@ import inflection
 import regex as re
 
 # --------------------- ELEMENT UTILITIES ---------------------------------
+from glue import css
+
 
 def makename(name: str) -> str:
   """Turns a capital camelcase name into a dasherized name for block detection.
@@ -290,26 +292,17 @@ def asset_url(type: AssetType, url: str):
     return elem
   return asset_url_helper
 
-def asset_inline(type: AssetType, contents: str):
+def asset_inline(type: AssetType, contents: Union[str, list]):
   def asset_inline_helper(elem: Element):
     elem.add_asset('<script type="text/javascript">\n{0}\n</script>'.format(contents)
                    if type == AssetType.JS
-                   else '<style>\n{0}\n</style>'.format(contents))
+                   else '<style>\n{0}\n</style>'.format(css.scss(contents)
+                                                        if isinstance(contents, list)
+                                                        else contents))
     return elem
   return asset_inline_helper
 
 # ----------------------- ELEMENT CONSTRUCTOR UTILITIES ----------------------
-
-# Having these as decorators allows for a simpler way of defining blocks, at
-# least for the time being, since it's just a decorator on a function.
-# In the future, this will have to be expanded to include:
-#
-# 1. separate parsing/rendering functions to support multiple target languages
-#    and frameworks (oh, the joys of javascript).
-# 2. asset files associated with the element, that need to be preloaded on the
-#    generated page so that the block can be used (eg. Katex, or chordmaker)
-# 3. component definitions in target frameworks eg React or Elm or Mithril
-# 4. minimal css definitions associated with the component.
 
 def block(nest=Nesting.POST, sub=None, opts=''):
   """
@@ -378,17 +371,16 @@ def inline(regex, nest=Nesting.FRAME, sub=None, escape='', display=Display.INLIN
 
   return inline_fn
 
-def inline_frame(regex, escape: Union[Set[str], str]):
+def inline_one(start: str, end: str, nest=Nesting.FRAME, sub=None, display=Display.INLINE):
   """
-  Decorator that returns an inline frame
-  :param regex: regex pattern to match to detect element
-  :param escape: characters for which the parent block must set up escape patterns.
-  :return: a new `Inline` element that is a frame with the parser specfied.
   """
-  return inline(regex, escape=escape, sub=['inherit'])
-
-def SingleGroupInlineFrame(name: str, start: str, end: str, tag: str,
-                              attr: Mapping[str, str]=None):
+  patt = re.compile(Patterns.single_group.value.format(
+    re.escape(start), re.escape(end)))
+  return inline(patt, escape=[start[0], end[0]],
+                nest=nest, display=display, sub=sub)
+  
+def SingleGroupInline(name: str, start: str, end: str, tag: str,
+                      attr: Mapping[str, str]=None):
   """
   A special kind of inline frame that has only one capture group and wraps
   it with some set of start and end characters.
@@ -401,26 +393,24 @@ def SingleGroupInlineFrame(name: str, start: str, end: str, tag: str,
   letters, and the generated regex makes sure that neither the start nor the
   end of the pattern are preceded by a backslash for escape.
   """
-  patt = re.compile(Patterns.single_group.value.format(
-    re.escape(start), re.escape(end)))
   parser = lambda body: [tag, attr or {}, body]
   parser.__name__ = name
-  return inline_frame(regex=patt, escape={start[0], end[0]})(parser)
+  return inline_one(start, end)(parser)
 
-def IdenticalInlineFrame(name: str, s:str, tag:str, attr:Mapping[str,str]=None):
+def IdenticalInline(name: str, s:str, tag:str, attr:Mapping[str, str]=None):
   """
   A very simple wrapper around `SingleGroupInlineFrame` that will work
   if you expect the start/end of the element to be the same. Eg: `*bold*`.
   """
-  return SingleGroupInlineFrame(name, s, s, tag, attr)
+  return SingleGroupInline(name, s, s, tag, attr)
 
-def MirrorInlineFrame(name:str, start:str, tag:str, attr:Mapping[str,str]=None):
+def MirrorInline(name:str, start:str, tag:str, attr:Mapping[str, str]=None):
   """
   A very simple wrapper around `SingleGroupInlineFrame` that is for when
   the start/end of the element are mirrors of each other, eg: `{++add++}`
   Handles ()[]{}<> flipping.
   """
-  return SingleGroupInlineFrame(
+  return SingleGroupInline(
     name, start,
     start[::-1].translate(str.maketrans('()[]{}<>', ')(][}{><')),
     tag, attr)

@@ -1,10 +1,10 @@
-# A Tour of the `Standard` Registry
+# A Tour of the Standard Registry
 
 This document is a primer for how to use *GLUE*, and also a tour of the various components that come prebundled in the `library.py` file.
 
 If you're interested in reading about how to *write* glue components, as opposed to how to use them, then go look at ["Anatomy of a Component"](/examples/anatomy_of_a_component) and ["A History of the Standard Registry"](/examples/a_history_of_the_standard_registry) which describe what went into making the components that are displayed here, and teaches strategies for how you can implement your own in the simplest way possible. Hopefully it covers about 80% of the cases that you would be interested in.
 
-## Basic Editing (see: `StandardInline` registry)
+## Basic Editing
 
 Basic editing encompasses things you'd normally like to do in any editing environment, which are things like: *bold*, _italic_, `monospace`, ~strikethrough~, __underline__ and so on.
 Since these basic editing elements are used so often, there is a simple way to make each of them:
@@ -36,7 +36,7 @@ You may also want a literal bold asterisk. To make one, type `\*\\\*\*` in the d
 
 Another option is that you may want to escape a link, for example, to explain to someone how to make a link! To do this, prefix the link with `\\`, like so: `\\\[link](google.com)` -> \[link](google.com). The `[` character loses its special meaning so the link is not processed.
 
-## Environments (basic blocks)
+## Environments
 
 Environments allow you to create other things than paragraphs of text. Here is an example of an environment - a list:
 
@@ -168,7 +168,7 @@ This layout may be rather confusing - but the right half is the code required to
 
 In general, if you wrap anything in the `CodeBySide` environment, you will see the code required to make it on the right (it will match whatever is inside the environment).
 
-## Media (audio, video etc)
+## Media
 
 ### Audio
 
@@ -195,7 +195,7 @@ And here is another image which is big enough to take up the whole container, an
 
 ![bubble nebula](http://i.imgur.com/R1fJq0V.jpg)
 
-## Standalone Blocks (integrations with other plain-texts)
+## Standalone Blocks
 
 The subtitle of this library is "plain text syntax for other plain text syntaxes". This is the section where I show you just how easy it is to use the other syntaxes out there with no special mangling or updating of a parser. Inside each of these environments, the text is processed by the respective library that is integrated, so you have access to anything that they've defined.
 
@@ -330,7 +330,7 @@ label: 0, 2, 3, 1
 
 Here is E Major for a tenor ukelele (which has the same tuning as the first four strings of a guitar).
 
-## Custom Components (using your own stuff)
+## Custom Components
 
 For those who like using a component library like React, Mithril, etc. You will probably write your own components a lot. It can be annoying to have to write something corresponding in *GLUE* for every single component you write in React or Mithril. There is an easy way around this though - there is a *GLUE* environment that allows you to use your own components, `YamlComponent`:
 
@@ -345,6 +345,6 @@ annotations:
 
 Here I've put an `AnnotatedCode` component (written in mithril.js) into my document by giving `YamlComponent` the name of the component in the environment opening line (`---yaml-component AnnotatedCode`) and then filling in whatever information needs to be the `props` (from React terminology, it may be called different things in different libraries) in YAML syntax in the body of the environment.
 
-# Wrap Up
+## Wrap Up
 
 That's a wrap! All the components that come with the Standard library. Hopefully this gives you an idea of the scope of the project and what it can accomplish. Most of these environments are also really easy to write, but that's the subject of another post.

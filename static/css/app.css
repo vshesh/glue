@@ -31,40 +31,48 @@ textarea {
 
 /* avenir white css */
 #rendered {
-	font-family: "M+ 2p", Helvetica, Arial, sans-serif;
+	font-family: "M+ 2p", sans-serif;
+  font-size: 12pt;
+  line-height: 1.5em;
 }
 
 h1, h2, h3, h4, h5, h6 {
 	font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  line-height: 1.1em;
 }
 
 h1 {
-	color: #000000;
-	font-size: 28pt;
+	font-size: 35pt;
+  font-family: Ribeye Marrow;
+  text-align: center;
 }
 
 h2 {
 	border-bottom: 1px solid #CCCCCC;
-	color: #000000;
-	font-size: 24px;
+  padding-bottom: 0.25em;
+	font-size: 24pt;
+  font-weight: 800;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 h3 {
-	font-size: 18px;
+	font-size: 20pt;
 }
 
 h4 {
-	font-size: 16px;
+	font-size: 18pt;
 }
 
 h5 {
-	font-size: 14px;
+	font-size: 16pt;
 }
 
 h6 {
-	color: #777777;
-	background-color: inherit;
-	font-size: 14px;
+	font-size: 14pt;
 }
 
 hr {
@@ -74,38 +82,26 @@ hr {
 	background-color: #CCCCCC;
 }
 
-ul, ol, dl, li {
+ul, ol, dl, {
+  line-height: 1.2em;
+  margin-bottom: 15px;
+}
+
+li {
   margin: 5px 0;
 }
 
 p, blockquote, table, pre {
-	margin: 15px 0;
+	margin-top: 0;
+  margin-bottom: 15px;
 }
 
 a, a:visited {
 	color: #4183C4;
-	background-color: inherit;
 	text-decoration: none;
 }
 
-#message {
-	border-radius: 6px;
-	border: 1px solid #ccc;
-	display:block;
-	width:100%;
-	height:60px;
-	margin:6px 0px;
-}
-
-button, #ws {
-	font-size: 10pt;
-	padding: 4px 6px;
-	border-radius: 5px;
-	border: 1px solid #bbb;
-	background-color: #eee;
-}
-
-code, pre, #ws, #message {
+code, pre {
 	font-family: "M+ 1m", monospace;
 	border-radius: 3px;
 	color: inherit;
@@ -117,5 +113,15 @@ pre > code {
 }
 
 pre {
-  line-height: 1.2em
+  line-height: 1.2em;
 }
+
+
+nav {
+  font-size: 14pt;
+  background-color: #eee; }
+nav > a {
+  text-decoration: none;
+  padding: 0 5px;
+  background-color: rgba(0,0,0,0.1);}
+  

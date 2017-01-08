@@ -5,7 +5,7 @@ from glue.library import *
 from glue.util import unwind
 
 
-@pytest.mark.randomize(choices=('digits', 'whitespace', 'ascii_letters'))
+@pytest.mark.randomize(str_attrs=('digits', 'whitespace', 'ascii_letters'))
 def test_singlegroups(s: str):
   assert unwind(parse(Registry(NoopBlock, Bold), '*'+s+'*', NoopBlock)) == ['div', ['strong', {}, s]]
   assert unwind(parse(Registry(NoopBlock, Italic), '_'+s+'_', NoopBlock)) == ['div', ['em', {}, s]]
@@ -55,36 +55,35 @@ def test_sidebyside():
                                    ['div', {'style': {'flex': '1'}}, 'a']]
 
 def test_matrix():
-  assert unwind(Matrix('c | x')) == ['div', {'class': 'matrix matrix-flex'},
+  assert unwind(Matrix('c | x')) == ['div.matrix.matrix-flex',
                                      ['div', {'style': {'display': 'flex'}},
                                       ['span', {'style': {'flex': 1}}, 'c'],
                                       ['span', {'style': {'flex': 1}}, 'x']]]
 
-  assert unwind(Matrix('c|x')) == ['div', {'class': 'matrix matrix-flex'},
+  assert unwind(Matrix('c|x')) == ['div.matrix.matrix-flex',
                                      ['div', {'style': {'display': 'flex'}},
                                       ['span', {'style': {'flex': 1}}, 'c'],
                                       ['span', {'style': {'flex': 1}}, 'x']]]
 
-  assert unwind(Matrix('c| x')) == ['div', {'class': 'matrix matrix-flex'},
+  assert unwind(Matrix('c| x')) == ['div.matrix.matrix-flex',
                                      ['div', {'style': {'display': 'flex'}},
                                       ['span', {'style': {'flex': 1}}, 'c'],
                                       ['span', {'style': {'flex': 1}}, 'x']]]
 
-  assert unwind(Matrix('c |x')) == ['div', {'class': 'matrix matrix-flex'},
+  assert unwind(Matrix('c |x')) == ['div.matrix.matrix-flex',
                                      ['div', {'style': {'display': 'flex'}},
                                       ['span', {'style': {'flex': 1}}, 'c'],
                                       ['span', {'style': {'flex': 1}}, 'x']]]
 
   assert unwind(Matrix('c | x', type='matrix')) == [
-    'table', {'class': 'matrix matrix-table'},
+    'table.matrix.matrix-table',
     ['tr', {'style': {}},
      ['td', {}, 'c'],
      ['td', {}, 'x']]]
 
-
-def test_noop():
-  assert list(NoopBlock('text')) == ['div', 'text']
-  assert list(NoopBlock('text\n\nmore text')) == ['div', 'text\n\nmore text']
+@pytest.mark.randomize()
+def test_noop(s: str):
+  assert list(NoopBlock(s)) == ['div', s]
 
 def test_standard_registry():
   t1="""

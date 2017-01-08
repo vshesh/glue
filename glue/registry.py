@@ -1,9 +1,12 @@
+# # Registry
+# Created: May 21, 2016
+# Author: Vishesh Gupta
+
 from collections import OrderedDict
 import copy
 import toolz as t
 from typing import Union, List, Mapping, Iterable
 from glue.elements import *
-
 
 class Registry(OrderedDict, Mapping[str, Union[Inline, Block]]):
   """
@@ -55,7 +58,7 @@ class Registry(OrderedDict, Mapping[str, Union[Inline, Block]]):
 
     return self
 
-  def __isub__(self, other:dict):
+  def __isub__(self, other: Iterable):
     if not isinstance(other, dict) and (
           not isinstance(other, Iterable) or
           not all(isinstance(x, (Inline, Block)) for x in other)):
@@ -95,7 +98,7 @@ class Registry(OrderedDict, Mapping[str, Union[Inline, Block]]):
     return r
 
   @property
-  def top(self) -> Union[Inline,Block]:
+  def top(self) -> Element:
     return self[Registry.TOP]
 
   @property
@@ -106,7 +109,7 @@ class Registry(OrderedDict, Mapping[str, Union[Inline, Block]]):
   def all_block(self) -> List[Block]:
     return t.filter(lambda x: isinstance(x, Block), self.values())
 
-  def inline_subscriptions(self, names:List[str], parent:Union[Block, Inline]=None) -> List[Inline]:
+  def inline_subscriptions(self, names:List[str], parent:Element=None) -> List[Inline]:
     l = []
     if 'all' in names:
       l.extend(self.all_inline)
@@ -129,8 +132,8 @@ class Registry(OrderedDict, Mapping[str, Union[Inline, Block]]):
     :return: a string which contains all the assets, to be put into an HTML template.
     """
     return '\n\n\n'.join('\n'.join(item[1].assets) for item in self.items() if len(item[1].assets) > 0)
-
-  def validate(self):
+  
+  def validate(self) -> bool:
     if self.TOP not in self or not isinstance(self[self.TOP], Block):
       return False
 

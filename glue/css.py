@@ -2,12 +2,15 @@
 # uses libsass to generate a CSS string.
 
 import sass
+from itertools import takewhile
 
-def scss_selector(l: list, indent=1):
-  return (l[0] + ' {'
+def scss_selector(selector: list, indent=1):
+  selector_list = list(takewhile(lambda x: isinstance(x, str), selector))
+  
+  return (','.join(selector_list) + ' {'
           + ' '.join(
-              item[0]+': '+item[1]+';' for item in l[1].items())
-          + ' '.join(scss_selector(x, indent+1) for x in  (l[2:] if len(l) > 2 else []))
+              item[0]+': '+item[1]+';' for item in selector[len(selector_list)].items())
+          + ' '.join(scss_selector(x, indent+1) for x in selector[len(selector_list)+1:])
           + '}')
 
 def scss(selectors:list):
