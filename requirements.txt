@@ -2,7 +2,7 @@ sass
 inflection
 regex
 toolz
-PyYAML
+ruamel.yaml
 
 bottle
 bs4
