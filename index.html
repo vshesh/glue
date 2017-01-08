@@ -79,6 +79,11 @@
 </style>
 
 
+<style>
+.matrix {margin: 0 auto}
+</style>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css"/>
 <style>
@@ -110,7 +115,7 @@ function setViewBox(selector) {
 </script>
 
 
-<script src="/glue/js/chordography.js"></script>
+<script src="/js/chordography.js"></script>
 <style>
 
 .chordChart g.grid {stroke: black; stroke-width: 1px;}
@@ -119,13 +124,13 @@ function setViewBox(selector) {
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/haskell.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/julia.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/atom-one-light.min.css"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/haskell.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/julia.min.js"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/atom-one-light.min.css"/>
 
 
-<script src="/glue/js/annotated-code.js"></script>
+<script src="/js/annotated-code.js"></script>
 <style>
 
   .annotated-code .code-box {
@@ -149,12 +154,19 @@ function setViewBox(selector) {
 
 </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.13.1/lodash.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mithril/0.2.5/mithril.js"></script>
-  <link href="https://fonts.googleapis.com/css?family=Lato|Open+Sans|PT+Sans" rel="stylesheet">
-  <link rel="stylesheet" href="/glue/css/app.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mithril/0.2.5/mithril.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Ribeye+Marrow" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
+  <nav>
+    <a href="/?/"><strong>GLUE</strong></a>
+    <a href="/?/intro">Intro</a>
+    <a href="/?/tour">Tour of <code>Standard</code> Registry</a>
+    <a href="/?/anatomy">Anatomy of an <code>Element</code></a>
+    <a href="/?/api">API</a>
+  </nav>
   <div id="container"></div>
-  <script src="/glue/js/app.js"></script>
+  <script src="/js/app.js"></script>
 </body>
 </html>

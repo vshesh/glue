@@ -11,9 +11,18 @@ function loadJS(file) {
   return jsElm;
 }
 
-loadJS('/glue/js/tour.js').onload = function() {
-  m.route(document.getElementById('container'), '/', {
-    '/': Tour,
-  })
+loadJS('/js/anatomy.js').onload = function() {
+  loadJS('/js/intro.js').onload = function() {
+    loadJS('/js/markdown.js').onload = function() {
+      loadJS('/js/tour.js').onload = function() {
+        m.route(document.getElementById('container'), '/', {
+          '/': Intro,
+          '/intro': Intro,
+          '/tour': Tour,
+          '/markdown': Markdown,
+          '/anatomy': Anatomy
+        })
+      }
+    }
+  }
 }
-
