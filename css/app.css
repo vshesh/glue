@@ -1,3 +1,31 @@
+@font-face {
+  font-family: "M+ 2p";
+  src: url('/fonts/mplus/mplus-2p-regular.ttf');
+}
+
+@font-face {
+  font-family: "M+ 2p";
+  src: url('/fonts/mplus/mplus-2p-bold.ttf');
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "M+ 2p";
+  src: url('/fonts/mplus/mplus-2p-heavy.ttf');
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: "M+ 1m";
+  src: url('/fonts/mplus/mplus-1m-regular.ttf');
+}
+
+@font-face {
+  font-family: "M+ 1m";
+  src: url('/fonts/mplus/mplus-1m-bold.ttf');
+  font-weight: 600;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -77,7 +105,7 @@ p, blockquote, table, pre {
   margin-bottom: 15px;
 }
 
-a, a:visited {
+a[href], a[href]:visited {
 	color: #4183C4;
 	text-decoration: none;
 }
