@@ -104,8 +104,14 @@ def test_parseblock_nestingpost():
 
 def test_parse_header():
   assert unwind(parse(Standard, '# Header ![img](imgurl)')) == [
-    'div', ['h1', 'Header ', ['img', {'alt': 'img', 'src': 'imgurl',
-                                     'style': {'margin': '0 auto', 'display': 'block', 'max-width': '100%'}}]]]
+    'div', ['h1', ['a', {'name': 'header-imgimgurl'},
+                   'Header ', ['img', {'alt': 'img', 'src': 'imgurl',
+    'style': {'margin': '0 auto', 'display': 'block', 'max-width': '100%'}}]]]]
+  assert unwind(
+    parse(Standard, '# h1\n## h2\n### h3', Paragraphs)) == [
+           'div', ['h1', ['a', {'name': 'h1'}, 'h1']],
+                  ['h2', ['a', {'name': 'h2'}, 'h2']],
+                  ['h3', ['a', {'name': 'h3'}, 'h3']]]
 
 @pytest.mark.randomize(str_attrs=('digits', 'whitespace', 'ascii_letters'))
 def test_regex_clash(s: str):

@@ -172,7 +172,7 @@ Is it possible to nest other `Element`s in your `Element`?
 Are there any asset files (css/js) to be included with your `Element`?
 ...
 
-This is a super bare-bones intro to writing your own `Element`. If it seems like a lot of convoluted decisions, don't worry! There's a whole article on it called "[Anatomy of an `Element`"](/anatomy) that explains everything in detail. Most `Element`s fall into one of a few main buckets, and that article covers how to make each kind.
+This is a super bare-bones intro to writing your own `Element`. If it seems like a lot of convoluted decisions, don't worry! There's a whole article on it called "[Anatomy of an `Element`"](/?/anatomy) that explains everything in detail. Most `Element`s fall into one of a few main buckets, and that article covers how to make each kind.
 
 ## FAQ
 

@@ -139,7 +139,11 @@ def unpack(html):
   :return: `(elem, [html...])` -> `[html...]` for each element in HTML. the tag
   name and attribute list are ignored.
   """
-  if isinstance(html, tuple):
+  if (isinstance(html, (list, types.GeneratorType, map, zip, filter))
+      or inspect.isgenerator(html)
+      or inspect.isgeneratorfunction(html)):
+    return [unpack(x) for x in html]
+  elif isinstance(html, tuple):
     if isinstance(html[1][1], dict):
       return [html[1][0], html[1][1], *map(unpack, html[1][2:])]
     return [html[1][0], *map(unpack, html[1][1:])]

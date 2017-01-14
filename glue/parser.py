@@ -79,6 +79,7 @@ def parseinline(registry:Registry,
     if elem.nest == Nesting.FRAME:
       # frames are simple, by default they have inherit behavior
       # and deal with one group
+      print(groups)
       l.append((elem, list(splicehtmlmap(lambda t: parseinline(
         registry, block, t, parent), parser(groups[0]) )) ) )
     elif elem.nest == Nesting.NONE:
@@ -158,7 +159,6 @@ def parseblock(registry:Registry, block:Block, text:str, args=None, parent=None)
         subs[substr] = unpack(e[1])
         subtext.append(substr)
         i += 1
-
     return splicehtmlmap(
       lambda text: [subs[x] if x.startswith('[|') and x.endswith('|]') else x
                  for x in re.split(r'(\[\|\|?\d+\|?\|\])', text) if x != ''],

@@ -16,12 +16,10 @@ def test_tooltip():
     parse(Registry(NoopBlock, Tooltip), 'T[text](tooltip)', NoopBlock)) == [
            'div', ['span.tooltip', 'text', ['div.tooltip-text', 'tooltip']]]
 
-def test_header():
-  assert unwind(parse(Registry(Paragraphs, Header), '# h1', Paragraphs)) == [
-    'div', ['h1', 'h1']]
-  assert unwind(
-    parse(Registry(Paragraphs, Header), '# h1\n## h2\n### h3', Paragraphs)) == [
-           'div', ['h1', 'h1'], ['h2', 'h2'], ['h3', 'h3']]
+@pytest.mark.randomize(str_attrs=('digits', 'ascii_letters'), min_num=1, max_num=6)
+def test_header(s: str, n: int):
+  assert unwind(parse(Registry(Paragraphs, Header), '#'*n+' '+s, Paragraphs)) == [
+    'div', ['h'+str(n), ['a', {'name': s.lower()}, s]]]
 
 def test_criticsub():
   assert unwind(parse(Registry(Paragraphs, CriticSub), '{~~a~>b~~}', Paragraphs)) == [
@@ -93,6 +91,6 @@ def test_standard_registry():
 
 new paragraph
   """
-  assert unwind(parse(Standard, t1)) == ['div', ['h1', 'Placeholder'],
+  assert unwind(parse(Standard, t1)) == ['div', ['h1', ['a', {'name': 'placeholder'}, 'Placeholder']],
                                                 ['p', ['strong', {}, ' bold ']],
                                                 ['p', 'new paragraph']]

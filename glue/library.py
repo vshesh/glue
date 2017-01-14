@@ -125,7 +125,9 @@ def Tooltip(groups):
 
 @inline(r'^(\#{1,6})([^\n]*)$', display=Display.BLOCK, nest=Nesting.POST, escape='#')
 def Header(groups):
-  return ['h' + str(len(groups[0])), groups[1].lstrip()]
+  return ['h' + str(len(groups[0])),
+          ['a', {'name':  re.sub(r'[^A-Za-z0-9 ]', '', groups[1]).strip().replace(' ', '-').lower()},
+           groups[1].lstrip()]]
 
 StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic, Monospace,
                           Strikethrough, Link, InlineImage, FullImage, Pictogram, Tooltip, Header)

@@ -338,6 +338,15 @@ def terminal_block(opts=''):
   return block(Nesting.NONE, [], opts)
 
 def standalone_integration(outer_elem='div', inner_elem='div'):
+  """
+  Decorator that takes a function with signature `(text: str, docid: str, elem: str) -> str` that spits out the
+  script contents required to inject the integrated content into the element, and generates a block that wraps that
+  logic. That's kinda confusing - see examples like `Katex` or `MusicalAbc` in the library.py file.
+  
+  :param outer_elem: optional if you want something other than a `div` on the outside
+  :param inner_elem: optional if you want something other than a `div` on the inside (eg, `svg`, `pre`, etc).
+  :return: a `Block` that generates HTML to inject content into the site integrated with a JS library.
+  """
   def standalone_integration_wrapper(f):
     @terminal_block()
     @functools.wraps(f)

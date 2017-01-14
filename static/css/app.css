@@ -96,7 +96,7 @@ p, blockquote, table, pre {
   margin-bottom: 15px;
 }
 
-a, a:visited {
+a[href], a[href]:visited {
 	color: #4183C4;
 	text-decoration: none;
 }
