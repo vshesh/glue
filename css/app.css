@@ -1,28 +1,28 @@
 @font-face {
   font-family: "M+ 2p";
-  src: url('/fonts/mplus/mplus-2p-regular.ttf');
+  src: url('/fonts/mplus/mplus-2p-regular.woff');
 }
 
 @font-face {
   font-family: "M+ 2p";
-  src: url('/fonts/mplus/mplus-2p-bold.ttf');
+  src: url('/fonts/mplus/mplus-2p-bold.woff');
   font-weight: 600;
 }
 
 @font-face {
   font-family: "M+ 2p";
-  src: url('/fonts/mplus/mplus-2p-heavy.ttf');
+  src: url('/fonts/mplus/mplus-2p-heavy.woff');
   font-weight: 800;
 }
 
 @font-face {
   font-family: "M+ 1m";
-  src: url('/fonts/mplus/mplus-1m-regular.ttf');
+  src: url('/fonts/mplus/mplus-1m-regular.woff');
 }
 
 @font-face {
   font-family: "M+ 1m";
-  src: url('/fonts/mplus/mplus-1m-bold.ttf');
+  src: url('/fonts/mplus/mplus-1m-bold.woff');
   font-weight: 600;
 }
 
