@@ -59,7 +59,7 @@ def render_react_component(name: str, expr: str):
     render: function() {{
       return {expr};
     }}
-  }}'''
+  }}'''.format(name=name, expr=expr)
 
 tomithril = t.compose(render_mithril, unwind, parse)
 toreact = t.compose(render, parse)

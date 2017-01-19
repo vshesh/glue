@@ -52,7 +52,7 @@ $ cat your-file | python3 -m glue -l [mithril|react] ComponentName
 
 `-l` or `--language` both work. Now you will get a file that creates a component, which you can save as `component-name.js[x]`.
 
-This is a really bare bones intro - see the [Tour of the Standard Registry](/tour) to learn more about what components are available to you to write your document.
+This is a really bare bones intro - see the [Tour of the Standard Registry](/?/tour) to learn more about what components are available to you to write your document.
 
 ### Use case 2: Customize your bundle
 

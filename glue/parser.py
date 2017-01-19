@@ -23,6 +23,7 @@ def parseinline(registry:Registry,
   so:
   ['div', *parseinline(registry, element, text)] is what you would do.
   """
+  if text == '': return ['']
 
   block = registry[element] if isinstance(element, str) else element
   subinline = list(registry.inline_subscriptions(block.subinline, parent))
@@ -79,7 +80,6 @@ def parseinline(registry:Registry,
     if elem.nest == Nesting.FRAME:
       # frames are simple, by default they have inherit behavior
       # and deal with one group
-      print(groups)
       l.append((elem, list(splicehtmlmap(lambda t: parseinline(
         registry, block, t, parent), parser(groups[0]) )) ) )
     elif elem.nest == Nesting.NONE:

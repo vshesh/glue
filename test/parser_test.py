@@ -9,7 +9,8 @@ sample = Registry(Bold, Italic, Monospace, Paragraphs)
 # --------------------------------- PARSEINLINE TESTS --------------------
 
 def test_parseinline_empty():
-  assert parseinline(sample, Paragraphs, '') == []
+  assert parseinline(sample, Paragraphs, '') == ['']
+  assert parseinline(Standard, Paragraphs, '**') == [(Bold, ['strong', {}, ''])]
 
 
 def test_parseinline_nosub():
@@ -115,10 +116,8 @@ def test_parse_header():
 
 @pytest.mark.randomize(str_attrs=('digits', 'whitespace', 'ascii_letters'))
 def test_regex_clash(s: str):
-
   assert unwind(parse(Standard, '__'+s+'__')) == [
-    'div', ['p', ['span', {'style': 'text-decoration:underline;'}, s]]] if len(s) > 0 else [
-    'div', ['p' ['span', {'style': 'text-decoration:underline;'}]]]
+    'div', ['p', ['span', {'style': 'text-decoration:underline;'}, s]]]
 
 
 # ------------- MACROExpand test
@@ -133,3 +132,4 @@ def test_macroexpand(s: str):
 @pytest.mark.randomize(str_attrs=('digits', 'ascii_uppercase'))
 def test_parsemacros(name: str, text: str):
   assert unwind(parsemacros('{} = {}'.format(name, text))) == [[name, text]]
+
