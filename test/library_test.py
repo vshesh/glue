@@ -79,6 +79,24 @@ def test_matrix():
      ['td', {}, 'c'],
      ['td', {}, 'x']]]
 
+def test_list():
+  s = '''
+  one
+  two
+  three
+  '''
+  assert List(s) == ['ul', ['li', 'one'], ['li', 'two'], ['li', 'three']]
+  s2 = '''
+  one
+   sub one
+   sub two
+     sub sub one
+  two
+  '''
+  assert List(s2) == ['ul', ['li', 'one', ['ul', ['li', 'sub one'], ['li', 'sub two', ['ul', ['li', 'sub sub one']]]]],
+                      ['li', 'two']]
+
+
 @pytest.mark.randomize()
 def test_noop(s: str):
   assert list(NoopBlock(s)) == ['div', s]

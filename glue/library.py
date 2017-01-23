@@ -221,19 +221,22 @@ def List(text, o:bool=False):
   :return: a list element
   """
   items = []
-  pos = -1
+  pos = [-1]
   for line in text.split('\n'):
     if line.strip() == "": continue
     p = len(line) - len(line.lstrip(' '))
-    if p > pos:
+    if p > pos[-1]:
       items.append([line.strip()])
-    elif p < pos:
-      item = items.pop()
-      items[-1].append(item)
+      pos.append(p)
+    elif p < pos[-1]:
+      while p < pos[-1]:
+        item = items.pop()
+        items[-1].append(item)
+        pos.pop()
       items[-1].append(line.strip())
+      pos.append(p)
     else:
       items[-1].append(line.strip())
-    pos = p
   # turtle down remaining lists.
   while len(items) > 1:
     items[-2].append(items[-1])

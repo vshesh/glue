@@ -12,11 +12,9 @@ def test_parseinline_empty():
   assert parseinline(sample, Paragraphs, '') == ['']
   assert parseinline(Standard, Paragraphs, '**') == [(Bold, ['strong', {}, ''])]
 
-
-def test_parseinline_nosub():
-  examples = ['test', ' ', 'a;lkjfksdfnqwenqw;eriouZN<ZMXz;lkj;sldakfjsf']
-  for e in examples:
-    assert parseinline(sample, Paragraphs, e) == [e]
+@pytest.mark.randomize(str_attrs=("ascii_letters","digits","whitespace"))
+def test_parseinline_nosub(s: str):
+  assert parseinline(sample, Paragraphs, s) == [s]
 
 
 def test_parseinline_basic():
