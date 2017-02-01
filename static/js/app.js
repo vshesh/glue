@@ -34,7 +34,7 @@ function renderText(text) {
              unwrapSuccess: x => x.template})
 }
 
-var debouncedRenderText = renderText;
+var debouncedRenderText = _.debounce(renderText, 100, {maxWait: 100});
 
 
 var Root = {

@@ -437,7 +437,7 @@ def AnnotatedCode(text, language='python', comment='#'):
       if len(annotation) > 0:
         annotations[num - total_annotation_lines] = annotation
         annotation = ''
-  return ['AnnotatedCode', {'code': code.rstrip(), 'annotations': annotations, 'language': language}]
+  return ['AnnotatedCode', {'code': code.rstrip('\n'), 'annotations': annotations, 'language': language}]
 
 # TOPLEVEL - two options for what the top might look like
 # such as doing nothing and returning a div, or parsing paragraphs, but

@@ -92,10 +92,21 @@ def test_list():
    sub two
      sub sub one
   two
+   two sub one
   '''
   assert List(s2) == ['ul', ['li', 'one', ['ul', ['li', 'sub one'], ['li', 'sub two', ['ul', ['li', 'sub sub one']]]]],
-                      ['li', 'two']]
+                      ['li', 'two', ['ul', ['li', 'two sub one']]]]
 
+
+def test_annotated_code():
+  s = '''
+#comment 1
+def f1(x):
+  return x
+'''
+  assert AnnotatedCode(s) == ['AnnotatedCode', {'code': '\ndef f1(x):\n  return x',
+                                                'annotations': {1:'comment 1\n'},
+                                                'language': 'python'}]
 
 @pytest.mark.randomize()
 def test_noop(s: str):

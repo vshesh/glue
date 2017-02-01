@@ -201,6 +201,7 @@ def render_tag(tag, content, **context):
 
   # Format classes
   classes = extra.get('class', [])
+  classes = [classes] if isinstance(classes, str) else classes
   classes.extend(chunks[1:])
   if classes:
     extra['class'] = ' '.join(classes)
