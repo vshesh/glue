@@ -6,3 +6,5 @@ htmlcov/*
 .idea/*
 .cache/*
 gh-pages/*
+.DS_Store
+tools/*

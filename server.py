@@ -36,6 +36,10 @@ def example(path: str):
     jsonabort(400, str(e))
 
 
+@app.get('/blocknames')
+def blockinfo():
+  return {'blocks': { x.name:x.parser.__doc__ for x in Standard.all_block}}
+
 if __name__ == '__main__':
   # generate index.html
   with open('./static/index.html', 'w') as index:
