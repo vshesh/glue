@@ -8,3 +8,5 @@ htmlcov/*
 gh-pages/*
 .DS_Store
 tools/*
+dist/*
+glue.egg-info/*

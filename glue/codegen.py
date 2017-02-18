@@ -5,8 +5,6 @@ from glue.html import render
 from glue.parser import parse
 from inflection import camelize
 
-tohtml = t.compose(render, parse)
-
 def render_mithril(html):
   if html is None: return ''
   elif isinstance(html, list):
@@ -111,6 +109,7 @@ def render_elm_component(name: str, expr: str):
   {name} = {expr}
   '''.format(name=name, expr=expr)
 
+tohtml = t.compose(render, parse)
 tomithril = t.compose(render_mithril, unwind, parse)
 toreact = t.compose(render, parse)
 toelm = t.compose(render_elm, unwind, parse)

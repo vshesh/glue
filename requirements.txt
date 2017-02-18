@@ -3,13 +3,10 @@ inflection
 regex
 toolz
 ruamel.yaml
-
-bottle
 bs4
 simplejson
 
 pytest
 pytest-cov
-pytest
 coveralls
 pytest-quickcheck
