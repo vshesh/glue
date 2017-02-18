@@ -1,0 +1,3113 @@
+<!doctype html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+
+    <title>glue.elements API documentation</title>
+    <meta name="description" content="" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
+  
+  <style type="text/css">
+  
+* {
+  box-sizing: border-box;
+}
+/*! normalize.css v1.1.1 | MIT License | git.io/normalize */
+
+/* ==========================================================================
+   HTML5 display definitions
+   ========================================================================== */
+
+/**
+ * Correct `block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
+
+/**
+ * Correct `inline-block` display not defined in IE 6/7/8/9 and Firefox 3.
+ */
+
+audio,
+canvas,
+video {
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+
+audio:not([controls]) {
+    display: none;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Firefox 3, and Safari 4.
+ * Known issue: no IE 6 support.
+ */
+
+[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * 1. Prevent system color scheme's background color being used in Firefox, IE,
+ *    and Opera.
+ * 2. Prevent system color scheme's text color being used in Firefox, IE, and
+ *    Opera.
+ * 3. Correct text resizing oddly in IE 6/7 when body `font-size` is set using
+ *    `em` units.
+ * 4. Prevent iOS text size adjust after orientation change, without disabling
+ *    user zoom.
+ */
+
+html {
+    background: #fff; /* 1 */
+    color: #000; /* 2 */
+    font-size: 100%; /* 3 */
+    -webkit-text-size-adjust: 100%; /* 4 */
+    -ms-text-size-adjust: 100%; /* 4 */
+}
+
+/**
+ * Address `font-family` inconsistency between `textarea` and other form
+ * elements.
+ */
+
+html,
+button,
+input,
+select,
+textarea {
+    font-family: sans-serif;
+}
+
+/**
+ * Address margins handled incorrectly in IE 6/7.
+ */
+
+body {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Links
+   ========================================================================== */
+
+/**
+ * Address `outline` inconsistency between Chrome and other browsers.
+ */
+
+a:focus {
+    outline: thin dotted;
+}
+
+/**
+ * Improve readability when focused and also mouse hovered in all browsers.
+ */
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+/**
+ * Address font sizes and margins set differently in IE 6/7.
+ * Address font sizes within `section` and `article` in Firefox 4+, Safari 5,
+ * and Chrome.
+ */
+
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+
+h2 {
+    font-size: 1.5em;
+    margin: 0.83em 0;
+}
+
+h3 {
+    font-size: 1.17em;
+    margin: 1em 0;
+}
+
+h4 {
+    font-size: 1em;
+    margin: 1.33em 0;
+}
+
+h5 {
+    font-size: 0.83em;
+    margin: 1.67em 0;
+}
+
+h6 {
+    font-size: 0.67em;
+    margin: 2.33em 0;
+}
+
+/**
+ * Address styling not present in IE 7/8/9, Safari 5, and Chrome.
+ */
+
+abbr[title] {
+    border-bottom: 1px dotted;
+}
+
+/**
+ * Address style set to `bolder` in Firefox 3+, Safari 4/5, and Chrome.
+ */
+
+b,
+strong {
+    font-weight: bold;
+}
+
+blockquote {
+    margin: 1em 40px;
+}
+
+/**
+ * Address styling not present in Safari 5 and Chrome.
+ */
+
+dfn {
+    font-style: italic;
+}
+
+/**
+ * Address differences between Firefox and other browsers.
+ * Known issue: no IE 6/7 normalization.
+ */
+
+hr {
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 0;
+}
+
+/**
+ * Address styling not present in IE 6/7/8/9.
+ */
+
+mark {
+    background: #ff0;
+    color: #000;
+}
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+p,
+pre {
+    margin: 1em 0;
+}
+
+/**
+ * Correct font family set oddly in IE 6, Safari 4/5, and Chrome.
+ */
+
+code,
+kbd,
+pre,
+samp {
+    font-family: monospace, serif;
+    _font-family: 'courier new', monospace;
+    font-size: 1em;
+}
+
+/**
+ * Improve readability of pre-formatted text in all browsers.
+ */
+
+pre {
+    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/**
+ * Address CSS quotes not supported in IE 6/7.
+ */
+
+q {
+    quotes: none;
+}
+
+/**
+ * Address `quotes` property not supported in Safari 4.
+ */
+
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+
+small {
+    font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+
+sub,
+sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sup {
+    top: -0.5em;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+/* ==========================================================================
+   Lists
+   ========================================================================== */
+
+/**
+ * Address margins set differently in IE 6/7.
+ */
+
+dl,
+menu,
+ol,
+ul {
+    margin: 1em 0;
+}
+
+dd {
+    margin: 0 0 0 40px;
+}
+
+/**
+ * Address paddings set differently in IE 6/7.
+ */
+
+menu,
+ol,
+ul {
+    padding: 0 0 0 40px;
+}
+
+/**
+ * Correct list images handled incorrectly in IE 7.
+ */
+
+nav ul,
+nav ol {
+    list-style: none;
+    list-style-image: none;
+}
+
+/* ==========================================================================
+   Embedded content
+   ========================================================================== */
+
+/**
+ * 1. Remove border when inside `a` element in IE 6/7/8/9 and Firefox 3.
+ * 2. Improve image quality when scaled in IE 7.
+ */
+
+img {
+    border: 0; /* 1 */
+    -ms-interpolation-mode: bicubic; /* 2 */
+}
+
+/**
+ * Correct overflow displayed oddly in IE 9.
+ */
+
+svg:not(:root) {
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   Figures
+   ========================================================================== */
+
+/**
+ * Address margin not present in IE 6/7/8/9, Safari 5, and Opera 11.
+ */
+
+figure {
+    margin: 0;
+}
+
+/* ==========================================================================
+   Forms
+   ========================================================================== */
+
+/**
+ * Correct margin displayed oddly in IE 6/7.
+ */
+
+form {
+    margin: 0;
+}
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+
+fieldset {
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+
+/**
+ * 1. Correct color not being inherited in IE 6/7/8/9.
+ * 2. Correct text not wrapping in Firefox 3.
+ * 3. Correct alignment displayed oddly in IE 6/7.
+ */
+
+legend {
+    border: 0; /* 1 */
+    padding: 0;
+    white-space: normal; /* 2 */
+    *margin-left: -7px; /* 3 */
+}
+
+/**
+ * 1. Correct font size not being inherited in all browsers.
+ * 2. Address margins set differently in IE 6/7, Firefox 3+, Safari 5,
+ *    and Chrome.
+ * 3. Improve appearance and consistency in all browsers.
+ */
+
+button,
+input,
+select,
+textarea {
+    font-size: 100%; /* 1 */
+    margin: 0; /* 2 */
+    vertical-align: baseline; /* 3 */
+    *vertical-align: middle; /* 3 */
+}
+
+/**
+ * Address Firefox 3+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+
+button,
+input {
+    line-height: normal;
+}
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Chrome, Safari 5+, and IE 6+.
+ * Correct `select` style inheritance in Firefox 4+ and Opera.
+ */
+
+button,
+select {
+    text-transform: none;
+}
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ * 4. Remove inner spacing in IE 7 without affecting normal text inputs.
+ *    Known issue: inner spacing remains in IE 6.
+ */
+
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+    -webkit-appearance: button; /* 2 */
+    cursor: pointer; /* 3 */
+    *overflow: visible;  /* 4 */
+}
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+
+button[disabled],
+html input[disabled] {
+    cursor: default;
+}
+
+/**
+ * 1. Address box sizing set to content-box in IE 8/9.
+ * 2. Remove excess padding in IE 8/9.
+ * 3. Remove excess padding in IE 7.
+ *    Known issue: excess padding remains in IE 6.
+ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    box-sizing: border-box; /* 1 */
+    padding: 0; /* 2 */
+    *height: 13px; /* 3 */
+    *width: 13px; /* 3 */
+}
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari 5 and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari 5 and Chrome
+ *    (include `-moz` to future-proof).
+ */
+
+input[type="search"] {
+    -webkit-appearance: textfield; /* 1 */
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box; /* 2 */
+    box-sizing: content-box;
+}
+
+/**
+ * Remove inner padding and search cancel button in Safari 5 and Chrome
+ * on OS X.
+ */
+
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/**
+ * Remove inner padding and border in Firefox 3+.
+ */
+
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+/**
+ * 1. Remove default vertical scrollbar in IE 6/7/8/9.
+ * 2. Improve readability and alignment in all browsers.
+ */
+
+textarea {
+    overflow: auto; /* 1 */
+    vertical-align: top; /* 2 */
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+
+/**
+ * Remove most spacing between table cells.
+ */
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+  </style>
+
+  <style type="text/css">
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+  body {
+    background: #fff;
+    font-family: "Source Sans Pro", "Helvetica Neueue", Helvetica, sans;
+    font-weight: 300;
+    font-size: 16px;
+    line-height: 1.6em;
+  }
+  #content {
+    width: 70%;
+    max-width: 850px;
+    float: left;
+    padding: 30px 60px;
+    border-left: 1px solid #ddd;
+  }
+  #sidebar {
+    width: 25%;
+    float: left;
+    padding: 30px;
+    overflow: hidden;
+  }
+  #nav {
+    font-size: 130%;
+    margin: 0 0 15px 0;
+  }
+
+  #top {
+    display: block;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    font-size: .85em;
+    text-transform: uppercase;
+  }
+
+  #footer {
+    font-size: .75em;
+    padding: 5px 30px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+    #footer p {
+      margin: 0 0 0 30px;
+      display: inline-block;
+    }
+
+  h1, h2, h3, h4, h5 {
+    font-weight: 300;
+  }
+  h1 {
+    font-size: 2.5em;
+    line-height: 1.1em;
+    margin: 0 0 .50em 0;
+  }
+
+  h2 {
+    font-size: 1.75em;
+    margin: 1em 0 .50em 0;
+  }
+
+  h3 {
+    margin: 25px 0 10px 0;
+  }
+
+  h4 {
+    margin: 0;
+    font-size: 105%;
+  }
+
+  a {
+    color: #058;
+    text-decoration: none;
+    transition: color .3s ease-in-out;
+  }
+
+  a:hover {
+    color: #e08524;
+    transition: color .3s ease-in-out;
+  }
+
+  pre, code, .mono, .name {
+    font-family: "Ubuntu Mono", "Cousine", "DejaVu Sans Mono", monospace;
+  }
+
+  .title .name {
+    font-weight: bold;
+  }
+  .section-title {
+    margin-top: 2em;
+  }
+  .ident {
+    color: #900;
+  }
+
+  code {
+    background: #f9f9f9;
+  } 
+
+  pre {
+    background: #fefefe;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 0 #f3f3f3;
+    margin: 0 30px;
+    padding: 15px 30px;
+  }
+
+  .codehilite {
+    margin: 0 30px 10px 30px;
+  }
+
+    .codehilite pre {
+      margin: 0;
+    }
+    .codehilite .err { background: #ff3300; color: #fff !important; } 
+
+  table#module-list {
+    font-size: 110%;
+  }
+
+    table#module-list tr td:first-child {
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+
+    table#module-list td {
+      vertical-align: top;
+      padding-bottom: 8px;
+    }
+
+      table#module-list td p {
+        margin: 0 0 7px 0;
+      }
+
+  .def {
+    display: table;
+  }
+
+    .def p {
+      display: table-cell;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .def p:first-child {
+      white-space: nowrap;
+    }
+
+    .def p:last-child {
+      width: 100%;
+    }
+
+
+  #index {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+    ul#index .class_name {
+      /* font-size: 110%; */
+      font-weight: bold;
+    }
+    #index ul {
+      margin: 0;
+    }
+
+  .item {
+    margin: 0 0 15px 0;
+  }
+
+    .item .class {
+      margin: 0 0 25px 30px;
+    }
+
+      .item .class ul.class_list {
+        margin: 0 0 20px 0;
+      }
+
+    .item .name {
+      background: #fafafa;
+      margin: 0;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 3px;
+      display: inline-block;
+      min-width: 40%;
+    }
+      .item .name:hover {
+        background: #f6f6f6;
+      }
+
+    .item .empty_desc {
+      margin: 0 0 5px 0;
+      padding: 0;
+    }
+
+    .item .inheritance {
+      margin: 3px 0 0 30px;
+    }
+
+    .item .inherited {
+      color: #666;
+    }
+
+    .item .desc {
+      padding: 0 8px;
+      margin: 0;
+    }
+
+      .item .desc p {
+        margin: 0 0 10px 0;
+      }
+
+    .source_cont {
+      margin: 0;
+      padding: 0;
+    }
+
+    .source_link a {
+      background: #ffc300;
+      font-weight: 400;
+      font-size: .75em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 1px 1px 0 #f4b700;
+      
+      padding: 3px 8px;
+      border-radius: 2px;
+      transition: background .3s ease-in-out;
+    }
+      .source_link a:hover {
+        background: #FF7200;
+        text-shadow: none;
+        transition: background .3s ease-in-out;
+      }
+
+    .source {
+      display: none;
+      max-height: 600px;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+    }
+
+      .source .codehilite {
+        margin: 0;
+      }
+
+  .desc h1, .desc h2, .desc h3 {
+    font-size: 100% !important;
+  }
+  .clear {
+    clear: both;
+  }
+
+  @media all and (max-width: 950px) {
+    #sidebar {
+      width: 35%;
+    }
+    #content {
+      width: 65%;
+    }
+  }
+  @media all and (max-width: 650px) {
+    #top {
+      display: none;
+    }
+    #sidebar {
+      float: none;
+      width: auto;
+    }
+    #content {
+      float: none;
+      width: auto;
+      padding: 30px;
+    }
+
+    #index ul {
+      padding: 0;
+      margin-bottom: 15px;
+    }
+    #index ul li {
+      display: inline-block;
+      margin-right: 30px;
+    }
+    #footer {
+      text-align: left;
+    }
+    #footer p {
+      display: block;
+      margin: inherit;
+    }
+  }
+
+  /*****************************/
+
+  </style>
+
+  <style type="text/css">
+  .codehilite .hll { background-color: #ffffcc }
+.codehilite  { background: #f8f8f8; }
+.codehilite .c { color: #408080; font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { color: #008000; font-weight: bold } /* Keyword */
+.codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
+.codehilite .gd { color: #A00000 } /* Generic.Deleted */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gr { color: #FF0000 } /* Generic.Error */
+.codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.codehilite .gi { color: #00A000 } /* Generic.Inserted */
+.codehilite .go { color: #888888 } /* Generic.Output */
+.codehilite .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.codehilite .gt { color: #0044DD } /* Generic.Traceback */
+.codehilite .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.codehilite .kp { color: #008000 } /* Keyword.Pseudo */
+.codehilite .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.codehilite .kt { color: #B00040 } /* Keyword.Type */
+.codehilite .m { color: #666666 } /* Literal.Number */
+.codehilite .s { color: #BA2121 } /* Literal.String */
+.codehilite .na { color: #7D9029 } /* Name.Attribute */
+.codehilite .nb { color: #008000 } /* Name.Builtin */
+.codehilite .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.codehilite .no { color: #880000 } /* Name.Constant */
+.codehilite .nd { color: #AA22FF } /* Name.Decorator */
+.codehilite .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.codehilite .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.codehilite .nf { color: #0000FF } /* Name.Function */
+.codehilite .nl { color: #A0A000 } /* Name.Label */
+.codehilite .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.codehilite .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.codehilite .nv { color: #19177C } /* Name.Variable */
+.codehilite .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.codehilite .w { color: #bbbbbb } /* Text.Whitespace */
+.codehilite .mb { color: #666666 } /* Literal.Number.Bin */
+.codehilite .mf { color: #666666 } /* Literal.Number.Float */
+.codehilite .mh { color: #666666 } /* Literal.Number.Hex */
+.codehilite .mi { color: #666666 } /* Literal.Number.Integer */
+.codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
+.codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
+.codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
+.codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.codehilite .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.codehilite .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.codehilite .sx { color: #008000 } /* Literal.String.Other */
+.codehilite .sr { color: #BB6688 } /* Literal.String.Regex */
+.codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
+.codehilite .ss { color: #19177C } /* Literal.String.Symbol */
+.codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
+.codehilite .vc { color: #19177C } /* Name.Variable.Class */
+.codehilite .vg { color: #19177C } /* Name.Variable.Global */
+.codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
+.codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
+  </style>
+
+  <style type="text/css">
+  
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+  </style>
+
+  <script type="text/javascript">
+  function toggle(id, $link) {
+    $node = document.getElementById(id);
+    if (!$node)
+    return;
+    if (!$node.style.display || $node.style.display == 'none') {
+    $node.style.display = 'block';
+    $link.innerHTML = 'Hide source &nequiv;';
+    } else {
+    $node.style.display = 'none';
+    $link.innerHTML = 'Show source &equiv;';
+    }
+  }
+  </script>
+</head>
+<body>
+<a href="#" id="top">Top</a>
+
+<div id="container">
+    
+  
+  <div id="sidebar">
+    <h1>Index</h1>
+    <ul id="index">
+
+    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
+      
+  <ul>
+    <li class="mono"><a href="#glue.elements.IdenticalInline">IdenticalInline</a></li>
+    <li class="mono"><a href="#glue.elements.MirrorInline">MirrorInline</a></li>
+    <li class="mono"><a href="#glue.elements.SingleGroupInline">SingleGroupInline</a></li>
+    <li class="mono"><a href="#glue.elements.asset_inline">asset_inline</a></li>
+    <li class="mono"><a href="#glue.elements.asset_url">asset_url</a></li>
+    <li class="mono"><a href="#glue.elements.block">block</a></li>
+    <li class="mono"><a href="#glue.elements.inline">inline</a></li>
+    <li class="mono"><a href="#glue.elements.inline_one">inline_one</a></li>
+    <li class="mono"><a href="#glue.elements.inline_two">inline_two</a></li>
+    <li class="mono"><a href="#glue.elements.link">link</a></li>
+    <li class="mono"><a href="#glue.elements.makename">makename</a></li>
+    <li class="mono"><a href="#glue.elements.standalone_integration">standalone_integration</a></li>
+    <li class="mono"><a href="#glue.elements.terminal_block">terminal_block</a></li>
+  </ul>
+
+    </li>
+
+    <li class="set"><h3><a href="#header-classes">Classes</a></h3>
+      <ul>
+        <li class="mono">
+        <span class="class_name"><a href="#glue.elements.AssetType">AssetType</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#glue.elements.Block">Block</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#glue.elements.Block.__init__">__init__</a></li>
+    <li class="mono"><a href="#glue.elements.Block.add_asset">add_asset</a></li>
+    <li class="mono"><a href="#glue.elements.Block.validate">validate</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#glue.elements.Display">Display</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#glue.elements.Element">Element</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#glue.elements.Element.__init__">__init__</a></li>
+    <li class="mono"><a href="#glue.elements.Element.add_asset">add_asset</a></li>
+    <li class="mono"><a href="#glue.elements.Element.validate">validate</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#glue.elements.Inline">Inline</a></span>
+        
+          
+  <ul>
+    <li class="mono"><a href="#glue.elements.Inline.__init__">__init__</a></li>
+    <li class="mono"><a href="#glue.elements.Inline.add_asset">add_asset</a></li>
+    <li class="mono"><a href="#glue.elements.Inline.validate">validate</a></li>
+  </ul>
+
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#glue.elements.Nesting">Nesting</a></span>
+        
+        </li>
+        <li class="mono">
+        <span class="class_name"><a href="#glue.elements.Patterns">Patterns</a></span>
+        
+        </li>
+      </ul>
+    </li>
+
+    </ul>
+  </div>
+
+    <article id="content">
+      
+  
+
+  
+
+
+  <header id="section-intro">
+  <h1 class="title"><span class="name">glue.elements</span> module</h1>
+  
+  
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements" class="source">
+    <div class="codehilite"><pre><span></span><span class="kn">import</span> <span class="nn">abc</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">inflection</span>
+<span class="kn">import</span> <span class="nn">regex</span> <span class="kn">as</span> <span class="nn">re</span>
+
+<span class="c1"># --------------------- ELEMENT UTILITIES ---------------------------------</span>
+<span class="kn">from</span> <span class="nn">glue</span> <span class="kn">import</span> <span class="n">css</span>
+
+
+<span class="k">def</span> <span class="nf">makename</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+  <span class="sd">&quot;&quot;&quot;Turns a capital camelcase name into a dasherized name for block detection.</span>
+<span class="sd">  Used as the logic for autogenerating the `name` attribute of an `Element`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">inflection</span><span class="o">.</span><span class="n">dasherize</span><span class="p">(</span><span class="n">inflection</span><span class="o">.</span><span class="n">underscore</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+
+<span class="nd">@enum.unique</span>
+<span class="k">class</span> <span class="nc">Patterns</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Defines some known regex pattern templates for common types of inline syntax.</span>
+<span class="sd">  For example, a single group inline element (one capture group framed by</span>
+<span class="sd">  something before and after the group).</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">escape</span> <span class="o">=</span> <span class="s1">&#39;(?&lt;!</span><span class="se">\\\\</span><span class="s1">)(?:</span><span class="se">\\\\\\\\</span><span class="s1">)*{0}&#39;</span>
+  <span class="n">single_group</span> <span class="o">=</span> <span class="s1">&#39;(?&lt;!</span><span class="se">\\\\</span><span class="s1">)(?:</span><span class="se">\\\\\\\\</span><span class="s1">)*</span><span class="se">\\</span><span class="s1">K{0}(.*?(?&lt;!</span><span class="se">\\\\</span><span class="s1">)(?:</span><span class="se">\\\\\\\\</span><span class="s1">)*){1}&#39;</span>
+  <span class="n">link</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*\K{0}\[(.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*)\]\((.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*)\)&#39;</span>
+  <span class="n">double_group</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*\K\{0}(.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*){1}(.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*){2}&#39;</span>
+
+
+<span class="n">Nesting</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s1">&#39;Nesting&#39;</span><span class="p">,</span> <span class="s1">&#39;FRAME POST SUB NONE&#39;</span><span class="p">)</span>
+<span class="n">Nesting</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">FRAME: element is intended to contain/frame the inside</span>
+<span class="s2">       text, which means that subscriptions should be inherited from the parent.</span>
+
+<span class="s2">POST: text in the block should be parsed AFTER this block is</span>
+<span class="s2">      parsed. This is the default, and is suitable for most situations.</span>
+
+<span class="s2">SUB: the inside of the text is parsed for child nodes (inline and</span>
+<span class="s2">     block) first, and the corresponding sections are replaced with [|*|] style</span>
+<span class="s2">     tags that are meant to be left UNTOUCHED. After this block is parsed,</span>
+<span class="s2">     then the tags are replaced with the appropriate parsed sections. This could</span>
+<span class="s2">     have also been called &#39;PRE&#39;, since it pre-parses the contents before</span>
+<span class="s2">     calling the block&#39;s parsing function.</span>
+
+<span class="s2">NONE: terminal element. The parser&#39;s output is taken verbatim, with out any</span>
+<span class="s2">      further processing of its insides.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">Display</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s1">&#39;Display&#39;</span><span class="p">,</span> <span class="s1">&#39;BLOCK INLINE&#39;</span><span class="p">)</span>
+<span class="n">Display</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">You can set an inline element to be displayed like a block element. This is</span>
+<span class="s2">good for things like header elements in markdown syntax, which are detected by</span>
+<span class="s2">regex, but are not intended to be wrapped in any other kind of block.</span>
+
+<span class="s2">INLINE: should be displayed like a HTML inline (think span) (default)</span>
+
+<span class="s2">BLOCK: should be displayed like a HTML block (think div)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="n">AssetType</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s1">&#39;AssetType&#39;</span><span class="p">,</span> <span class="s1">&#39;JS CSS&#39;</span><span class="p">)</span>
+<span class="n">AssetType</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">There are at least two kinds of assets - the ones that are scripts</span>
+<span class="s2">(eg, `&lt;script src=&quot;blah blah&quot;&gt;&lt;/script&gt;`), and the ones that are CSS</span>
+<span class="s2">(eg `&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;blah blah&quot;/&gt;`).</span>
+
+<span class="s2">Accordingly there are two values for this Enum so far:</span>
+
+<span class="s2">JS: something written in the JS language</span>
+<span class="s2">CSS: a stylesheet written in CSS</span>
+<span class="s2">SCSS: a stylesheet written in SCSS, preprocessed through libsass.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="c1"># ------------------  BASE ELEMENTS --------------------------</span>
+
+
+<span class="k">class</span> <span class="nc">Element</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Base class for all elements, which itself is really just a parser function</span>
+<span class="sd">  augmented with some necessary data to plug into the glue system.</span>
+
+<span class="sd">  There are four instance variables:</span>
+
+<span class="sd">  `nest` is the nesting policy. It controls in which order the sub-blocks/inline</span>
+<span class="sd">  elements are parsed. See the `Nesting` enum for more information on what the</span>
+<span class="sd">  kinds of nesting policies are and how they are expected to function.</span>
+
+<span class="sd">  `sub` is a list of the subscriptions this element is maintinaing. Only the</span>
+<span class="sd">  elements appearing in this list can be sub blocks or inline elements of this</span>
+<span class="sd">  element. There are two special keywords. The first is `&#39;all&#39;` which means all</span>
+<span class="sd">  elements in the registry are fair game. The second is `&#39;inherit&#39;` which means</span>
+<span class="sd">  that this block allows exactly what its parent allows through. `&#39;inherit&#39;` is</span>
+<span class="sd">  a rare choice, and most blocks will just have `&#39;all&#39;` as their subscription</span>
+<span class="sd">  policy.</span>
+
+<span class="sd">  `parser` is a function that is supposed to take the body of the block along</span>
+<span class="sd">  with any options (or just the captured groups of an inline element) and</span>
+<span class="sd">  generate HTML output (in the cottonmouth list form). It has slightly different</span>
+<span class="sd">  semantics for each of the subclasses, and different signatures as well</span>
+<span class="sd">  depending on what they are parsing and how.</span>
+
+<span class="sd">  `assets` is a set of strings each of which is a valid HTML tag (plus contents)</span>
+<span class="sd">  that adds an asset such as a script (JS) or stylesheet (CSS) to the page.</span>
+<span class="sd">  It is recommended that you use the helpers to construct these, rather than</span>
+<span class="sd">  go through the tedious process of trying to write it out yourself.</span>
+
+<span class="sd">  An additional property is:</span>
+
+<span class="sd">  `name` is the name of the element. The name has two uses - it becomes the key</span>
+<span class="sd">  for the element in the registry, and it also is the &#39;dispatch&#39; (think like a</span>
+<span class="sd">  function call) for the block. The name is auto-generated for the sake of</span>
+<span class="sd">  sanity by taking a camelcase name (which is consistent with python naming style)</span>
+<span class="sd">  and converting it into something dash-separated so that it&#39;s easier to type</span>
+<span class="sd">  into the editor.</span>
+
+<span class="sd">  ```</span>
+<span class="sd">  ---block</span>
+<span class="sd">  blah blah blah</span>
+<span class="sd">  ...</span>
+<span class="sd">  ```</span>
+
+<span class="sd">  after the `---` the name is used to dispatch to the appropriate block element,</span>
+<span class="sd">  whose parser function will be called to parse the contents of that block.</span>
+<span class="sd">  For the sake of sanity, the name is autogenerated based on the class name.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+
+  <span class="c1"># this class does not require instance data, so we can save space.</span>
+  <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+  <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+  <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">inflection</span><span class="o">.</span><span class="n">camelize</span><span class="p">(</span><span class="n">inflection</span><span class="o">.</span><span class="n">underscore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+  <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">nest</span><span class="p">:</span> <span class="n">Nesting</span><span class="p">,</span> <span class="n">sub</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Element&#39;</span><span class="p">]):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">=</span> <span class="n">nest</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">=</span> <span class="n">sub</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">makename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assets</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">_replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">copied</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">copied</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">copied</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">copied</span>
+
+  <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># If there&#39;s no nesting there should be no subscriptions</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">==</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">NONE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">!=</span> <span class="p">[]:</span> <span class="k">return</span> <span class="bp">False</span>
+    <span class="c1"># Frames should not restrict what can be put inside them, since they</span>
+    <span class="c1"># don&#39;t process anything inside themselves.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">==</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">!=</span> <span class="p">[</span><span class="s1">&#39;inherit&#39;</span><span class="p">]:</span> <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+  <span class="k">def</span> <span class="nf">add_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+
+<span class="k">class</span> <span class="nc">Block</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Base class for elements that are enclosed in yaml-like document blocks.</span>
+<span class="sd">  A block element is an element that is expected to render in the style of an</span>
+<span class="sd">  html `div` element, and is represented in the plain-text format as:</span>
+
+<span class="sd">  ```yaml</span>
+<span class="sd">  ---block ...args</span>
+<span class="sd">  text that will be parsed by the block goes here.</span>
+<span class="sd">  ...</span>
+<span class="sd">  ```</span>
+
+<span class="sd">  The name of the block is put right after the `---` and is used to dispatch</span>
+<span class="sd">  to the block with the appropriate name. The name of the block should be</span>
+<span class="sd">  dasherized for style purposes (so that it&#39;s easier to type than capitals, and</span>
+<span class="sd">  so that there&#39;s a consistent look).</span>
+
+<span class="sd">  `nest` is the nesting policies for nesting blocks and inline elements.</span>
+
+<span class="sd">  `sub` is an array of literal elements that this block</span>
+<span class="sd">  accepts as sub-blocks. In general, most blocks will either be `Nesting.NONE` or</span>
+<span class="sd">  accept every block, but you can be more specific if you&#39;d like.</span>
+
+<span class="sd">  `subinline` is the same, but restricted to `Inline` elements. It&#39;s generated</span>
+<span class="sd">  from the sub list, and it&#39;s existence is just an optimization to avoid having</span>
+<span class="sd">  to do the filter ecah time.</span>
+
+<span class="sd">  `parser` is a function that takes string text and outputs html corresponding</span>
+<span class="sd">  to whatever this block would like to parse.</span>
+
+<span class="sd">  `opts` is a string passed to getopts that states which flags are allowed</span>
+<span class="sd">  as kwargs options for this block.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">nest</span><span class="p">:</span> <span class="n">Nesting</span><span class="p">,</span> <span class="n">sub</span><span class="p">:</span> <span class="p">[</span><span class="n">Element</span><span class="p">],</span>
+               <span class="n">opts</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="n">opts</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">subinline</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sub</span>
+                      <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;inherit&#39;</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Inline</span><span class="p">)]</span>
+
+
+<span class="k">class</span> <span class="nc">Inline</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Base class for elements that are meant to be inline in the text inside blocks.</span>
+<span class="sd">  An inline element is expected to render in the style of an html `span` element.</span>
+
+<span class="sd">  The representation of an inline element in plaintext is defined by the parser</span>
+<span class="sd">  object, which is designed differently than the parser element of a block.</span>
+<span class="sd">  The parser in an Inline element looks like a list of pairs, where the first</span>
+<span class="sd">  element in a pair is a regex and the second is a function that takes the</span>
+<span class="sd">  recorded groups of the regex and returns an html element, in cottonmouth form.</span>
+
+<span class="sd">  It&#39;s recommended to use the more advanced `regex` 2016 library that comes from</span>
+<span class="sd">  pip so that you can properly create regexes that allow escaped characters.</span>
+
+<span class="sd">  Eg, matching bold text might seem easy (`\*(.*?)\*`) but it is actually quite</span>
+<span class="sd">  complicated to ignore a literal `\*` in the text.</span>
+<span class="sd">  For very basic things, both helper methods and standard elements have been</span>
+<span class="sd">  provided so you don&#39;t have to write them yourself!</span>
+
+<span class="sd">  `nest` defines what nesting style the parser is expecting. `FRAME` is the most</span>
+<span class="sd">  common, and basically &quot;passes through&quot; parsing from the parent block element.</span>
+<span class="sd">  However, you can also define `POST` or `SUB` if you expect to do some of</span>
+<span class="sd">  your own parsing (eg, link elements work well with the `POST` style).</span>
+
+<span class="sd">  `sub` is a list of literal element objects that define</span>
+<span class="sd">  which styles are allowed inside this style. The two special values are &#39;inherit&#39;</span>
+<span class="sd">  and &#39;all&#39;. &#39;inherit&#39; is a dynamic key, and at parse-time the text inside the</span>
+<span class="sd">  element will be parsed as if it was in the enclosing block&#39;s scope. &#39;all&#39; means</span>
+<span class="sd">  you would like to subscribe to ALL the inline styles in your registry. This is</span>
+<span class="sd">  a static key.</span>
+
+<span class="sd">  `escape` is a string or set containing characters that need to be escaped in the</span>
+<span class="sd">  block. eg, if you define syntax like `*bold*` to mean bold, then you would like</span>
+<span class="sd">  for the `*` character to be escapable so that the user can enter an actual</span>
+<span class="sd">  asterisk if they wish. Setting escape = &quot;*&quot; will tell the parser to translate</span>
+<span class="sd">  every `\*` sequence to a literal `*`. Every time you give a character a special</span>
+<span class="sd">  meaning, you have to make an escape sequence that allows you to enter the</span>
+<span class="sd">  character literally. This is most critical for the 1-char elements, but it&#39;s</span>
+<span class="sd">  important for others as well.</span>
+
+<span class="sd">  `display` is a switch that allows inline elements to be displayed as blocks</span>
+<span class="sd">  (eg, with no other elements like div/section/p wrapping them). A good example</span>
+<span class="sd">  of when Display.BLOCK is a good idea is for Markdown style headers.</span>
+<span class="sd">  Note that the regex for a Display.BLOCK type case is limited to exist on ONLY</span>
+<span class="sd">  one line. This is a necessary restriction to not conflict with the multiline</span>
+<span class="sd">  regex being used to split blocks. Please use Display.BLOCK sparingly.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span>
+                     <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+                     <span class="n">nest</span><span class="p">:</span> <span class="n">Nesting</span> <span class="o">=</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span>
+                     <span class="n">sub</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Inline&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+                     <span class="n">escape</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                     <span class="n">display</span><span class="p">:</span> <span class="n">Display</span> <span class="o">=</span> <span class="n">Display</span><span class="o">.</span><span class="n">INLINE</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Inline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">regex</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">escape</span> <span class="o">=</span> <span class="n">escape</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="n">display</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">subinline</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">])</span>
+                      <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;inherit&#39;</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Inline</span><span class="p">)]</span>
+
+  <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Inline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">==</span> <span class="n">Display</span><span class="o">.</span><span class="n">BLOCK</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">)):</span>
+      <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+<span class="c1"># ---------------------- ASSET CONSTRUCTOR UTILITIES -------------------------</span>
+
+<span class="k">def</span> <span class="nf">asset_url</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="n">AssetType</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">asset_url_helper</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">Element</span><span class="p">):</span>
+    <span class="n">elem</span><span class="o">.</span><span class="n">add_asset</span><span class="p">(</span><span class="s1">&#39;&lt;script src=&quot;{0}&quot;&gt;&lt;/script&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                   <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="n">AssetType</span><span class="o">.</span><span class="n">JS</span>
+                   <span class="k">else</span> <span class="s1">&#39;&lt;link rel=&quot;stylesheet&quot; href=&quot;{0}&quot;/&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">elem</span>
+  <span class="k">return</span> <span class="n">asset_url_helper</span>
+
+<span class="k">def</span> <span class="nf">asset_inline</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="n">AssetType</span><span class="p">,</span> <span class="n">contents</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]):</span>
+  <span class="k">def</span> <span class="nf">asset_inline_helper</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">Element</span><span class="p">):</span>
+    <span class="n">elem</span><span class="o">.</span><span class="n">add_asset</span><span class="p">(</span><span class="s1">&#39;&lt;script type=&quot;text/javascript&quot;&gt;</span><span class="se">\n</span><span class="s1">{0}</span><span class="se">\n</span><span class="s1">&lt;/script&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+                   <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="n">AssetType</span><span class="o">.</span><span class="n">JS</span>
+                   <span class="k">else</span> <span class="s1">&#39;&lt;style&gt;</span><span class="se">\n</span><span class="s1">{0}</span><span class="se">\n</span><span class="s1">&lt;/style&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">css</span><span class="o">.</span><span class="n">scss</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+                                                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                                                        <span class="k">else</span> <span class="n">contents</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">elem</span>
+  <span class="k">return</span> <span class="n">asset_inline_helper</span>
+
+<span class="c1"># ----------------------- ELEMENT CONSTRUCTOR UTILITIES ----------------------</span>
+
+<span class="k">def</span> <span class="nf">block</span><span class="p">(</span><span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Decorator for block style elements, to be used on a parser function.</span>
+<span class="sd">  eg:</span>
+
+<span class="sd">  ```python</span>
+<span class="sd">  @block(...)</span>
+<span class="sd">  def BlockName(text):</span>
+<span class="sd">    \&quot;\&quot;\&quot; docs for BlockName element go here \&quot;\&quot;\&quot;</span>
+<span class="sd">    return [&#39;div&#39;, text]</span>
+<span class="sd">  ```</span>
+
+<span class="sd">  The name of the function becomes the name of the block. There is automatic</span>
+<span class="sd">  sanitization/converstion that happens in the process.</span>
+<span class="sd">  So `BlockName` would have `name=&#39;block-name&#39;` so that it&#39;s easier to type</span>
+<span class="sd">  in the plain-text format.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">block_fn</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span><span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">],</span> <span class="n">opts</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">block_fn</span>
+
+<span class="k">def</span> <span class="nf">terminal_block</span><span class="p">(</span><span class="n">opts</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Decorator for blocks that have nesting = NONE and do not subscribe to any</span>
+<span class="sd">  inline or block elements. Note that NONE type blocks should NOT subscribe</span>
+<span class="sd">  to any such elements, anyway, so it is convenient to use this function.</span>
+<span class="sd">  :param opts: see Block documentation.</span>
+<span class="sd">  :return: a decorator that converts a parser function to a Block object of the</span>
+<span class="sd">  same name. See Block for details.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">block</span><span class="p">(</span><span class="n">Nesting</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span> <span class="p">[],</span> <span class="n">opts</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">standalone_integration</span><span class="p">(</span><span class="n">outer_elem</span><span class="o">=</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="n">inner_elem</span><span class="o">=</span><span class="s1">&#39;div&#39;</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Decorator that takes a function with signature `(text: str, docid: str, elem: str) -&gt; str` that spits out the</span>
+<span class="sd">  script contents required to inject the integrated content into the element, and generates a block that wraps that</span>
+<span class="sd">  logic. That&#39;s kinda confusing - see examples like `Katex` or `MusicalAbc` in the library.py file.</span>
+<span class="sd">  </span>
+<span class="sd">  :param outer_elem: optional if you want something other than a `div` on the outside</span>
+<span class="sd">  :param inner_elem: optional if you want something other than a `div` on the inside (eg, `svg`, `pre`, etc).</span>
+<span class="sd">  :return: a `Block` that generates HTML to inject content into the site integrated with a JS library.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">standalone_integration_wrapper</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="nd">@terminal_block</span><span class="p">()</span>
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">standalone_block</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+      <span class="n">docid</span> <span class="o">=</span> <span class="n">makename</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+      <span class="n">elem</span> <span class="o">=</span> <span class="s2">&quot;document.getElementById(&#39;{0}&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">docid</span><span class="p">);</span>
+
+      <span class="k">return</span> <span class="p">[</span><span class="n">outer_elem</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">makename</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
+              <span class="p">[</span><span class="n">inner_elem</span> <span class="o">+</span> <span class="s1">&#39;#{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">docid</span><span class="p">)],</span>
+              <span class="p">[</span><span class="s1">&#39;script&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">docid</span><span class="p">},</span> <span class="n">f</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">docid</span><span class="o">=</span><span class="n">docid</span><span class="p">,</span> <span class="n">elem</span><span class="o">=</span><span class="n">elem</span><span class="p">)]]</span>
+    <span class="k">return</span> <span class="n">standalone_block</span>
+
+  <span class="k">return</span> <span class="n">standalone_integration_wrapper</span>
+
+
+<span class="k">def</span> <span class="nf">inline</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">escape</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">Display</span><span class="o">.</span><span class="n">INLINE</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Decorator for an inline element that has exactly one pattern and parser.</span>
+<span class="sd">  For more complex inline elements, it&#39;s best to just define the element</span>
+<span class="sd">  yourself.</span>
+
+<span class="sd">  Recommended usage is to pass the regex is as a positional argument, and the</span>
+<span class="sd">  others as kwargs, since it&#39;s hard to remember what order they go in.</span>
+
+<span class="sd">  The parser function should take the groups of the returned regex as params,</span>
+<span class="sd">  per usual and return html in s-expression form, like</span>
+<span class="sd">  `[&#39;div&#39;, {&#39;attr&#39;: &#39;value&#39;}, &#39;text&#39;]`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">inline_fn</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span><span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inline</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Inline</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">escape</span><span class="p">,</span> <span class="n">display</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">inline_fn</span>
+
+<span class="k">def</span> <span class="nf">inline_one</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">Display</span><span class="o">.</span><span class="n">INLINE</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">patt</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">Patterns</span><span class="o">.</span><span class="n">single_group</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">end</span><span class="p">)))</span>
+  <span class="k">return</span> <span class="n">inline</span><span class="p">(</span><span class="n">patt</span><span class="p">,</span> <span class="n">escape</span><span class="o">=</span><span class="p">[</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                <span class="n">nest</span><span class="o">=</span><span class="n">nest</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">display</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="n">sub</span><span class="p">)</span>
+  
+<span class="k">def</span> <span class="nf">SingleGroupInline</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">attr</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  A special kind of inline frame that has only one capture group and wraps</span>
+<span class="sd">  it with some set of start and end characters.</span>
+
+<span class="sd">  It&#39;s expected that this kind of element will wrap its contents in one tag</span>
+<span class="sd">  with specified attributes, so you can pass in a tag and its attributes</span>
+<span class="sd">  here directly and the parser function will be generated for you.</span>
+
+<span class="sd">  The first character of `start` and `end` is added to the list of escapable</span>
+<span class="sd">  letters, and the generated regex makes sure that neither the start nor the</span>
+<span class="sd">  end of the pattern are preceded by a backslash for escape.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">parser</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">body</span><span class="p">:</span> <span class="p">[</span><span class="n">tag</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">or</span> <span class="p">{},</span> <span class="n">body</span><span class="p">]</span>
+  <span class="n">parser</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
+  <span class="k">return</span> <span class="n">inline_one</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)(</span><span class="n">parser</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">IdenticalInline</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  A very simple wrapper around `SingleGroupInlineFrame` that will work</span>
+<span class="sd">  if you expect the start/end of the element to be the same. Eg: `*bold*`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">SingleGroupInline</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">MirrorInline</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  A very simple wrapper around `SingleGroupInlineFrame` that is for when</span>
+<span class="sd">  the start/end of the element are mirrors of each other, eg: `{++add++}`</span>
+<span class="sd">  Handles ()[]{}&lt;&gt; flipping.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">SingleGroupInline</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s1">&#39;()[]{}&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;)(][}{&gt;&lt;&#39;</span><span class="p">)),</span>
+    <span class="n">tag</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">link</span><span class="p">(</span><span class="n">designation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Convenience decorator for two-group inline elements that look like markdown links.</span>
+<span class="sd">  In other words, we expect `something[group1](group2)`. The pattern is limited to</span>
+<span class="sd">  using square/round parens in that exact way.</span>
+
+<span class="sd">  :param designation: the string that goes in front of the link. Eg, a tooltip</span>
+<span class="sd">  might have the syntax `T[text](tooltip text)`, so the designation would be `&#39;T&#39;`</span>
+<span class="sd">  :return: a new Inline element with the syntax of designation + [group1](group2)</span>
+<span class="sd">  that is parsed by the parser that this decorator is going to wrap.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">Patterns</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">designation</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">V1</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">link_fn</span><span class="p">(</span><span class="n">parser</span> <span class="p">:</span><span class="n">Callable</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Inline</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;inherit&#39;</span><span class="p">],</span>
+                  <span class="n">escape</span><span class="o">=</span><span class="s1">&#39;()[]&#39;</span><span class="o">+</span> <span class="n">designation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">designation</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">link_fn</span>
+
+<span class="k">def</span> <span class="nf">inline_two</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">  :param start: what goes at the beginning of the pattern, eg `{~~`</span>
+<span class="sd">  :param mid: what goes in between the two capture groups, eg `~&gt;`</span>
+<span class="sd">  :param end: what goes at the end of the second capture group eg `~~}`</span>
+<span class="sd">  :param nest: see Inline/Nesting for description of Nesting policies</span>
+<span class="sd">  :param sub: subscription list (see Inline#sub)</span>
+<span class="sd">  :return:</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">Patterns</span><span class="o">.</span><span class="n">double_group</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">V1</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">inline_two_fn</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Inline</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;inherit&#39;</span><span class="p">])</span>
+
+  <span class="k">return</span> <span class="n">inline_two_fn</span>
+</pre></div>
+
+  </div>
+
+  </header>
+
+  <section id="section-items">
+
+    <h2 class="section-title" id="header-functions">Functions</h2>
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.IdenticalInline">
+    <p>def <span class="ident">IdenticalInline</span>(</p><p>name, s, tag, attr=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>A very simple wrapper around <code>SingleGroupInlineFrame</code> that will work
+if you expect the start/end of the element to be the same. Eg: <code>*bold*</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.IdenticalInline', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.IdenticalInline" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">IdenticalInline</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  A very simple wrapper around `SingleGroupInlineFrame` that will work</span>
+<span class="sd">  if you expect the start/end of the element to be the same. Eg: `*bold*`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">SingleGroupInline</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.MirrorInline">
+    <p>def <span class="ident">MirrorInline</span>(</p><p>name, start, tag, attr=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>A very simple wrapper around <code>SingleGroupInlineFrame</code> that is for when
+the start/end of the element are mirrors of each other, eg: <code>{++add++}</code>
+Handles ()[]{}&lt;&gt; flipping.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.MirrorInline', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.MirrorInline" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">MirrorInline</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  A very simple wrapper around `SingleGroupInlineFrame` that is for when</span>
+<span class="sd">  the start/end of the element are mirrors of each other, eg: `{++add++}`</span>
+<span class="sd">  Handles ()[]{}&lt;&gt; flipping.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">SingleGroupInline</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">maketrans</span><span class="p">(</span><span class="s1">&#39;()[]{}&lt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;)(][}{&gt;&lt;&#39;</span><span class="p">)),</span>
+    <span class="n">tag</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.SingleGroupInline">
+    <p>def <span class="ident">SingleGroupInline</span>(</p><p>name, start, end, tag, attr=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>A special kind of inline frame that has only one capture group and wraps
+it with some set of start and end characters.</p>
+<p>It's expected that this kind of element will wrap its contents in one tag
+with specified attributes, so you can pass in a tag and its attributes
+here directly and the parser function will be generated for you.</p>
+<p>The first character of <code>start</code> and <code>end</code> is added to the list of escapable
+letters, and the generated regex makes sure that neither the start nor the
+end of the pattern are preceded by a backslash for escape.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.SingleGroupInline', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.SingleGroupInline" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">SingleGroupInline</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                      <span class="n">attr</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  A special kind of inline frame that has only one capture group and wraps</span>
+<span class="sd">  it with some set of start and end characters.</span>
+
+<span class="sd">  It&#39;s expected that this kind of element will wrap its contents in one tag</span>
+<span class="sd">  with specified attributes, so you can pass in a tag and its attributes</span>
+<span class="sd">  here directly and the parser function will be generated for you.</span>
+
+<span class="sd">  The first character of `start` and `end` is added to the list of escapable</span>
+<span class="sd">  letters, and the generated regex makes sure that neither the start nor the</span>
+<span class="sd">  end of the pattern are preceded by a backslash for escape.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">parser</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">body</span><span class="p">:</span> <span class="p">[</span><span class="n">tag</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">or</span> <span class="p">{},</span> <span class="n">body</span><span class="p">]</span>
+  <span class="n">parser</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">name</span>
+  <span class="k">return</span> <span class="n">inline_one</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)(</span><span class="n">parser</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.asset_inline">
+    <p>def <span class="ident">asset_inline</span>(</p><p>type, contents)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.asset_inline', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.asset_inline" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">asset_inline</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="n">AssetType</span><span class="p">,</span> <span class="n">contents</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]):</span>
+  <span class="k">def</span> <span class="nf">asset_inline_helper</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">Element</span><span class="p">):</span>
+    <span class="n">elem</span><span class="o">.</span><span class="n">add_asset</span><span class="p">(</span><span class="s1">&#39;&lt;script type=&quot;text/javascript&quot;&gt;</span><span class="se">\n</span><span class="s1">{0}</span><span class="se">\n</span><span class="s1">&lt;/script&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+                   <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="n">AssetType</span><span class="o">.</span><span class="n">JS</span>
+                   <span class="k">else</span> <span class="s1">&#39;&lt;style&gt;</span><span class="se">\n</span><span class="s1">{0}</span><span class="se">\n</span><span class="s1">&lt;/style&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">css</span><span class="o">.</span><span class="n">scss</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span>
+                                                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contents</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                                                        <span class="k">else</span> <span class="n">contents</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">elem</span>
+  <span class="k">return</span> <span class="n">asset_inline_helper</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.asset_url">
+    <p>def <span class="ident">asset_url</span>(</p><p>type, url)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.asset_url', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.asset_url" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">asset_url</span><span class="p">(</span><span class="nb">type</span><span class="p">:</span> <span class="n">AssetType</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">asset_url_helper</span><span class="p">(</span><span class="n">elem</span><span class="p">:</span> <span class="n">Element</span><span class="p">):</span>
+    <span class="n">elem</span><span class="o">.</span><span class="n">add_asset</span><span class="p">(</span><span class="s1">&#39;&lt;script src=&quot;{0}&quot;&gt;&lt;/script&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+                   <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="n">AssetType</span><span class="o">.</span><span class="n">JS</span>
+                   <span class="k">else</span> <span class="s1">&#39;&lt;link rel=&quot;stylesheet&quot; href=&quot;{0}&quot;/&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">elem</span>
+  <span class="k">return</span> <span class="n">asset_url_helper</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.block">
+    <p>def <span class="ident">block</span>(</p><p>nest=&lt;Nesting.POST: 2&gt;, sub=None, opts=&#39;&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Decorator for block style elements, to be used on a parser function.
+eg:</p>
+<p><code>python
+@block(...)
+def BlockName(text):
+  """ docs for BlockName element go here """
+  return ['div', text]</code></p>
+<p>The name of the function becomes the name of the block. There is automatic
+sanitization/converstion that happens in the process.
+So <code>BlockName</code> would have <code>name='block-name'</code> so that it's easier to type
+in the plain-text format.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.block', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.block" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">block</span><span class="p">(</span><span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">opts</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Decorator for block style elements, to be used on a parser function.</span>
+<span class="sd">  eg:</span>
+
+<span class="sd">  ```python</span>
+<span class="sd">  @block(...)</span>
+<span class="sd">  def BlockName(text):</span>
+<span class="sd">    \&quot;\&quot;\&quot; docs for BlockName element go here \&quot;\&quot;\&quot;</span>
+<span class="sd">    return [&#39;div&#39;, text]</span>
+<span class="sd">  ```</span>
+
+<span class="sd">  The name of the function becomes the name of the block. There is automatic</span>
+<span class="sd">  sanitization/converstion that happens in the process.</span>
+<span class="sd">  So `BlockName` would have `name=&#39;block-name&#39;` so that it&#39;s easier to type</span>
+<span class="sd">  in the plain-text format.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">block_fn</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span><span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Block</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Block</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">],</span> <span class="n">opts</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">block_fn</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.inline">
+    <p>def <span class="ident">inline</span>(</p><p>regex, nest=&lt;Nesting.FRAME: 1&gt;, sub=None, escape=&#39;&#39;, display=&lt;Display.INLINE: 2&gt;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Decorator for an inline element that has exactly one pattern and parser.
+For more complex inline elements, it's best to just define the element
+yourself.</p>
+<p>Recommended usage is to pass the regex is as a positional argument, and the
+others as kwargs, since it's hard to remember what order they go in.</p>
+<p>The parser function should take the groups of the returned regex as params,
+per usual and return html in s-expression form, like
+<code>['div', {'attr': 'value'}, 'text']</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.inline', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.inline" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">inline</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">escape</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">Display</span><span class="o">.</span><span class="n">INLINE</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Decorator for an inline element that has exactly one pattern and parser.</span>
+<span class="sd">  For more complex inline elements, it&#39;s best to just define the element</span>
+<span class="sd">  yourself.</span>
+
+<span class="sd">  Recommended usage is to pass the regex is as a positional argument, and the</span>
+<span class="sd">  others as kwargs, since it&#39;s hard to remember what order they go in.</span>
+
+<span class="sd">  The parser function should take the groups of the returned regex as params,</span>
+<span class="sd">  per usual and return html in s-expression form, like</span>
+<span class="sd">  `[&#39;div&#39;, {&#39;attr&#39;: &#39;value&#39;}, &#39;text&#39;]`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">inline_fn</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span><span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Inline</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Inline</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span><span class="p">,</span> <span class="n">escape</span><span class="p">,</span> <span class="n">display</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">inline_fn</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.inline_one">
+    <p>def <span class="ident">inline_one</span>(</p><p>start, end, nest=&lt;Nesting.FRAME: 1&gt;, sub=None, display=&lt;Display.INLINE: 2&gt;)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.inline_one', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.inline_one" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">inline_one</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">Display</span><span class="o">.</span><span class="n">INLINE</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">patt</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">Patterns</span><span class="o">.</span><span class="n">single_group</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">end</span><span class="p">)))</span>
+  <span class="k">return</span> <span class="n">inline</span><span class="p">(</span><span class="n">patt</span><span class="p">,</span> <span class="n">escape</span><span class="o">=</span><span class="p">[</span><span class="n">start</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">end</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                <span class="n">nest</span><span class="o">=</span><span class="n">nest</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="n">display</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="n">sub</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.inline_two">
+    <p>def <span class="ident">inline_two</span>(</p><p>start, mid, end, nest=&lt;Nesting.POST: 2&gt;, sub=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>:param start: what goes at the beginning of the pattern, eg <code>{~~</code>
+:param mid: what goes in between the two capture groups, eg <code>~&gt;</code>
+:param end: what goes at the end of the second capture group eg <code>~~}</code>
+:param nest: see Inline/Nesting for description of Nesting policies
+:param sub: subscription list (see Inline#sub)
+:return:</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.inline_two', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.inline_two" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">inline_two</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">mid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">  :param start: what goes at the beginning of the pattern, eg `{~~`</span>
+<span class="sd">  :param mid: what goes in between the two capture groups, eg `~&gt;`</span>
+<span class="sd">  :param end: what goes at the end of the second capture group eg `~~}`</span>
+<span class="sd">  :param nest: see Inline/Nesting for description of Nesting policies</span>
+<span class="sd">  :param sub: subscription list (see Inline#sub)</span>
+<span class="sd">  :return:</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">Patterns</span><span class="o">.</span><span class="n">double_group</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">mid</span><span class="p">,</span> <span class="n">end</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">V1</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">inline_two_fn</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Inline</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;inherit&#39;</span><span class="p">])</span>
+
+  <span class="k">return</span> <span class="n">inline_two_fn</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.link">
+    <p>def <span class="ident">link</span>(</p><p>designation, nest=&lt;Nesting.POST: 2&gt;, sub=None)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Convenience decorator for two-group inline elements that look like markdown links.
+In other words, we expect <code>something[group1](group2)</code>. The pattern is limited to
+using square/round parens in that exact way.</p>
+<p>:param designation: the string that goes in front of the link. Eg, a tooltip
+might have the syntax <code>T[text](tooltip text)</code>, so the designation would be <code>'T'</code>
+:return: a new Inline element with the syntax of designation + <a href="group2">group1</a>
+that is parsed by the parser that this decorator is going to wrap.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.link', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.link" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">link</span><span class="p">(</span><span class="n">designation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">nest</span><span class="o">=</span><span class="n">Nesting</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Convenience decorator for two-group inline elements that look like markdown links.</span>
+<span class="sd">  In other words, we expect `something[group1](group2)`. The pattern is limited to</span>
+<span class="sd">  using square/round parens in that exact way.</span>
+
+<span class="sd">  :param designation: the string that goes in front of the link. Eg, a tooltip</span>
+<span class="sd">  might have the syntax `T[text](tooltip text)`, so the designation would be `&#39;T&#39;`</span>
+<span class="sd">  :return: a new Inline element with the syntax of designation + [group1](group2)</span>
+<span class="sd">  that is parsed by the parser that this decorator is going to wrap.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">Patterns</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">designation</span><span class="p">),</span> <span class="n">re</span><span class="o">.</span><span class="n">V1</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">link_fn</span><span class="p">(</span><span class="n">parser</span> <span class="p">:</span><span class="n">Callable</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Inline</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;inherit&#39;</span><span class="p">],</span>
+                  <span class="n">escape</span><span class="o">=</span><span class="s1">&#39;()[]&#39;</span><span class="o">+</span> <span class="n">designation</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">designation</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">link_fn</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.makename">
+    <p>def <span class="ident">makename</span>(</p><p>name)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Turns a capital camelcase name into a dasherized name for block detection.
+Used as the logic for autogenerating the <code>name</code> attribute of an <code>Element</code>.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.makename', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.makename" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">makename</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+  <span class="sd">&quot;&quot;&quot;Turns a capital camelcase name into a dasherized name for block detection.</span>
+<span class="sd">  Used as the logic for autogenerating the `name` attribute of an `Element`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">inflection</span><span class="o">.</span><span class="n">dasherize</span><span class="p">(</span><span class="n">inflection</span><span class="o">.</span><span class="n">underscore</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.standalone_integration">
+    <p>def <span class="ident">standalone_integration</span>(</p><p>outer_elem=&#39;div&#39;, inner_elem=&#39;div&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Decorator that takes a function with signature <code>(text: str, docid: str, elem: str) -&gt; str</code> that spits out the
+script contents required to inject the integrated content into the element, and generates a block that wraps that
+logic. That's kinda confusing - see examples like <code>Katex</code> or <code>MusicalAbc</code> in the library.py file.</p>
+<p>:param outer_elem: optional if you want something other than a <code>div</code> on the outside
+:param inner_elem: optional if you want something other than a <code>div</code> on the inside (eg, <code>svg</code>, <code>pre</code>, etc).
+:return: a <code>Block</code> that generates HTML to inject content into the site integrated with a JS library.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.standalone_integration', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.standalone_integration" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">standalone_integration</span><span class="p">(</span><span class="n">outer_elem</span><span class="o">=</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="n">inner_elem</span><span class="o">=</span><span class="s1">&#39;div&#39;</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Decorator that takes a function with signature `(text: str, docid: str, elem: str) -&gt; str` that spits out the</span>
+<span class="sd">  script contents required to inject the integrated content into the element, and generates a block that wraps that</span>
+<span class="sd">  logic. That&#39;s kinda confusing - see examples like `Katex` or `MusicalAbc` in the library.py file.</span>
+<span class="sd">  </span>
+<span class="sd">  :param outer_elem: optional if you want something other than a `div` on the outside</span>
+<span class="sd">  :param inner_elem: optional if you want something other than a `div` on the inside (eg, `svg`, `pre`, etc).</span>
+<span class="sd">  :return: a `Block` that generates HTML to inject content into the site integrated with a JS library.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">standalone_integration_wrapper</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="nd">@terminal_block</span><span class="p">()</span>
+    <span class="nd">@functools.wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">standalone_block</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+      <span class="n">docid</span> <span class="o">=</span> <span class="n">makename</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+      <span class="n">elem</span> <span class="o">=</span> <span class="s2">&quot;document.getElementById(&#39;{0}&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">docid</span><span class="p">);</span>
+
+      <span class="k">return</span> <span class="p">[</span><span class="n">outer_elem</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">makename</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span><span class="p">),</span>
+              <span class="p">[</span><span class="n">inner_elem</span> <span class="o">+</span> <span class="s1">&#39;#{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">docid</span><span class="p">)],</span>
+              <span class="p">[</span><span class="s1">&#39;script&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="n">docid</span><span class="p">},</span> <span class="n">f</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">docid</span><span class="o">=</span><span class="n">docid</span><span class="p">,</span> <span class="n">elem</span><span class="o">=</span><span class="n">elem</span><span class="p">)]]</span>
+    <span class="k">return</span> <span class="n">standalone_block</span>
+
+  <span class="k">return</span> <span class="n">standalone_integration_wrapper</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+      
+  <div class="item">
+    <div class="name def" id="glue.elements.terminal_block">
+    <p>def <span class="ident">terminal_block</span>(</p><p>opts=&#39;&#39;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Decorator for blocks that have nesting = NONE and do not subscribe to any
+inline or block elements. Note that NONE type blocks should NOT subscribe
+to any such elements, anyway, so it is convenient to use this function.
+:param opts: see Block documentation.
+:return: a decorator that converts a parser function to a Block object of the
+same name. See Block for details.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.terminal_block', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.terminal_block" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">terminal_block</span><span class="p">(</span><span class="n">opts</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Decorator for blocks that have nesting = NONE and do not subscribe to any</span>
+<span class="sd">  inline or block elements. Note that NONE type blocks should NOT subscribe</span>
+<span class="sd">  to any such elements, anyway, so it is convenient to use this function.</span>
+<span class="sd">  :param opts: see Block documentation.</span>
+<span class="sd">  :return: a decorator that converts a parser function to a Block object of the</span>
+<span class="sd">  same name. See Block for details.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">block</span><span class="p">(</span><span class="n">Nesting</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span> <span class="p">[],</span> <span class="n">opts</span><span class="p">)</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+
+    <h2 class="section-title" id="header-classes">Classes</h2>
+      
+      <div class="item">
+      <p id="glue.elements.AssetType" class="name">class <span class="ident">AssetType</span></p>
+      
+  
+    <div class="desc"><p>There are at least two kinds of assets - the ones that are scripts
+(eg, <code>&lt;script src="blah blah"&gt;&lt;/script&gt;</code>), and the ones that are CSS
+(eg <code>&lt;link rel="stylesheet" type="text/css" href="blah blah"/&gt;</code>).</p>
+<p>Accordingly there are two values for this Enum so far:</p>
+<p>JS: something written in the JS language
+CSS: a stylesheet written in CSS
+SCSS: a stylesheet written in SCSS, preprocessed through libsass.</p></div>
+  <div class="source_cont">
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#glue.elements.AssetType">AssetType</a></li>
+          <li>enum.Enum</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="glue.elements.AssetType.CSS" class="name">var <span class="ident">CSS</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.AssetType.JS" class="name">var <span class="ident">JS</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.AssetType.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.AssetType.value" class="name">var <span class="ident">value</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="glue.elements.Block" class="name">class <span class="ident">Block</span></p>
+      
+  
+    <div class="desc"><p>Base class for elements that are enclosed in yaml-like document blocks.
+A block element is an element that is expected to render in the style of an
+html <code>div</code> element, and is represented in the plain-text format as:</p>
+<p><code>yaml
+---block ...args
+text that will be parsed by the block goes here.
+...</code></p>
+<p>The name of the block is put right after the <code>---</code> and is used to dispatch
+to the block with the appropriate name. The name of the block should be
+dasherized for style purposes (so that it's easier to type than capitals, and
+so that there's a consistent look).</p>
+<p><code>nest</code> is the nesting policies for nesting blocks and inline elements.</p>
+<p><code>sub</code> is an array of literal elements that this block
+accepts as sub-blocks. In general, most blocks will either be <code>Nesting.NONE</code> or
+accept every block, but you can be more specific if you'd like.</p>
+<p><code>subinline</code> is the same, but restricted to <code>Inline</code> elements. It's generated
+from the sub list, and it's existence is just an optimization to avoid having
+to do the filter ecah time.</p>
+<p><code>parser</code> is a function that takes string text and outputs html corresponding
+to whatever this block would like to parse.</p>
+<p><code>opts</code> is a string passed to getopts that states which flags are allowed
+as kwargs options for this block.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Block', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Block" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Block</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Base class for elements that are enclosed in yaml-like document blocks.</span>
+<span class="sd">  A block element is an element that is expected to render in the style of an</span>
+<span class="sd">  html `div` element, and is represented in the plain-text format as:</span>
+
+<span class="sd">  ```yaml</span>
+<span class="sd">  ---block ...args</span>
+<span class="sd">  text that will be parsed by the block goes here.</span>
+<span class="sd">  ...</span>
+<span class="sd">  ```</span>
+
+<span class="sd">  The name of the block is put right after the `---` and is used to dispatch</span>
+<span class="sd">  to the block with the appropriate name. The name of the block should be</span>
+<span class="sd">  dasherized for style purposes (so that it&#39;s easier to type than capitals, and</span>
+<span class="sd">  so that there&#39;s a consistent look).</span>
+
+<span class="sd">  `nest` is the nesting policies for nesting blocks and inline elements.</span>
+
+<span class="sd">  `sub` is an array of literal elements that this block</span>
+<span class="sd">  accepts as sub-blocks. In general, most blocks will either be `Nesting.NONE` or</span>
+<span class="sd">  accept every block, but you can be more specific if you&#39;d like.</span>
+
+<span class="sd">  `subinline` is the same, but restricted to `Inline` elements. It&#39;s generated</span>
+<span class="sd">  from the sub list, and it&#39;s existence is just an optimization to avoid having</span>
+<span class="sd">  to do the filter ecah time.</span>
+
+<span class="sd">  `parser` is a function that takes string text and outputs html corresponding</span>
+<span class="sd">  to whatever this block would like to parse.</span>
+
+<span class="sd">  `opts` is a string passed to getopts that states which flags are allowed</span>
+<span class="sd">  as kwargs options for this block.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">nest</span><span class="p">:</span> <span class="n">Nesting</span><span class="p">,</span> <span class="n">sub</span><span class="p">:</span> <span class="p">[</span><span class="n">Element</span><span class="p">],</span>
+               <span class="n">opts</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="n">opts</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">subinline</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sub</span>
+                      <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;inherit&#39;</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Inline</span><span class="p">)]</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#glue.elements.Block">Block</a></li>
+          <li><a href="#glue.elements.Element">Element</a></li>
+          <li>abc.ABC</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="glue.elements.Block.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, parser, nest, sub, opts)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Block.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Block.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">nest</span><span class="p">:</span> <span class="n">Nesting</span><span class="p">,</span> <span class="n">sub</span><span class="p">:</span> <span class="p">[</span><span class="n">Element</span><span class="p">],</span>
+             <span class="n">opts</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+  <span class="nb">super</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="n">opts</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">subinline</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sub</span>
+                    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;inherit&#39;</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Inline</span><span class="p">)]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="glue.elements.Block.add_asset">
+    <p>def <span class="ident">add_asset</span>(</p><p>self, asset)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Block.add_asset', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Block.add_asset" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="glue.elements.Block.validate">
+    <p>def <span class="ident">validate</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Block.validate', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Block.validate" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+  <span class="c1"># If there&#39;s no nesting there should be no subscriptions</span>
+  <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">==</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">NONE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">!=</span> <span class="p">[]:</span> <span class="k">return</span> <span class="bp">False</span>
+  <span class="c1"># Frames should not restrict what can be put inside them, since they</span>
+  <span class="c1"># don&#39;t process anything inside themselves.</span>
+  <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">==</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">!=</span> <span class="p">[</span><span class="s1">&#39;inherit&#39;</span><span class="p">]:</span> <span class="k">return</span> <span class="bp">False</span>
+  <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="glue.elements.Block.opts" class="name">var <span class="ident">opts</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Block.subinline" class="name">var <span class="ident">subinline</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="glue.elements.Display" class="name">class <span class="ident">Display</span></p>
+      
+  
+    <div class="desc"><p>You can set an inline element to be displayed like a block element. This is
+good for things like header elements in markdown syntax, which are detected by
+regex, but are not intended to be wrapped in any other kind of block.</p>
+<p>INLINE: should be displayed like a HTML inline (think span) (default)</p>
+<p>BLOCK: should be displayed like a HTML block (think div)</p></div>
+  <div class="source_cont">
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#glue.elements.Display">Display</a></li>
+          <li>enum.Enum</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="glue.elements.Display.BLOCK" class="name">var <span class="ident">BLOCK</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Display.INLINE" class="name">var <span class="ident">INLINE</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Display.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Display.value" class="name">var <span class="ident">value</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="glue.elements.Element" class="name">class <span class="ident">Element</span></p>
+      
+  
+    <div class="desc"><p>Base class for all elements, which itself is really just a parser function
+augmented with some necessary data to plug into the glue system.</p>
+<p>There are four instance variables:</p>
+<p><code>nest</code> is the nesting policy. It controls in which order the sub-blocks/inline
+elements are parsed. See the <code>Nesting</code> enum for more information on what the
+kinds of nesting policies are and how they are expected to function.</p>
+<p><code>sub</code> is a list of the subscriptions this element is maintinaing. Only the
+elements appearing in this list can be sub blocks or inline elements of this
+element. There are two special keywords. The first is <code>'all'</code> which means all
+elements in the registry are fair game. The second is <code>'inherit'</code> which means
+that this block allows exactly what its parent allows through. <code>'inherit'</code> is
+a rare choice, and most blocks will just have <code>'all'</code> as their subscription
+policy.</p>
+<p><code>parser</code> is a function that is supposed to take the body of the block along
+with any options (or just the captured groups of an inline element) and
+generate HTML output (in the cottonmouth list form). It has slightly different
+semantics for each of the subclasses, and different signatures as well
+depending on what they are parsing and how.</p>
+<p><code>assets</code> is a set of strings each of which is a valid HTML tag (plus contents)
+that adds an asset such as a script (JS) or stylesheet (CSS) to the page.
+It is recommended that you use the helpers to construct these, rather than
+go through the tedious process of trying to write it out yourself.</p>
+<p>An additional property is:</p>
+<p><code>name</code> is the name of the element. The name has two uses - it becomes the key
+for the element in the registry, and it also is the 'dispatch' (think like a
+function call) for the block. The name is auto-generated for the sake of
+sanity by taking a camelcase name (which is consistent with python naming style)
+and converting it into something dash-separated so that it's easier to type
+into the editor.</p>
+<p><code>---block
+blah blah blah
+...</code></p>
+<p>after the <code>---</code> the name is used to dispatch to the appropriate block element,
+whose parser function will be called to parse the contents of that block.
+For the sake of sanity, the name is autogenerated based on the class name.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Element', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Element" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Element</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Base class for all elements, which itself is really just a parser function</span>
+<span class="sd">  augmented with some necessary data to plug into the glue system.</span>
+
+<span class="sd">  There are four instance variables:</span>
+
+<span class="sd">  `nest` is the nesting policy. It controls in which order the sub-blocks/inline</span>
+<span class="sd">  elements are parsed. See the `Nesting` enum for more information on what the</span>
+<span class="sd">  kinds of nesting policies are and how they are expected to function.</span>
+
+<span class="sd">  `sub` is a list of the subscriptions this element is maintinaing. Only the</span>
+<span class="sd">  elements appearing in this list can be sub blocks or inline elements of this</span>
+<span class="sd">  element. There are two special keywords. The first is `&#39;all&#39;` which means all</span>
+<span class="sd">  elements in the registry are fair game. The second is `&#39;inherit&#39;` which means</span>
+<span class="sd">  that this block allows exactly what its parent allows through. `&#39;inherit&#39;` is</span>
+<span class="sd">  a rare choice, and most blocks will just have `&#39;all&#39;` as their subscription</span>
+<span class="sd">  policy.</span>
+
+<span class="sd">  `parser` is a function that is supposed to take the body of the block along</span>
+<span class="sd">  with any options (or just the captured groups of an inline element) and</span>
+<span class="sd">  generate HTML output (in the cottonmouth list form). It has slightly different</span>
+<span class="sd">  semantics for each of the subclasses, and different signatures as well</span>
+<span class="sd">  depending on what they are parsing and how.</span>
+
+<span class="sd">  `assets` is a set of strings each of which is a valid HTML tag (plus contents)</span>
+<span class="sd">  that adds an asset such as a script (JS) or stylesheet (CSS) to the page.</span>
+<span class="sd">  It is recommended that you use the helpers to construct these, rather than</span>
+<span class="sd">  go through the tedious process of trying to write it out yourself.</span>
+
+<span class="sd">  An additional property is:</span>
+
+<span class="sd">  `name` is the name of the element. The name has two uses - it becomes the key</span>
+<span class="sd">  for the element in the registry, and it also is the &#39;dispatch&#39; (think like a</span>
+<span class="sd">  function call) for the block. The name is auto-generated for the sake of</span>
+<span class="sd">  sanity by taking a camelcase name (which is consistent with python naming style)</span>
+<span class="sd">  and converting it into something dash-separated so that it&#39;s easier to type</span>
+<span class="sd">  into the editor.</span>
+
+<span class="sd">  ```</span>
+<span class="sd">  ---block</span>
+<span class="sd">  blah blah blah</span>
+<span class="sd">  ...</span>
+<span class="sd">  ```</span>
+
+<span class="sd">  after the `---` the name is used to dispatch to the appropriate block element,</span>
+<span class="sd">  whose parser function will be called to parse the contents of that block.</span>
+<span class="sd">  For the sake of sanity, the name is autogenerated based on the class name.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+
+  <span class="c1"># this class does not require instance data, so we can save space.</span>
+  <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+  <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+  <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">inflection</span><span class="o">.</span><span class="n">camelize</span><span class="p">(</span><span class="n">inflection</span><span class="o">.</span><span class="n">underscore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+  <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">nest</span><span class="p">:</span> <span class="n">Nesting</span><span class="p">,</span> <span class="n">sub</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Element&#39;</span><span class="p">]):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">=</span> <span class="n">nest</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">=</span> <span class="n">sub</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">makename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assets</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">_replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">copied</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">copied</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">copied</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">copied</span>
+
+  <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># If there&#39;s no nesting there should be no subscriptions</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">==</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">NONE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">!=</span> <span class="p">[]:</span> <span class="k">return</span> <span class="bp">False</span>
+    <span class="c1"># Frames should not restrict what can be put inside them, since they</span>
+    <span class="c1"># don&#39;t process anything inside themselves.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">==</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">!=</span> <span class="p">[</span><span class="s1">&#39;inherit&#39;</span><span class="p">]:</span> <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+  <span class="k">def</span> <span class="nf">add_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#glue.elements.Element">Element</a></li>
+          <li>abc.ABC</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="glue.elements.Element.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, parser, nest, sub)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Element.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Element.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">nest</span><span class="p">:</span> <span class="n">Nesting</span><span class="p">,</span> <span class="n">sub</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Element&#39;</span><span class="p">]):</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">=</span> <span class="n">nest</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">=</span> <span class="n">sub</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">parser</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">makename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">assets</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="glue.elements.Element.add_asset">
+    <p>def <span class="ident">add_asset</span>(</p><p>self, asset)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Element.add_asset', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Element.add_asset" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="glue.elements.Element.validate">
+    <p>def <span class="ident">validate</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Element.validate', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Element.validate" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+  <span class="c1"># If there&#39;s no nesting there should be no subscriptions</span>
+  <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">==</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">NONE</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">!=</span> <span class="p">[]:</span> <span class="k">return</span> <span class="bp">False</span>
+  <span class="c1"># Frames should not restrict what can be put inside them, since they</span>
+  <span class="c1"># don&#39;t process anything inside themselves.</span>
+  <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nest</span> <span class="o">==</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub</span> <span class="o">!=</span> <span class="p">[</span><span class="s1">&#39;inherit&#39;</span><span class="p">]:</span> <span class="k">return</span> <span class="bp">False</span>
+  <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="glue.elements.Element.assets" class="name">var <span class="ident">assets</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Element.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Element.nest" class="name">var <span class="ident">nest</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Element.parser" class="name">var <span class="ident">parser</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Element.sub" class="name">var <span class="ident">sub</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="glue.elements.Inline" class="name">class <span class="ident">Inline</span></p>
+      
+  
+    <div class="desc"><p>Base class for elements that are meant to be inline in the text inside blocks.
+An inline element is expected to render in the style of an html <code>span</code> element.</p>
+<p>The representation of an inline element in plaintext is defined by the parser
+object, which is designed differently than the parser element of a block.
+The parser in an Inline element looks like a list of pairs, where the first
+element in a pair is a regex and the second is a function that takes the
+recorded groups of the regex and returns an html element, in cottonmouth form.</p>
+<p>It's recommended to use the more advanced <code>regex</code> 2016 library that comes from
+pip so that you can properly create regexes that allow escaped characters.</p>
+<p>Eg, matching bold text might seem easy (<code>\*(.*?)\*</code>) but it is actually quite
+complicated to ignore a literal <code>\*</code> in the text.
+For very basic things, both helper methods and standard elements have been
+provided so you don't have to write them yourself!</p>
+<p><code>nest</code> defines what nesting style the parser is expecting. <code>FRAME</code> is the most
+common, and basically "passes through" parsing from the parent block element.
+However, you can also define <code>POST</code> or <code>SUB</code> if you expect to do some of
+your own parsing (eg, link elements work well with the <code>POST</code> style).</p>
+<p><code>sub</code> is a list of literal element objects that define
+which styles are allowed inside this style. The two special values are 'inherit'
+and 'all'. 'inherit' is a dynamic key, and at parse-time the text inside the
+element will be parsed as if it was in the enclosing block's scope. 'all' means
+you would like to subscribe to ALL the inline styles in your registry. This is
+a static key.</p>
+<p><code>escape</code> is a string or set containing characters that need to be escaped in the
+block. eg, if you define syntax like <code>*bold*</code> to mean bold, then you would like
+for the <code>*</code> character to be escapable so that the user can enter an actual
+asterisk if they wish. Setting escape = "*" will tell the parser to translate
+every <code>\*</code> sequence to a literal <code>*</code>. Every time you give a character a special
+meaning, you have to make an escape sequence that allows you to enter the
+character literally. This is most critical for the 1-char elements, but it's
+important for others as well.</p>
+<p><code>display</code> is a switch that allows inline elements to be displayed as blocks
+(eg, with no other elements like div/section/p wrapping them). A good example
+of when Display.BLOCK is a good idea is for Markdown style headers.
+Note that the regex for a Display.BLOCK type case is limited to exist on ONLY
+one line. This is a necessary restriction to not conflict with the multiline
+regex being used to split blocks. Please use Display.BLOCK sparingly.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Inline', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Inline" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Inline</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Base class for elements that are meant to be inline in the text inside blocks.</span>
+<span class="sd">  An inline element is expected to render in the style of an html `span` element.</span>
+
+<span class="sd">  The representation of an inline element in plaintext is defined by the parser</span>
+<span class="sd">  object, which is designed differently than the parser element of a block.</span>
+<span class="sd">  The parser in an Inline element looks like a list of pairs, where the first</span>
+<span class="sd">  element in a pair is a regex and the second is a function that takes the</span>
+<span class="sd">  recorded groups of the regex and returns an html element, in cottonmouth form.</span>
+
+<span class="sd">  It&#39;s recommended to use the more advanced `regex` 2016 library that comes from</span>
+<span class="sd">  pip so that you can properly create regexes that allow escaped characters.</span>
+
+<span class="sd">  Eg, matching bold text might seem easy (`\*(.*?)\*`) but it is actually quite</span>
+<span class="sd">  complicated to ignore a literal `\*` in the text.</span>
+<span class="sd">  For very basic things, both helper methods and standard elements have been</span>
+<span class="sd">  provided so you don&#39;t have to write them yourself!</span>
+
+<span class="sd">  `nest` defines what nesting style the parser is expecting. `FRAME` is the most</span>
+<span class="sd">  common, and basically &quot;passes through&quot; parsing from the parent block element.</span>
+<span class="sd">  However, you can also define `POST` or `SUB` if you expect to do some of</span>
+<span class="sd">  your own parsing (eg, link elements work well with the `POST` style).</span>
+
+<span class="sd">  `sub` is a list of literal element objects that define</span>
+<span class="sd">  which styles are allowed inside this style. The two special values are &#39;inherit&#39;</span>
+<span class="sd">  and &#39;all&#39;. &#39;inherit&#39; is a dynamic key, and at parse-time the text inside the</span>
+<span class="sd">  element will be parsed as if it was in the enclosing block&#39;s scope. &#39;all&#39; means</span>
+<span class="sd">  you would like to subscribe to ALL the inline styles in your registry. This is</span>
+<span class="sd">  a static key.</span>
+
+<span class="sd">  `escape` is a string or set containing characters that need to be escaped in the</span>
+<span class="sd">  block. eg, if you define syntax like `*bold*` to mean bold, then you would like</span>
+<span class="sd">  for the `*` character to be escapable so that the user can enter an actual</span>
+<span class="sd">  asterisk if they wish. Setting escape = &quot;*&quot; will tell the parser to translate</span>
+<span class="sd">  every `\*` sequence to a literal `*`. Every time you give a character a special</span>
+<span class="sd">  meaning, you have to make an escape sequence that allows you to enter the</span>
+<span class="sd">  character literally. This is most critical for the 1-char elements, but it&#39;s</span>
+<span class="sd">  important for others as well.</span>
+
+<span class="sd">  `display` is a switch that allows inline elements to be displayed as blocks</span>
+<span class="sd">  (eg, with no other elements like div/section/p wrapping them). A good example</span>
+<span class="sd">  of when Display.BLOCK is a good idea is for Markdown style headers.</span>
+<span class="sd">  Note that the regex for a Display.BLOCK type case is limited to exist on ONLY</span>
+<span class="sd">  one line. This is a necessary restriction to not conflict with the multiline</span>
+<span class="sd">  regex being used to split blocks. Please use Display.BLOCK sparingly.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span>
+                     <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+                     <span class="n">nest</span><span class="p">:</span> <span class="n">Nesting</span> <span class="o">=</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span>
+                     <span class="n">sub</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Inline&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+                     <span class="n">escape</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                     <span class="n">display</span><span class="p">:</span> <span class="n">Display</span> <span class="o">=</span> <span class="n">Display</span><span class="o">.</span><span class="n">INLINE</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Inline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">regex</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">escape</span> <span class="o">=</span> <span class="n">escape</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="n">display</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">subinline</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">])</span>
+                      <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;inherit&#39;</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Inline</span><span class="p">)]</span>
+
+  <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">Inline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">==</span> <span class="n">Display</span><span class="o">.</span><span class="n">BLOCK</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">)):</span>
+      <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#glue.elements.Inline">Inline</a></li>
+          <li><a href="#glue.elements.Element">Element</a></li>
+          <li>abc.ABC</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Static methods</h3>
+            
+  <div class="item">
+    <div class="name def" id="glue.elements.Inline.__init__">
+    <p>def <span class="ident">__init__</span>(</p><p>self, regex, parser, nest=&lt;Nesting.FRAME: 1&gt;, sub=None, escape=&#39;&#39;, display=&lt;Display.INLINE: 2&gt;)</p>
+    </div>
+    
+
+    
+  
+    <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Inline.__init__', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Inline.__init__" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span>
+                   <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+                   <span class="n">nest</span><span class="p">:</span> <span class="n">Nesting</span> <span class="o">=</span> <span class="n">Nesting</span><span class="o">.</span><span class="n">FRAME</span><span class="p">,</span>
+                   <span class="n">sub</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Inline&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+                   <span class="n">escape</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                   <span class="n">display</span><span class="p">:</span> <span class="n">Display</span> <span class="o">=</span> <span class="n">Display</span><span class="o">.</span><span class="n">INLINE</span><span class="p">):</span>
+  <span class="nb">super</span><span class="p">(</span><span class="n">Inline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">nest</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">])</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">regex</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">escape</span> <span class="o">=</span> <span class="n">escape</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">=</span> <span class="n">display</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">subinline</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">sub</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span> <span class="ow">or</span> <span class="n">x</span> <span class="o">==</span> <span class="s1">&#39;inherit&#39;</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Inline</span><span class="p">)]</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="glue.elements.Inline.add_asset">
+    <p>def <span class="ident">add_asset</span>(</p><p>self, asset)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Inline.add_asset', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Inline.add_asset" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asset</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+  <span class="bp">self</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asset</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+            
+  <div class="item">
+    <div class="name def" id="glue.elements.Inline.validate">
+    <p>def <span class="ident">validate</span>(</p><p>self)</p>
+    </div>
+    
+
+    
+  
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Inline.validate', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Inline.validate" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="nb">super</span><span class="p">(</span><span class="n">Inline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+  <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">display</span> <span class="o">==</span> <span class="n">Display</span><span class="o">.</span><span class="n">BLOCK</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;^&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">pattern</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">)):</span>
+    <span class="k">return</span> <span class="bp">False</span>
+  <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+
+  </div>
+</div>
+
+  </div>
+  
+          <h3>Instance variables</h3>
+            <div class="item">
+            <p id="glue.elements.Inline.display" class="name">var <span class="ident">display</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Inline.escape" class="name">var <span class="ident">escape</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Inline.regex" class="name">var <span class="ident">regex</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Inline.subinline" class="name">var <span class="ident">subinline</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="glue.elements.Nesting" class="name">class <span class="ident">Nesting</span></p>
+      
+  
+    <div class="desc"><p>FRAME: element is intended to contain/frame the inside
+       text, which means that subscriptions should be inherited from the parent.</p>
+<p>POST: text in the block should be parsed AFTER this block is
+      parsed. This is the default, and is suitable for most situations.</p>
+<p>SUB: the inside of the text is parsed for child nodes (inline and
+     block) first, and the corresponding sections are replaced with [|*|] style
+     tags that are meant to be left UNTOUCHED. After this block is parsed,
+     then the tags are replaced with the appropriate parsed sections. This could
+     have also been called 'PRE', since it pre-parses the contents before
+     calling the block's parsing function.</p>
+<p>NONE: terminal element. The parser's output is taken verbatim, with out any
+      further processing of its insides.</p></div>
+  <div class="source_cont">
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#glue.elements.Nesting">Nesting</a></li>
+          <li>enum.Enum</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="glue.elements.Nesting.FRAME" class="name">var <span class="ident">FRAME</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Nesting.NONE" class="name">var <span class="ident">NONE</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Nesting.POST" class="name">var <span class="ident">POST</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Nesting.SUB" class="name">var <span class="ident">SUB</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Nesting.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Nesting.value" class="name">var <span class="ident">value</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+      
+      <div class="item">
+      <p id="glue.elements.Patterns" class="name">class <span class="ident">Patterns</span></p>
+      
+  
+    <div class="desc"><p>Defines some known regex pattern templates for common types of inline syntax.
+For example, a single group inline element (one capture group framed by
+something before and after the group).</p></div>
+  <div class="source_cont">
+  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-glue.elements.Patterns', this);">Show source &equiv;</a></p>
+  <div id="source-glue.elements.Patterns" class="source">
+    <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Patterns</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Defines some known regex pattern templates for common types of inline syntax.</span>
+<span class="sd">  For example, a single group inline element (one capture group framed by</span>
+<span class="sd">  something before and after the group).</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">escape</span> <span class="o">=</span> <span class="s1">&#39;(?&lt;!</span><span class="se">\\\\</span><span class="s1">)(?:</span><span class="se">\\\\\\\\</span><span class="s1">)*{0}&#39;</span>
+  <span class="n">single_group</span> <span class="o">=</span> <span class="s1">&#39;(?&lt;!</span><span class="se">\\\\</span><span class="s1">)(?:</span><span class="se">\\\\\\\\</span><span class="s1">)*</span><span class="se">\\</span><span class="s1">K{0}(.*?(?&lt;!</span><span class="se">\\\\</span><span class="s1">)(?:</span><span class="se">\\\\\\\\</span><span class="s1">)*){1}&#39;</span>
+  <span class="n">link</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*\K{0}\[(.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*)\]\((.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*)\)&#39;</span>
+  <span class="n">double_group</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*\K\{0}(.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*){1}(.*?(?&lt;!</span><span class="se">\\</span><span class="s1">)(?:</span><span class="se">\\\\</span><span class="s1">)*){2}&#39;</span>
+</pre></div>
+
+  </div>
+</div>
+
+
+      <div class="class">
+          <h3>Ancestors (in MRO)</h3>
+          <ul class="class_list">
+          <li><a href="#glue.elements.Patterns">Patterns</a></li>
+          <li>enum.Enum</li>
+          <li>builtins.object</li>
+          </ul>
+          <h3>Class variables</h3>
+            <div class="item">
+            <p id="glue.elements.Patterns.double_group" class="name">var <span class="ident">double_group</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Patterns.escape" class="name">var <span class="ident">escape</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Patterns.link" class="name">var <span class="ident">link</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Patterns.name" class="name">var <span class="ident">name</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Patterns.single_group" class="name">var <span class="ident">single_group</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+            <div class="item">
+            <p id="glue.elements.Patterns.value" class="name">var <span class="ident">value</span></p>
+            
+
+            
+  
+  <div class="source_cont">
+</div>
+
+            </div>
+      </div>
+      </div>
+
+  </section>
+
+    </article>
+  <div class="clear"> </div>
+  <footer id="footer">
+    <p>
+      Documentation generated by
+      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
+    </p>
+
+    <p>pdoc is in the public domain with the
+      <a href="http://unlicense.org">UNLICENSE</a></p>
+
+    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+  </footer>
+</div>
+</body>
+</html>
