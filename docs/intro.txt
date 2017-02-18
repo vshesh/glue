@@ -1,0 +1,205 @@
+# Introduction
+
+In a (hopefully) obvious move, this whole website's content was written using
+*GLUE*, as an attempt to show off what it can do. You can follow along with the
+input text of each page in the [examples directory](https://github.com/vshesh/glue/tree/master/static/examples).
+
+## Why did you bother?
+
+I like Markdown a lot. It makes writing static documents a lot easier, esp. for people who have some experience writing code. I like using it for all kinds of tasks - homework write ups (which includes math and code), papers, web pages, presentations, educational content, personal blogs, and so on.
+
+However, Markdown is incredibly basic. I end up writing quite a bit of raw HTML in my markdown documents, mostly because of missing plugins/styling. Math is an excellent example. I have to write `<div class="math"> [math here] </div>` in my documents, and then add a script tag to include `katex`, which is really annoying. Another good example is images, which have no default styling, meaning I have to wrap them in another div and type the styling myself. Doing this for every image leads to lots of copy pasting, which is boring and a waste of time.
+
+Markdown has also inspired many other plain text domain-specific languages. There's languages for [sheet music](http://abcnotation.com), [flowcharts](http://knsv.github.io/mermaid/), [math](https://khan.github.io/KaTeX), [critique](http://criticmarkup.com), and more out there. No way to include these into the original markdown syntax, unless the person writing your parser thought to include it in there. I always feel gimped when trying to express myself using Markdown - not everything is a list or a blockquote.
+
+I also can write my own components (in a view library, say React or Mithril or Elm) and include them into the document. It's especially useful for static elements that need some interaction, like an image carousel, tooltip, slideshow, and so on. Again, no way to get Markdown of any kind to spit out a template useable by a view library as a page.
+
+What I'd like to be able to do is write my own extensions to Markdown and have them included into the syntax of my parser, with minimal fuss. There are some "extensible" markdown editors out there, but I couldn't make sense of how to extend them (and I don't use PHP or Ruby, which is what most of them seemed to be written in). On top of that, most of these "extensible" parsers required actually mucking around with the parser, which didn't seem very extensible to me. Their docs on extensions were always hidden somewhere in the back, as if the authors knew that the vast majority of their users wouldn't bother with it at all. For example, pandoc exposes a custom AST that isn't documented _anywhere!_ Basically just have to guess what a particular element might look like. The filter paradigm also doesn't work if you want to actually include new _syntax_ into the document, rather than just reformatting existing known elements, like lists.
+
+I also noticed that many of these "extensions" required assets - small JS/CSS snippets - to be included so that they function properly, which makes them a lot like components in a real application, and no Markdown parser out there handled generating the proper kinds of header files (no, not even Pandoc), or embedding the mini-scripts needed to get everything working.
+
+## Ok, so how does GLUE help?
+
+*GLUE* is a combination of a few things:
+
+---list
+*CLI Parser*: the ability to read a file of text and convert it to:
+  raw HTML
+  Component in a known language (so far React/Mithril)
+*Library*: a bundle of `Element`s that comes built-in
+  Of course, you can change any of the `Element`s to suit yourself.
+  The library is divided into *Registry*s, each of which house `Element`s for a particular domain. You can take only the ones you need to keep the parser fast.
+*Constructors*: a bundle of functions/decorators that make it really, really easy to build your own `Element`s.
+...
+ 
+Each thing facilitates one major use case of *GLUE*.
+
+### Use case 1: Parse some text
+
+For those of you who just want to use *GLUE* to write yourself some content -
+
+---code bash
+$ cat your-file | python3 -m glue
+...
+
+Will spit out html!
+
+Sometimes, you need a template - I have support for react and mithril templates, so far:
+
+---code bash
+$ cat your-file | python3 -m glue -l [mithril|react] ComponentName
+...
+
+`-l` or `--language` both work. Now you will get a file that creates a component, which you can save as `component-name.js[x]`.
+
+This is a really bare bones intro - see the [Tour of the Standard Registry](/?/tour) to learn more about what components are available to you to write your document.
+
+### Use case 2: Customize your bundle
+
+The `parser` function asks you to provide an object called a `Registry`, which is just a fancy dictionary mapping name to `Element` for all the elements that you want to include. You can always add, remove, or modify the elements in the `Registry` and customize what's possible.
+
+#### Edit a registry
+
+Let's say you don't need/want [`CriticMarkup`](http://criticmarkup.com). Maybe it's just not something you're going to use in your actual content writing, or maybe there will never be a reason to visualize an editing scenario. You can remove it easily with little fuss:
+
+---code python
+from glue.library import Standard, CriticMarkup
+from glue import parse
+
+new_registry = Standard - CriticMarkup
+parse(new_registry, '*text*')
+# ['strong', {}, 'text']
+...
+
+#### DSL bundle
+
+Here's another example: say you want to use GLUE as a literate code parser.
+Let's say this is your python script:
+
+---code python
+# # Fibonacci Sequence
+# The fibonacci sequence is one of the most mysterious mathematical sequences ever discovered.
+# It seems to occur everywhere! Let's try and generate it here. The sequence is:
+# ---katex
+# 0,1,1,2,3,5,8,13,21,34,55,...
+# ...
+# You can see that each number is the sum of the two before it.
+
+def fib(n):
+  """fibonacci sequence, naively implemented using recursion"""
+  if n == 0: return 0
+  if n == 1: return 1
+  return fib(n-1) + fib(n-2)
+
+# The recursive solution is slow O((n+1)n/2) ~ O(n^2)! How can we make it faster?
+
+def fib2(n):
+  a = 0
+  b = 1
+  for i in range(n)
+    a,b = b,a+b
+  
+  return a
+
+# Yay, now it's O(n)!
+...
+
+You've done the wonderful job of including your docs in your code, and now you want to share that with everyone.
+
+To make this possible, you write a small script which replaces the above with:
+
+---code md
+# Fibonacci Sequence
+The fibonacci sequence is one of the most mysterious mathematical sequences ever discovered.
+It seems to occur everywhere! Let's try and generate it here. The sequence is:
+---katex
+0,1,1,2,3,5,8,13,21,34,55,...
+...
+You can see that each number is the sum of the two before it.
+
+---code python
+def fib(n):
+  """fibonacci sequence, naively implemented using recursion"""
+  if n == 0: return 0
+  if n == 1: return 1
+  return fib(n-1) + fib(n-2)
+...
+
+The recursive solution is slow O((n+1)n/2) ~ O(n^2)! How can we make it faster?
+
+---code python
+def fib2(n):
+  a = 0
+  b = 1
+  for i in range(n)
+    a,b = b,a+b
+  
+  return a
+...
+
+Yay, now it's O(n)!
+...
+
+And now you want to pass this through GLUE to generate your final output. Clearly you don't need lots of stuff. Maybe just the standard inline styles (bold, underline, etc) and the ability to show math, and the ability to show code.
+
+---code python
+import glue.library as l
+
+my_registry = l.StandardInline + [l.Katex, l.Code]
+...
+
+Voila! Super trim `Registry` just for you!
+
+#### Your own `Element`s
+Of course, you can also extend a registry with your own `Element`s:
+
+---code python
+import glue.library
+import elements as e
+
+my_registry = glue.library.Standard + [e.FirstElement, e.SecondElement, ...]
+...
+
+### Use case 3: Write an `Element`
+
+GLUE provides lots of support for you to write your own `Element`. However, it's more of an art than a science. In general, you have to decide a few things:
+
+---list -o
+Do you want a `Block` or an `Inline` element? `Block`s look like HTML `div` tags, and `Inline` look like HTML `span` tags.
+Is it possible to nest other `Element`s in your `Element`?
+  If no, you want `Nesting.NONE`, or a `@terminal_block`.
+  If yes, then do you want assemble your `Element` upfront (`Nesting.POST`), or have GLUE first assemble the nested `Element`s (`Nesting.SUB`)?
+Are there any asset files (css/js) to be included with your `Element`?
+...
+
+This is a super bare-bones intro to writing your own `Element`. If it seems like a lot of convoluted decisions, don't worry! There's a whole article on it called "[Anatomy of an `Element`"](/?/anatomy) that explains everything in detail. Most `Element`s fall into one of a few main buckets, and that article covers how to make each kind.
+
+## FAQ
+
+### Why is this in Python!? Wouldn't JS be more universal?
+
+Frankly, JS drives me nuts. I am not a fan of working in JS, and I'm especially not a fan of debugging JS. Talk about nightmares.
+
+Also, JS does not have the ability to handle complex regexes, including lookbehind, lookahead, and the `\K` flag, which allows for exact matches excluding escape sequences. Python does in the [`regex`](https://pypi.python.org/pypi/regex) module. JS also doesn't have operator overloading, which makes the `Registry` somewhat more cumbersome to deal with.
+
+If JS ever did implement the regexes, then I guess there wouldn't be anything stopping someone (me, I guess) from porting this whole library to JS.
+
+### I want to use a different view library...
+
+Yeah, there are lots now.
+
+What you have to do is write a function similar to `render\_mithril` in the `codegen.py` file. If necessary, you can also write a function similar to `render\_mithril\_component` which spits out a full component (with the `var ComponentName = ...`). Finally, add a case to `\_\_main\_\_.py` that renders your language.
+
+## Legal
+
+Licensed under the GPL. I don't speak legalese, so let me go ahead and include the spirit of what I want:
+
+---list
+If you improve the *parser* or the *library* of `Element`s, I'd like that to be open source under GPL. Basically since I provided those things to you, I'd like you to provide your work back to the world. This includes:
+  improving the basic parser `Element`s (elements, parser, codegen, registry, main file).
+  improving the `Element`s in the library.py file.
+If you write *your own `Element` or `Registry`*, that's your buisness. You can keep that to yourself, although it would be _nice_ if you put it up for all of us to enjoy!
+...
+
+
+The html.py file is a port of [cottonmouth](https://github.com/nosamanuel/cottonmouth), which I ported to python3 and improved a bit by adding ability to define the style attribute as a dictionary.

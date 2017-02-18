@@ -1,0 +1,350 @@
+# A Tour of the Standard Registry
+
+This document is a primer for how to use *GLUE*, and also a tour of the various components that come prebundled in the `library.py` file.
+
+If you're interested in reading about how to *write* glue components, as opposed to how to use them, then go look at ["Anatomy of a Component"](/examples/anatomy_of_a_component) and ["A History of the Standard Registry"](/examples/a_history_of_the_standard_registry) which describe what went into making the components that are displayed here, and teaches strategies for how you can implement your own in the simplest way possible. Hopefully it covers about 80% of the cases that you would be interested in.
+
+## Basic Editing
+
+Basic editing encompasses things you'd normally like to do in any editing environment, which are things like: *bold*, _italic_, `monospace`, ~strikethrough~, __underline__ and so on.
+Since these basic editing elements are used so often, there is a simple way to make each of them:
+
+---matrix table
+__*What you want*__ | __*What you type*__ | __*What you get*__
+bold text | `\*text*` | *text*
+italic text | `\_text\_` | _text_
+monospace text  | `\`text\`` | `text`
+underline text  | `\_\_text\_\_` | __text__
+strikethrough text |`\~text~` | ~text~
+hyperlink | `\[link](http://google.com)` | [link](http://google.com)
+tooltip | `T\[text](tooltip)` | T[text](tooltip)
+[critic markup](https://criticmarkup.com) insert text |`\{++inserting text++}` | {++inserting text++}
+[critic markup](https://criticmarkup.com) delete text | `\{--deleting text--}` | {--deleting text--}
+[critic markup](https://criticmarkup.com) highlight text | `\{==highlighted text==}` | {==highlighted text==}
+[critic markup](https://criticmarkup.com) replace text | `\{\~\~old\~>new\~\~} text` | {~~old~>new~~} text
+header (more `\#` gives smaller header)| `\#header`, `\##header`, `\###header`, so on | #header
+inline image | `!!\[image](http://lorempixel.com/50/50)` | !![image](http://lorempixel.com/50/50)
+...
+
+### A note about escapes (when you want a literal character)
+
+Sometimes you really want an actual asterisk, as opposed to a bold element. What do you do then? Type `\\\*` in your document, like so: \*. This will make a literal asterisk in the final result. Putting a backslash in front of any character will cause it to lose any special meaning it has.
+
+The same principle applies to literal underscores (`\\\_`), tildes (`\\\~`), and backticks (`\\\``). And, of course, backslashes themselves (`\\\\`).
+
+You may also want a literal bold asterisk. To make one, type `\*\\\*\*` in the document (an escaped asterisk inside two asterisks to make it bold). It renders like this: *\** versus \*. This isn't a special case, but since it can be a bit confusing, I've left it here.
+
+Another option is that you may want to escape a link, for example, to explain to someone how to make a link! To do this, prefix the link with `\\`, like so: `\\\[link](google.com)` -> \[link](google.com). The `[` character loses its special meaning so the link is not processed.
+
+## Environments
+
+Environments allow you to create other things than paragraphs of text. Here is an example of an environment - a list:
+
+---code-by-side
+---list
+first item
+second item
+...
+...
+
+Every environment starts with three dashes (`---`) and ends with three dots (`...`). The name of the environment goes right after the three dashes.
+
+You will always see the rendered version on the left and the code to make it happen on the right in the following examples.
+
+### Blockquote
+
+A `Blockquote` is nothing more than a piece of text made to stand out. Normally this is done with some indentation and larger font:
+
+---code-by-side
+---blockquote
+Hi I'm a blockquote
+...
+...
+
+You can also put other things into the blockquote like a list:
+
+---code-by-side
+---blockquote
+---list
+first item
+second item
+...
+...
+...
+
+
+### List
+
+List is pretty self-explanatory.
+
+---code-by-side
+---list
+first item
+second item
+  sub item 1
+  sub item 2
+third item
+...
+...
+
+Put each item one at a time on a line. If you want to have a sub item, indent the line any amount more than the previous line and it will be a sub item.
+
+One more thing may be that you want an *ordered* list. You can achieve that with the `-o` option:
+
+---code-by-side
+---list -o
+first item
+second item
+  sub item 1
+  sub item 2
+third item
+...
+...
+
+
+### SideBySide
+
+This environment allows you to have multi-columns in your document:
+
+---code-by-side
+---side-by-side
+a | b | c
+foo | bar | baz
+...
+...
+
+Note how the text in the columns is processed as one contiguous section rather than distinct rows. This allows you to also put other environments inside the column:
+
+---code-by-side
+---side-by-side
+---list | b | c
+item 1 |
+item 2 |
+... | bar | baz
+...
+...
+
+Note how there are empty pipes on the rows with the items, even though there is nothing corresponding in the other columns. This is necessary to know which column to put `item 1` and `item 2` in.
+
+### Matrix
+
+`Matrix` is similar to `SideBySide`, but each row is processed separately.
+
+---code-by-side
+---matrix
+a | b | c
+x | y | z
+...
+...
+
+The matrix is defaulted to have equal width columns, but if you'd like for the columns to be sized based on the width of its contents, you can ask the matrix to render as a table:
+
+
+---code-by-side
+---matrix table
+23 | 13109 | 11-0230124-0193
+24 | 12318 | 13pi110-29-0-12
+...
+...
+
+Now you see that the columns with more data are wider, and the ones with less are smaller.
+
+### CodeBySide
+
+I've been using this environment to show off the other environments, so I've included it here in case you want to use it to show off examples of your own.
+
+The `CodeBySide` environment will show the text inside the environment next to a rendered version of what's there so that you can simultaneously see what to type and what you get.
+
+---code-by-side
+---code-by-side
+---list
+first item
+second item
+...
+...
+...
+
+This layout may be rather confusing - but the right half is the code required to make the left half. In the left half, there is a `CodeBySide` element, which is showing you how to make a list.
+
+In general, if you wrap anything in the `CodeBySide` environment, you will see the code required to make it on the right (it will match whatever is inside the environment).
+
+## Media
+
+### Audio
+
+Simple audio elements can be added inline with `@\{url}`
+
+---code-by-side
+@{http://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3}
+...
+
+Pretty easy!
+
+### FullImage
+
+This image is intended to center itself in the container and not exceed the maximum width. Here is an example:
+
+---code-by-side
+![klein bottle](http://www.gnuplotting.org/figs/klein_bottle.png)
+...
+
+Here it is rendered at full size
+![klein bottle](http://www.gnuplotting.org/figs/klein_bottle.png)
+
+And here is another image which is big enough to take up the whole container, and therefore will be constrained:
+
+![bubble nebula](http://i.imgur.com/R1fJq0V.jpg)
+
+## Standalone Blocks
+
+The subtitle of this library is "plain text syntax for other plain text syntaxes". This is the section where I show you just how easy it is to use the other syntaxes out there with no special mangling or updating of a parser. Inside each of these environments, the text is processed by the respective library that is integrated, so you have access to anything that they've defined.
+
+### Math!
+
+Math, math, math. For when nothing less than an equation will do. There are many math libraries out in the cyberwebs, but I chose [KaTeX](https://khan.github.io/KaTeX/) because its the most performant one out of all of them.
+
+---code-by-side
+---katex
+f(x) = \int_{-\infty}^\infty
+    \hat f(\xi)\,e^{2 \pi i \xi x}
+    \,d\xi
+...
+...
+
+
+
+### Code Blocks
+
+Programming snippets are a common thing to include on technical websites. Again, there are many choices for syntax highlighting, and I have integrated [highlight.js](https://highlightjs.org) for now. See "Anatomy of a Component" to write a component to use a different one, like [Google Prettify](https://github.com/google/code-prettify) or [rainbow.js](https://craig.is/making/rainbows).
+
+---code-by-side
+---code python
+import toolz as t
+
+def f(x):
+  return t.pipe(x,
+                t.map(lambda x: x+1))
+...
+...
+
+
+### Annotated Code Blocks
+
+It can be a nice way to show off a code example so that the flow of the code is unbroken, but there are appropriate comments on the side.
+
+The default language for the code block is `python`, but you can change it to whatever you like. In order for the annotations to work properly, you will also have to include the character(s) that start a comment line as another argument:
+
+---annotated-code haskell --
+-- Type annotation (optional)
+factorial :: (Integral a) => a -> a
+
+-- Using recursion
+factorial n | n < 2 = 1
+factorial n = n * factorial (n - 1)
+
+-- Using recursion, with guards
+factorial n
+  | n < 2     = 1
+  | otherwise = n * factorial (n - 1)
+
+-- Using recursion but written without pattern matching
+factorial n = if n > 0 then n * factorial (n-1) else 1
+
+-- Using a list
+factorial n = product [1..n]
+
+-- Using fold (implements product)
+factorial n = foldl (*) 1 [1..n]
+
+-- Point-free style
+factorial = foldr (*) 1 . enumFromTo 1
+...
+
+In `Haskell`, comments begin with a `--` rather than a `\#`, so I passed that as the second argument. The code required to make the block above looks like this:
+
+---code
+---annotated-code haskell --
+-- Type annotation (optional)
+factorial :: (Integral a) => a -> a
+
+-- Using recursion
+factorial n | n < 2 = 1
+factorial n = n * factorial (n - 1)
+
+-- Using recursion, with guards
+factorial n
+  | n < 2     = 1
+  | otherwise = n * factorial (n - 1)
+
+-- Using recursion but written without pattern matching
+factorial n = if n > 0 then n * factorial (n-1) else 1
+
+-- Using a list
+factorial n = product [1..n]
+
+-- Using fold (implements product)
+factorial n = foldl (*) 1 [1..n]
+
+-- Point-free style
+factorial = foldr (*) 1 . enumFromTo 1
+...
+...
+
+### Sheet Music (musicalabc)
+
+[musicalabc](http://abcnotation.com/examples) is a simple sheet music syntax, for which there is a js implementation of the parser.
+
+---code-by-side
+---musical-abc
+X:1
+T: Name
+L: 1/2
+C D E F| G A B C |
+...
+...
+
+Voila! Pretty cool huh?
+
+### Guitar Chords
+
+Continuing in the music theme, someone wrote a JS function to draw guitar chord diagrams.
+
+---code-by-side
+---guitar-chord
+title: E Major
+fret: 0, 2, 2, 1, 0, 0
+label: 0, 2, 3, 1, 0, 0
+...
+...
+
+Easy and cool! `fret` controlls the position of the black dots (`0` for open string), and `label` is for the fingering on each of the 6 strings. You can also do ukelele, or any other differently stringed instrument, by just including more or less entries:
+
+
+---code-by-side
+---guitar-chord
+title: E Major
+fret: 0, 2, 2, 1
+label: 0, 2, 3, 1
+...
+...
+
+Here is E Major for a tenor ukelele (which has the same tuning as the first four strings of a guitar).
+
+## Custom Components
+
+For those who like using a component library like React, Mithril, etc. You will probably write your own components a lot. It can be annoying to have to write something corresponding in *GLUE* for every single component you write in React or Mithril. There is an easy way around this though - there is a *GLUE* environment that allows you to use your own components, `YamlComponent`:
+
+---code-by-side
+---yaml-component AnnotatedCode
+code: blah blah blah
+language: python
+annotations:
+  0: annotation
+...
+...
+
+Here I've put an `AnnotatedCode` component (written in mithril.js) into my document by giving `YamlComponent` the name of the component in the environment opening line (`---yaml-component AnnotatedCode`) and then filling in whatever information needs to be the `props` (from React terminology, it may be called different things in different libraries) in YAML syntax in the body of the environment.
+
+## Wrap Up
+
+That's a wrap! All the components that come with the Standard library. Hopefully this gives you an idea of the scope of the project and what it can accomplish. Most of these environments are also really easy to write, but that's the subject of another post.

@@ -1,0 +1,271 @@
+# Anatomy of an Element
+
+Here you can learn all about the common ways to write an `Element`.
+
+This article is structured by first giving you the full list of available options, followed by some "case studies" into
+how some of the components of the standard library were written and how you might write your own.
+
+Here is a template for the definition of an Element (hover over numbers in left gutter for more info):
+
+---annotated-code
+# Some assets are loaded over the network - you can define them with
+# this decorator.
+@asset_url(AssetType.JS, 'http://example.com/asset.js')
+# Other assets (mostly CSS) are small snippets that you can just embed
+# directly into the definition. For a more programmatic way to define
+# css properties, see [`glue/css.py`](https://github.com/vshesh/glue/blob/master/glue/css.py).
+@asset_inline(AssetType.CSS, '.element {property: value}')
+# You have many options for what kind of element you are dealing with,
+# look at the Cheatsheet below for a list of all of them.
+@block(opts='xy:')
+# Blocks take the contents as their first (and only) mandatory argument, and
+# then any further options that are allowed.
+def Element(text: str, x: bool=False, y: str=''):
+  return ['div', text]
+...
+
+## Cheatsheet
+
+For all the options you have at your fingertips. You diabolical genius, you.
+
+### `Inline`
+
+#### `IdenticalInline(name: str, s: str, tag: str, attr: dict)`
+
+The most basic kind of `Inline` Element looks like:
+
+---code
+[SOMETHING]text[SOMETHING]
+Eg:
+*text*
+_text_
+__text__
+...
+
+It's some character(s) followed by the contents, followed by the SAME character(s) again. The resultant HTML looks like
+`<tag ...attrs>text</tag>`. As you can imagine, configuring this is as easy as choosing the tag you want and the associated styles.
+
+Poster children for this type of inline element are `Bold` (\*text\*), `Italic`, `Underline`, `Monospace`, `Strikethrough`,
+the most basic styles in text editing. Here is how they're made:
+
+---code
+Bold = IdenticalInline('bold', '*', 'strong')
+Italic = IdenticalInline('italic', '_', 'em')
+Monospace = IdenticalInline('monospace', '`', 'code')
+Underline = IdenticalInline('underline', '__', 'span', {'style': 'text-decoration:underline;'})
+Strikethrough = IdenticalInline('strikethrough', '~', 'del')
+...
+
+Let's say you want to add a new element in this vein - HTML5 has a `<sup>` (superscript) tag, and you want to include
+that syntax. You would like superscript text to look like this in your input: `^text^`. How do you write the component to make this happen?
+
+---code
+Superscript = IdenticalInlineFrame('superscript', '^', 'sup')
+...
+
+That's all, folks! Now you can type `^superscript^` and it will be converted just the way you want.
+
+
+#### `MirrorInline(name:str, start:str, tag:str, attr: dict)`
+
+A slightly more general case of `IdenticalInlineFrame` for when you want the same thing to start and end your element,
+just flipped. This element will flip `(), [], {}, <>` pairs in the start string to compute what the end string should look like.
+
+Critic Markup allows you to highlight text using the syntax `\{==text==}`. How would you write this?
+
+---code python
+CriticMark = MirrorInline('critic-mark', '{==', 'mark')
+...
+
+And it {==works==}, too!
+
+
+#### `SingleGroupInline(name: str, start: str, end: str, tag: str, attr: dict)`
+
+A slightly more general version of `Identical/MirrorInline`, this allows you to do the same thing, but with different `start` and `end` characters.
+
+Eg, let's say you want to modify the superscript element above so it looks like Latex (`\^{superscript}`). How would you do that?
+
+---code
+Superscript = SingleGroupInlineFrame('superscript', '^{', '}', 'sup')
+...
+
+While we're at it, why not throw in subscript, too?
+
+---code
+Subscript = SingleGroupInlineFrame('subscript', '_{', '}', 'sub')
+...
+
+When you implement these elements, they look like^{this} and_{this}!
+Here is the chemical formula for glucose: C_{6}H_{12}O_{6}.
+
+#### `@inline_one(start: str, end: str)`
+
+General purpose element for `Inline` elements that only capture one group.
+Start and end are for the text that goes before and after the capture group, respectively.
+
+For example, markdown allows you to put a link in place by surrounding it with angle brackets. Eg, `<google.com>`.
+How do you add this syntax to GLUE?
+
+---code
+@inline_one('<', '>')
+def LinkInPlace(groups):
+  return ['a', {'href': groups[0]}, groups[0]]
+...
+
+
+
+#### `@link(designation: str, nest=Nesting.POST, sub=None)`
+
+For elements that take on the syntax of a markdown link, preceded by some characters (`designation`).
+For example, you can copy Markdown for `<img>` tags by doing:
+
+---code
+@link('!') # so the syntax is ![alt](url)
+def Image(groups):
+  return ['img', {'alt': groups[0]}, groups[1]]
+...
+
+`Link` itself is implemented this way:
+---code
+@link('') # so the syntax is [text](url)
+def Link(groups):
+  return ['a', {'href': groups[1]}, groups[0]]
+...
+
+There are others, like `Tooltip` that benefit from this syntax. Basically, if you want two capture groups in your inline
+element, and you don't want to deal with the fuss of `@inline_two` (which is coming up), you can just use `@link` with
+some designation that isn't taken yet.
+
+#### `@inline_two(start: str, mid: str, end: str, nest=Nesting.POST, sub=['all'])`
+
+A more flexible version of `@link` that allows you to delimit two groups in an inline syntax with whatever you want
+in between. Your syntax will look like: `[start]group1[mid]group2[end]`
+
+You could, for example, implement `Link` from above like this: `@inline_two('[', '](', ')')` (this is not how it's actually
+implemented). Another component that can be implemented this way is `CriticSub`, which has the syntax `{~~group1~>group2~~}`.
+
+#### `@inline(regex, nest=Nesting.FRAME, sub=None, escape='', display=Display.INLINE)`
+
+In case your syntax does not fit the above cases, you can define a base `Inline` element with this decorator:
+
+---code python
+# So the syntax would be: `#id.class1.class2[wrapped text]`
+# please note that in reality, you would need to handle escapes in the regex, which isn't done here.
+@inline(r'(?:\#\([a-z0-9_-]+?))?(?:(\.[a-z0-9_-]+?))*[(.+?)\]')
+def WrappedClass(groups):
+  """
+  Wraps the contents of the brackets in a `<span>` element with the given ids and classes.
+
+  Eg: `#id.class1.class2[wrapped text]` -> `<span id="id" class="class1 class2">wrapped text</span>`
+  """
+  return ['span',
+          {id: groups[0] if groups[0][0] != '.' else "",
+           class: ' '.join(x.lstrip('.') for x in groups[(0 if groups[0][0] == '.' else 1):-1]) },
+          groups[-1]]
+...
+
+The element above creates a syntax for wrapping some text with an arbitrary HTML id and/or class. It has an
+arbitrary number of capture groups (which is why `Inline` elements take the whole array of groups) and therefore doesn't
+fit any of the previous patterns. A good catch-all element if you want to expose the ability to style text in whatever
+way the content writer wants.
+
+For all elements that don't fit into any of the above boxes, you can just use `@inline`.
+
+### Block
+
+#### `@standalone_integration(inner\_elem='div', outer\_elem='div')`
+
+A special `Block` for super easy integration of syntax that have js libraries, and have an output that looks like:
+
+---code
+# f = the wrapped function that you provide.
+['{outer_elem}.element-name',
+  ['{inner_elem}#element-name-1231-203-13901239'],
+  ['script', {'key': docid}, f(text, docid=docid, elem=elem)]]
+...
+
+In other words, there is an empty tag (`inner_elem`)
+and a small script that injects the content into that tag. The whole assembly
+is wrapped in the `outer_elem`. You can specify your own `inner_elem` and `outer_elem` in the decorator yourself,
+if you'd like. This is one element helper which may be easier to understand by just inspecting the source directly.
+
+The input to this function is *NOT* the regular parser function - it's a function that takes three variables
+(body text, docid, elem), and spits out a string that is JS that will cause the creation of the element. Here's an
+example, the `Katex` element:
+
+---code
+@standalone_integration()
+def Katex(text, docid, elem):
+  """Integration with Khan Academy's math typsetting library.
+  Takes just the body text (which is the math) and renders it in place using
+  the API of the library.
+  """
+  return repr("katex.render('\\displaystyle{{{0}}}', {1})".format(text.strip(), elem))[1:-1]
+...
+
+`text` is the contents of the body of the block when it was invoked. `docid` is a string like `katex-12308-13918-1392813`
+which is the id attribute of the inner element, and `elem` is the `docid` wrapped with a `document.getElementById()` call.
+You don't need to use all of them, but they're there in case you want to use them for some reason. Most integrations
+will only need the element and the contents.
+
+#### `@terminal_block(opts: str)`
+
+Some blocks do not have anything inside them, and therefore do not require any special formatting. Examples are the
+integration type blocks for sure (Katex, musicalabc, Code, etc), but also some others, like `YamlComponent` that aren't
+intended to have any further elements inside them. Mostly `@terminal_blocks` happen when delegating to another
+plain-text syntax inside a `Block`.
+
+The only configuration left is the `opts` if there are any opts accepted by your block.
+
+#### `@block(nest: Nesting, sub: [str], opts: str)`
+
+Catch all decorator for a `Block` element, allows you to specify the nesting, sub, and accepted options.
+
+---code python
+@block(nest=Nesting.SUB)
+def NoopBlock(text):
+  return ['div', text]
+...
+
+Here is one block that is just a noop. It just wraps its contents in a div.
+
+## Add some assets
+
+Assets are snippets of CSS and JS that make life interesting for our components. Adding them to any `Element` is really easy:
+
+### `@asset_url(type: AssetType, url: str)`
+
+Say you are writing a component to display math (using Katex) - only one problem: you need the math library! It's
+located _somewhere_ on the internet, so we can just add the asset as a URL:
+
+---code python
+from elements import asset_url, standalone_integration, AssetType
+
+@asset_url(AssetType.CSS, '//cdnjs.com/katex/0.6.0/katex.min.css')
+@asset_url(AssetType.JS, '//cdnjs.com/katex/0.6.0/katex.min.js')
+@standalone_integration()
+def Katex(contents, docid, elem):
+  return repr('katex.render(... blah blah ...)'.format(contents, elem)
+...
+
+Done! Now Katex is bundled with the necessary assets. In fact, this is pretty much exactly how `Katex` looks in `library.py`.
+
+### `@asset_inline(type: AssetType, contents: str)`
+
+Sometimes you just need a quick style or two that would be a pain to keep track of in other places, like your application style sheets.
+You can just add them inline, like so:
+
+---code python
+from elements import asset_url, standalone_integration, AssetType
+
+# This line right here:
+@asset_inline(AssetType.CSS, '.katex{ position: relative}')
+@asset_url(AssetType.CSS, '//cdnjs.com/katex/0.6.0/katex.min.css')
+@asset_url(AssetType.JS, '//cdnjs.com/katex/0.6.0/katex.min.js')
+@standalone_integration()
+def Katex(contents, docid, elem):
+  return repr('katex.render(... blah blah ...)'.format(contents, elem)
+...
+
+This way you can see the whole of the component in one place. There's no need to run around looking for where to change something.
