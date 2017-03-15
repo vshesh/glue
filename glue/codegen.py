@@ -5,7 +5,21 @@ from glue.html import render
 from glue.parser import parse
 from inflection import camelize
 
-def render_mithril(html):
+def attr_values_to_str(attrs: dict):
+  return str({k: ' '.join('{}:{};'.format(k2,v2) for k2,v2 in v)
+              if isinstance(v, dict)
+              else v})
+
+def render_mithril(html) -> str:
+  """
+  Takes html in cottonmouth syntax and generates a mithril template from it.
+  
+  ### Params
+  * html see cottonmouth - ['div', {'attr': 'value'}, 'text' ...] is the general syntax.
+  
+  ### Return
+  a string that is a valid mithril template of the same HTML.
+  """
   if html is None: return ''
   elif isinstance(html, list):
     if isinstance(html[0], list):
@@ -13,7 +27,7 @@ def render_mithril(html):
       return '[{}]'.format(','.join(render_mithril(x) for x in html))
     else:
       tag = repr(html[0])
-      attr = (str(html[1]).replace('True', 'true').replace('False', 'false')
+      attr = (str(attr_values_to_str(html[1])).replace('True', 'true').replace('False', 'false')
               if len(html) > 1 and isinstance(html[1], dict)
               else {})
       if tag[1].isupper():
@@ -64,7 +78,8 @@ def double_quoted_repr(s: str):
   return '"' + repr(s)[1:-1].replace('"', '\\"') + '"'
 
 def render_elm_attrs(attrs: dict):
-  return ', '.join(['attribute {} {}'.format(double_quoted_repr(k),double_quoted_repr(v)) for (k,v) in attrs.items()])
+  return ', '.join(['attribute {} {}'.format(double_quoted_repr(k),double_quoted_repr(v))
+                    for (k,v) in attr_values_to_str(attrs.items())])
 
 def render_elm(html):
   """
@@ -113,4 +128,3 @@ tohtml = t.compose(render, parse)
 tomithril = t.compose(render_mithril, unwind, parse)
 toreact = t.compose(render, parse)
 toelm = t.compose(render_elm, unwind, parse)
-
