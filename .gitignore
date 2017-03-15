@@ -1,0 +1,7 @@
+*.pyc
+*/__pycache__/*
+*/.cache/*
+gh-pages/*
+.DS_Store
+static/elm/elm-stuff/*
+static/js/elm.js
