@@ -5,3 +5,5 @@ gh-pages/*
 .DS_Store
 static/elm/elm-stuff/*
 static/js/elm.js
+static/elm-stuff/*
+elm-stuff

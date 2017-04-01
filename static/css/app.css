@@ -28,6 +28,21 @@ textarea {
 }
 
 
+.block {
+	position: relative;
+}
+.block > .config {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+.block > textarea {
+  min-height: 100px;
+  max-height: 400px;
+}
+
+
+
 
 
 

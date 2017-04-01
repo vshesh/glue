@@ -16,11 +16,12 @@ def index():
   return static_file('index.html', root='static')
 
 @app.post('/render')
-@params(['text'])
-def render(text: str):
+@params(['text'], {'name': ''})
+def render(text: str, name: str):
   try:
-    print(list(parse(Standard, text)))
-    return template_to_ast(parse(Standard, text))
+    return template_to_ast(parse(
+      Standard,
+      text if name == '' else '---'+name+'\n'+text+'\n...'))
   except (ValueError, TypeError) as e:
     print(e)
     jsonabort(400, str(e))
@@ -35,6 +36,8 @@ if __name__ == '__main__':
   # generate index.html
   with open('./static/index.html', 'w') as index:
     index.write(template('index', assets=Standard.assets))
+  with open('./glue-notebook/src/index.html', 'w') as index:
+    index.write(template('index', assets=Standard.assets))
 
-  run(app, host='localhost', port='8123', reloader=True,
+  run(app, host='localhost', port='8000', reloader=True,
       debug=True)
