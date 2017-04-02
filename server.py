@@ -1,3 +1,5 @@
+import traceback
+
 import bottle
 bottle.TEMPLATE_PATH.append('./static/templates')
 
@@ -23,7 +25,7 @@ def render(text: str, name: str):
       Standard,
       text if name == '' else '---'+name+'\n'+text+'\n...'))
   except (ValueError, TypeError) as e:
-    print(e)
+    traceback.print_exc()
     jsonabort(400, str(e))
 
 staticroutestack(app, ['js', 'css'], 'static')

@@ -1,7 +1,7 @@
 module Block exposing (..)
 
 import Html exposing (..)
-import Html.Events exposing (onInput, onClick, onDoubleClick)
+import Html.Events exposing (onInput, onClick, onDoubleClick, onWithOptions)
 import ExtendedEvents exposing (..)
 import Html.Attributes exposing (attribute, classList)
 import Http
@@ -108,7 +108,8 @@ viewBlock block msg names extraClasses =
                 [ onChange <| msg << ChangeName ]
               <|
                 List.map (\x -> option [] [ text x ]) names
-            , (button [ onClick <| msg ToggleEdit ]
+            , (button
+                [ onLocalClick <| msg ToggleEdit ]
                 [ text
                     (if block.editing then
                         "Done"
