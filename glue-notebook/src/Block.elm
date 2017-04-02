@@ -1,10 +1,13 @@
 module Block exposing (..)
 
 import Html exposing (..)
-import Html.Events exposing (onInput, onClick)
-import Html.Attributes exposing (attribute)
+import Html.Events exposing (onInput, onClick, onDoubleClick)
+import ExtendedEvents exposing (..)
+import Html.Attributes exposing (attribute, classList)
 import Http
+import Dict exposing (Dict)
 import Json.Encode as Encode
+import Json.Decode as Decode
 import Util
 import Template
 
@@ -18,7 +21,8 @@ type alias Block =
 
 
 type Msg
-    = ChangeName String
+    = NoOp
+    | ChangeName String
     | ChangeContents String
     | ToggleEdit
     | ChangeTemplate (Result Http.Error Template.Template)
@@ -27,11 +31,18 @@ type Msg
 updateBlock : Msg -> Block -> ( Block, Cmd Msg )
 updateBlock msg block =
     case msg of
+        NoOp ->
+            block ! []
+
         ChangeName name ->
-            ( { block | name = Just name }, getTemplate (Just name) block.contents ChangeTemplate )
+            ( { block | name = Just name }
+            , getTemplate (Just name) block.contents ChangeTemplate
+            )
 
         ChangeContents contents ->
-            ( { block | contents = contents }, getTemplate block.name contents ChangeTemplate )
+            ( { block | contents = contents }
+            , getTemplate block.name contents ChangeTemplate
+            )
 
         ToggleEdit ->
             ( { block | editing = not block.editing }, Cmd.none )
@@ -65,28 +76,39 @@ getTemplate name text msg =
         Http.send msg request
 
 
-viewBlock : Block -> (String -> a) -> (String -> a) -> a -> Html a
-viewBlock block inputMsg nameMsg editMsg =
-    div [ attribute "class" "block" ]
+getBlockNames : (Result Http.Error (Dict String String) -> msg) -> Cmd msg
+getBlockNames msg =
+    let
+        url =
+            "/blocknames"
+
+        decodeBlockNames =
+            Decode.field "blocks" <| Decode.dict Decode.string
+
+        request =
+            Http.post url (Http.jsonBody (Encode.object [])) decodeBlockNames
+    in
+        Http.send msg request
+
+
+viewBlock : Block -> (Msg -> a) -> List String -> List String -> Html a
+viewBlock block msg names extraClasses =
+    div
+        [ classList <| List.map (\x -> ( x, True )) <| [ "block" ] ++ extraClasses
+        , onDoubleClick <| msg ToggleEdit
+        , onClick <| msg NoOp
+        ]
         [ if block.editing then
-            (textarea [ onInput inputMsg ] [ text block.contents ])
+            (textarea [ onInput <| msg << ChangeContents ] [ text block.contents ])
           else
             Template.template2Html block.template
         , (node "span"
             [ attribute "class" "config" ]
-            [ (input
-                [ onInput <| nameMsg ]
-                [ text
-                    (case block.name of
-                        Nothing ->
-                            ""
-
-                        Just s ->
-                            s
-                    )
-                ]
-              )
-            , (button [ onClick <| editMsg ]
+            [ select
+                [ onChange <| msg << ChangeName ]
+              <|
+                List.map (\x -> option [] [ text x ]) names
+            , (button [ onClick <| msg ToggleEdit ]
                 [ text
                     (if block.editing then
                         "Done"

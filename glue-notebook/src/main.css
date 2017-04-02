@@ -3,9 +3,20 @@ html, body {
   padding: 0;
 }
 
-html, body, #container {
+html, body, #root {
   height: 100%;
   width: 100%;
+}
+
+#root {
+  background-color: #f7f7f7;
+}
+#root > div.app {
+  height: 100%;
+  width: 60%;
+  margin: 0 auto;
+  background-color: white;
+  overflow-y: scroll;
 }
 
 textarea {
@@ -30,6 +41,7 @@ textarea {
 
 .block {
 	position: relative;
+  min-height: 20px;
 }
 .block > .config {
 	position: absolute;
@@ -41,7 +53,9 @@ textarea {
   max-height: 400px;
 }
 
-
+.block.selected {
+  border-left: 3px solid #ccccee;
+}
 
 
 

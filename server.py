@@ -28,9 +28,9 @@ def render(text: str, name: str):
 
 staticroutestack(app, ['js', 'css'], 'static')
 
-@app.get('/blocknames')
+@app.post('/blocknames')
 def blockinfo():
-  return {'blocks': { x.name:x.parser.__doc__ for x in Standard.all_block}}
+  return {'blocks': { x.name:x.parser.__doc__ or '' for x in Standard.all_block}}
 
 if __name__ == '__main__':
   # generate index.html
