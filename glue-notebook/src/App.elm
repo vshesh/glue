@@ -67,10 +67,23 @@ update msg model =
                 ! []
 
         AddBlock ->
-            ( { model
-                | blocks = model.blocks ++ [ Block.init ]
-                , selection = Single (List.length model.blocks)
-              }
+            ( let
+                pos =
+                    case model.selection of
+                        Single x ->
+                            (x + 1)
+
+                        Range _ x ->
+                            (x + 1)
+              in
+                { model
+                    | blocks =
+                        Util.insert
+                            pos
+                            Block.init
+                            model.blocks
+                    , selection = Single pos
+                }
             , Cmd.none
             )
 
@@ -198,6 +211,7 @@ view model =
             [ button [ onClick CopySelection ] [ text "Copy" ]
             , button [ onClick CutSelection ] [ text "Cut" ]
             , button [ onClick PasteSelection ] [ text "Paste" ]
+            , button [ onClick AddBlock ] [ text "Add Block" ]
             ]
          ]
             ++ (List.indexedMap
@@ -214,7 +228,6 @@ view model =
                     )
                     model.blocks
                )
-            ++ [ button [ onClick AddBlock ] [ text "Add Block" ] ]
         )
 
 
