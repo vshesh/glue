@@ -165,22 +165,24 @@ def test_template_to_ast_string_identity(s: str):
 
 @pytest.mark.randomize()
 def test_template_to_ast_tag_only(tag: str):
-  assert template_to_ast(iter([tag])) == {'tag' : tag, "attrs": {}, "body": []}
+  assert template_to_ast(iter([tag])) == ({'tag' : tag, "attrs": {}, "body": []}
+                                         if not tag or re.match(r'^[^A-Z]', tag) else
+                                          {'name': tag, 'props': {}, 'children': []})
 
-@pytest.mark.randomize()
+@pytest.mark.randomize(str_attrs=("ascii_lowercase", "digits", "whitespace"))
 def test_template_to_ast_no_attrs(tag: str, body: str):
   assert template_to_ast([tag, body]) == {'tag': tag, "attrs": {}, "body": [body]}
 
-@pytest.mark.randomize()
+@pytest.mark.randomize(str_attrs=("ascii_lowercase", "digits", "whitespace"))
 def test_template_to_ast_with_attrs(tag: str, attr: str, value: str, body: str):
-  assert template_to_ast([tag, {attr: value}, body]) == {'tag': tag, "attrs": {attr: value}, "body": [body]}
-  
-@pytest.mark.randomize()
+  assert template_to_ast([tag, {attr: value} if value else {}, body]) == {'tag': tag, "attrs": {attr: value}, "body": [body]}
+
+@pytest.mark.randomize(str_attrs=("ascii_lowercase", "digits", "whitespace"))
 def test_template_to_ast_recursive(tag: str, attr: str, value: str, body: str):
-  assert template_to_ast([tag, {attr: value}, [tag, {attr: value, tag:value}, body]]) == {
+  assert template_to_ast([tag, {attr: value} if value else {}, [tag, {attr: value, tag:value} if value else {}, body]]) == {
     'tag': tag,
     'attrs': {attr: value},
     "body": [{'tag': tag, 'attrs': {attr: value, tag: value}, 'body': [body]}]
   }
-  
-  
+
+
