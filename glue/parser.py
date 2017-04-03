@@ -126,6 +126,8 @@ def parseblock(registry:Registry, block:Block, text:str, args=None, parent=None)
       
     l = []
     for b in subblocks:
+      if b[0] not in registry: # means block name is not in registry
+        raise ValueError('Parser Error: Block `{}` is not in registry'.format(b[0]))
       if isinstance(b, list):
         sub = parseblock(registry, registry[b[0]], b[2], args=b[1])
         if meta:

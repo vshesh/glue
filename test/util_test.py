@@ -164,6 +164,10 @@ def test_template_to_ast_string_identity(s: str):
   assert template_to_ast(s) == s
 
 @pytest.mark.randomize()
+def test_template_to_ast_tag_only(tag: str):
+  assert template_to_ast(iter([tag])) == {'tag' : tag, "attrs": {}, "body": []}
+
+@pytest.mark.randomize()
 def test_template_to_ast_no_attrs(tag: str, body: str):
   assert template_to_ast([tag, body]) == {'tag': tag, "attrs": {}, "body": [body]}
 
@@ -178,7 +182,5 @@ def test_template_to_ast_recursive(tag: str, attr: str, value: str, body: str):
     'attrs': {attr: value},
     "body": [{'tag': tag, 'attrs': {attr: value, tag: value}, 'body': [body]}]
   }
-  
-  
   
   

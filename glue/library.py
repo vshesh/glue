@@ -206,20 +206,22 @@ def List(text, o:bool=False):
   as of now.
 
   Example:
-    ---list
-    as;fkjasdf
-      as;dkfjas
-    a sfa sfas;fkj sdf
-      as;dkfljas
-      asfjas;kdfj
-        asdlfjasldfkj
-    ...
+  ```
+  ---list
+  as;fkjasdf
+    as;dkfjas
+  a sfa sfas;fkj sdf
+    as;dkfljas
+    asfjas;kdfj
+      asdlfjasldfkj
+  ...
+  ```
 
-  :param text: body text of the list
-  :param o: whether list is ordered, in which case an `ol` is returned instead of a `ul`.
-  to the ul or ol type of element.
-  :return: a list element
+  ###Params
+  `text`: body text of the list
+  `o`: whether list is ordered, in which case an `ol` is returned instead of a `ul`.
   """
+  if text is None or text.strip() == '': return ['ol' if o else 'ul']
   items = []
   pos = [-1]
   for line in text.split('\n'):

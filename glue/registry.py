@@ -100,6 +100,10 @@ class Registry(OrderedDict, Mapping[str, Union[Inline, Block]]):
   @property
   def top(self) -> Element:
     return self[Registry.TOP]
+  
+  @top.setter
+  def top(self, e: Element):
+    self[Registry.TOP] = e
 
   @property
   def all_inline(self) -> List[Inline]:

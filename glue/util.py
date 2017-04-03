@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-
+from typing import Mapping
+from collections import defaultdict
 import regex as re
 import inspect
 import types
@@ -135,12 +136,14 @@ def parsetag(tag: str):
   """
   Takes a complex tag, like: tag#id.class1.class2, or tag.class1#id.class2
   where the id could occur anywhere or the classes could occur anywhere
+  
+  **returns**: a tuple of (str, {'id':str, 'class':str}). the first is the tag name,
+               and the second is an attrs dictionary prepopulated with the id and class from this tag.
   """
-  print(tag)
-  if '.' not in tag and '#' not in tag: return tag, {}
+  if '.' not in tag and '#' not in tag: return tag, {'id': '', 'class': ''}
   if '#' not in tag:
     tag, *classes = tag.split('.')
-    return tag, {'class': ' '.join(classes)}
+    return tag, {'class': ' '.join(classes), 'id': ''}
   
   one, two = tag.split('#', maxsplit=1) # there should only be one of these.
   tag, *c1 = one.split('.')
@@ -172,32 +175,70 @@ def unpack(html):
   else:
     return html
 
+def assemble_ast(tag:str, idsclasses: Mapping[str, str], attrs: Mapping[str, str], body: list):
+  """
+  Small helper function for the template_2_ast function that assembles the appropriate ast element
+  given the tag name, a dictionary of ids/classes from the tag name, further attrs, and a list of children or the body.
+  For most components, there won't be any children.
+  
+  :param tag:
+  :param idsclasses:
+  :param attrs:
+  :param body:
+  :return:
+  """
+  iscomponent = re.match(r'^[A-Z]', tag)
+  attrs['id'] = (attrs.get('id', '') + ' ' + idsclasses.get('id', '')).strip()
+  attrs['class'] = (attrs.get('class', '') + ' ' + idsclasses.get('class', '')).strip()
+  # remove the empty attributes to avoid clutter and save bytes.
+  attrs = dict(t.valfilter(lambda x: not (isinstance(x, str) and x.strip() == ''), attrs))
+  # special handling for the "style" attribute, since that can be a dictionary
+  attrs = t.valmap(lambda val:' '.join('{}: {};'.format(k,v) for k,v in val.items())
+                   if isinstance(val, dict) else val,
+                   attrs)
+  
+  if iscomponent:
+    return {'name': tag, 'props': attrs, 'children': body}
+  else:
+    return {'tag': tag, 'attrs': attrs, 'body': body}
+  
+  
 def template_to_ast(html):
   """
-  Converts cottonmouth type HTML to an "AST" representation, where each tag
-  is a dictionary with three keys: "tag", "attrs", "body"
+  Converts cottonmouth type HTML to an "AST" representation, where there can be two kinds of
+  structural types - one is {tag, attrs, body} for the normal HTML, and the other is {name, props, children}
+  for the components.
   
+  There are two separate ones on purpose so its easy to tell which should be handled as a subcomponent and which
+  should be handled as an HTML tag as part of a vdom templating library.
+  Eg, in Elm this makes things a lot easier.
   
   """
   if isinstance(html, str): return html
   if isinstance(html, list):
     hasattrs = len(html) > 1 and isinstance(html[1], dict)
     tag, idsclasses = parsetag(html[0])
-    return {"tag": tag,
-            "attrs": t.merge_with(' '.join, (html[1] if hasattrs else {}), idsclasses),
-            "body": [template_to_ast(x)
-                     for x in html[(2 if hasattrs else 1):]]}
+    # combine attrs with idsclasses in the tag name. only modifies these two properties explicitly, so that
+    # other attrs and data for components is untouched.
+    attrs = html[1] if hasattrs else {}
+    return assemble_ast(tag, idsclasses, attrs, [template_to_ast(x) for x in html[(2 if hasattrs else 1):] if x is not None])
+  
   if istag(html):
     tag,html = t.peek(html)
     if istag(tag):
       return map(template_to_ast, html)
     # this looks confusing, but it's to leave the generator at the right place,
     # and also extract the tag and attrs.
+    # because I have to check the type of the next element, and optionally consume it if it's the right one
+    # I end up assigning next(html) to a particular variable twice.
     tag, idsclasses = parsetag(next(html))
-    attrs, html = t.peek(html)
-    attrs = next(html) if isinstance(attrs, dict) else {}
-    return {"tag": tag,
-            "attrs": t.merge_with(' '.join, attrs, idsclasses),
-            "body": [template_to_ast(x) for x in html]}
-  else: raise ValueError('Cannot convert the following type of value: ' + str(html))
+    try:
+      attrs, html = t.peek(html)
+      attrs = next(html) if isinstance(attrs, dict) else {}
+    except StopIteration:
+      attrs = {}
+      html = iter([])
+    return assemble_ast(tag, idsclasses, attrs, [template_to_ast(x) for x in html if x is not None])
+  
+  else: raise ValueError('template_to_ast: Cannot convert the following type of value: ' + str(html))
   

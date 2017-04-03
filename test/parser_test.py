@@ -11,7 +11,8 @@ sample = Registry(Bold, Italic, Monospace, Paragraphs)
 def test_parseinline_empty():
   assert parseinline(sample, Paragraphs, '') == ['']
   assert parseinline(Standard, Paragraphs, '**') == [(Bold, ['strong', {}, ''])]
-
+  assert unwind(parse(Standard, '')) == ['div']
+  
 @pytest.mark.randomize(str_attrs=("ascii_letters","digits","whitespace"))
 def test_parseinline_nosub(s: str):
   assert parseinline(sample, Paragraphs, s) == [s]
@@ -83,7 +84,8 @@ def test_parseblock_nestingsub():
 
 def test_parseblock_nestingsub_multiple():
   assert unwind(parseblock(sample + [IdentityBlock], IdentityBlock,
-                           '*hello*\n---paragraphs\nhello\n---paragraphs\nhello again\n...\n...\n')) == ['div', ['strong', {}, 'hello'], '\n', ['div', ['p', 'hello'], ['div', ['p', 'hello again']]]]
+                           '*hello*\n---paragraphs\nhello\n---paragraphs\nhello again\n...\n...\n')) == [
+           'div', ['strong', {}, 'hello'], '\n', ['div', ['p', 'hello'], ['div', ['p', 'hello again']]]]
 
   assert unwind(parseblock(sample, Paragraphs,
                            ' *hello*\n---paragraphs\nhello\n---paragraphs\n*hello* again\n...\n...\n')) == [
