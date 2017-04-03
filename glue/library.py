@@ -521,7 +521,7 @@ def GuitarChord(text, docid, elem):
    generate the desired chord diagram.
   """
   info = yaml.safe_load(text)
-  return repr("chordMaker()({0}, {1})".format(elem, repr(info)))[1:-1]
+  return repr("chordMaker()({0}, {1})".format(elem, repr(info or {})))[1:-1]
 
 @asset_inline(AssetType.JS, '''
 function getStyleProp(elem, prop){
