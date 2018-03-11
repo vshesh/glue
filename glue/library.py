@@ -1,18 +1,14 @@
 # File: glue/library.py
 # Author: Vishesh Gupta
 # Created: 31 May 2016
-
-import uuid
-
-import functools
+import regex as re
 import simplejson as json
 import ruamel.yaml as yaml
-import regex as re
 import toolz as t
 import toolz.curried as tc
 from itertools import zip_longest
 
-from glue import Nesting, Registry
+from glue import Registry
 from glue.elements import *
 
 # this module exposes basic elements and registries for common tasks.
@@ -118,7 +114,7 @@ def Pictogram(groups):
   .tooltip:hover .tooltip-text {
       visibility: visible;
   }
-  ''')
+''')
 @link('T')
 def Tooltip(groups):
   return ['span.tooltip', groups[0], ['div.tooltip-text', groups[1]]]
@@ -216,7 +212,6 @@ def List(text, o:bool=False):
       asdlfjasldfkj
   ...
   ```
-
   ###Params
   `text`: body text of the list
   `o`: whether list is ordered, in which case an `ol` is returned instead of a `ul`.
@@ -252,6 +247,7 @@ def List(text, o:bool=False):
 # sidebyside - 2 columns that are rendered independently
 # flexbox - lays out things in a flex manner
 # matrix - every line is a row, and pipes separate columns, rendered in flexbox again.
+# grid - css grid is a new spec, and there are various possible text representations of it.
 
 @block()
 def SideBySide(text):
@@ -558,5 +554,8 @@ Music = Registry(GuitarChord, MusicalAbc)
 
 # Registry setup
 
-Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [Blockquote, List, CodeBySide, SideBySide, Matrix, Katex, Figure, Audio, MusicalAbc, GuitarChord, Code, AnnotatedCode, JsonComponent, YamlComponent]
+Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [
+  Blockquote, List, CodeBySide, SideBySide, Matrix, Katex, Figure, Audio,
+  MusicalAbc, GuitarChord, Code, AnnotatedCode, JsonComponent, YamlComponent
+]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup

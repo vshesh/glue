@@ -109,8 +109,7 @@ def render_elm(html):
       elif len(html) == 2 and isinstance(html[1], dict):
         return 'Html.node {} [{}] []'.format(tag, attr)
       elif len(html) >= 3 and isinstance(html[1], dict):
-        return 'Html.node {} [{}] [{}]'.format(tag, attr,
-                                      ', '.join(map(render_elm, html[2:])))
+        return 'Html.node {} [{}] [{}]'.format(tag, attr, ', '.join(map(render_elm, html[2:])))
     # no attr dictionary
     return 'Html.node {} [] [{}]'.format(tag, ', '.join(map(render_elm, html[1:])))
   elif isinstance(html, str):
