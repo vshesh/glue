@@ -393,10 +393,10 @@ filter?
 It's pretty simple to add CriticMarkup to a registry using **Glue**:
 
 ```python
-CriticAdd = MirrorInlineFrame('critic-add', '{++', 'ins')
-CriticDel = MirrorInlineFrame('critic-del', '{--', 'del')
-CriticComment = MirrorInlineFrame('critic-comment', '{>>', 'span.critic.comment')
-CriticHighlight = MirrorInlineFrame('critic-highlight', '{==', 'mark')
+CriticAdd = MirrorInline('critic-add', '{++', 'ins')
+CriticDel = MirrorInline('critic-del', '{--', 'del')
+CriticComment = MirrorInline('critic-comment', '{>>', 'span.critic.comment')
+CriticHighlight = MirrorInline('critic-highlight', '{==', 'mark')
 
 CriticMarkdown = Registry(CriticAdd, CriticDel, CriticComment, CriticHighlight)
 ```
@@ -405,7 +405,7 @@ I'll leave CriticSub as an exercise for the reader. It fits in a similar vein
 as the Link component. It's been implemented in the library.py file if 
 you want an answer as to how it looks.
 
-Note: `MirrorInlineFrame` is a helper function I provide, which is written
+Note: `MirrorInline` is a helper function I provide, which is written
 to simply writing a parser for an element with one group in which the start
 and end pattern are mirrors of each other - I've defined the start pattern, and
 the function will compute the other side eg `++}` and then make the appropriate
