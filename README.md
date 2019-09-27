@@ -5,6 +5,8 @@
 
 ## Quickstart
 
+Requires Python 3.6+
+
 ```bash
 $ git clone <this repo>
 $ cd glue
