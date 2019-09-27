@@ -1,6 +1,8 @@
 from glue.util import *
+from hypothesis import given
+from hypothesis.strategies import text, integers
+import string
 import pytest
-
 
 # ------------------------ general utilities testing -------------------
 
@@ -159,30 +161,33 @@ def test_unpack():
   
 # ----- test template2ast
 
-@pytest.mark.randomize()
+@given(text())
 def test_template_to_ast_string_identity(s: str):
   assert template_to_ast(s) == s
 
-@pytest.mark.randomize()
+
+@given(text(alphabet=(string.ascii_letters+string.digits)))
 def test_template_to_ast_tag_only(tag: str):
   assert template_to_ast(iter([tag])) == ({'tag' : tag, "attrs": {}, "body": []}
                                          if not tag or re.match(r'^[^A-Z]', tag) else
                                           {'name': tag, 'props': {}, 'children': []})
 
-@pytest.mark.randomize(str_attrs=("ascii_lowercase", "digits", "whitespace"))
+words = text(alphabet=(string.ascii_lowercase+string.digits+string.whitespace))
+
+@given(tag=words, body=words)
 def test_template_to_ast_no_attrs(tag: str, body: str):
   assert template_to_ast([tag, body]) == {'tag': tag, "attrs": {}, "body": [body]}
 
-@pytest.mark.randomize(str_attrs=("ascii_lowercase", "digits", "whitespace"))
+@given(words, words, words, words)
 def test_template_to_ast_with_attrs(tag: str, attr: str, value: str, body: str):
-  assert template_to_ast([tag, {attr: value} if value else {}, body]) == {'tag': tag, "attrs": {attr: value}, "body": [body]}
+  assert template_to_ast([tag, {attr: value}, body]) == {'tag': tag, "attrs": {attr: value} if value.strip() else {}, "body": [body]}
 
-@pytest.mark.randomize(str_attrs=("ascii_lowercase", "digits", "whitespace"))
+@given(words, words, words, words)
 def test_template_to_ast_recursive(tag: str, attr: str, value: str, body: str):
-  assert template_to_ast([tag, {attr: value} if value else {}, [tag, {attr: value, tag:value} if value else {}, body]]) == {
+  assert template_to_ast([tag, {attr: value}, [tag, {attr: value, tag:value}, body]]) == {
     'tag': tag,
-    'attrs': {attr: value},
-    "body": [{'tag': tag, 'attrs': {attr: value, tag: value}, 'body': [body]}]
+    'attrs': {attr: value} if value.strip() else {},
+    "body": [{'tag': tag, 'attrs': {attr: value, tag: value} if value.strip() else {}, 'body': [body]}]
   }
 
 

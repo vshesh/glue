@@ -63,6 +63,14 @@ def fills(quantities, n):
 # ------------------------- PROJECT SPECIFIC UTILITIES --------------------
 
 def splitblocks(text: str):
+  """
+  A state machine type parser that can split the original document into nested blocks.
+
+  It scans for groups of --- and ... on their own lines, and then uses those tokens
+  to make a tree of blocks for the parser.
+  :param text: raw text from the input file to the glue parser
+  :return: a `X = str | [X]` type structure that represents the structure of the AST of the document.
+  """
   # tokenize
   tokens = re.split(re.compile(r'^(?:(---[\w_=\- \.]+)|(\.\.\.))[ \t]*(?:\n|$)', re.M), text)
 

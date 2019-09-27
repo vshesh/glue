@@ -8,7 +8,7 @@ import toolz as t
 from typing import Union, List, Mapping, Iterable
 from glue.elements import *
 
-class Registry(OrderedDict, Mapping[str, Union[Inline, Block]]):
+class Registry(OrderedDict, Mapping[str, Element]):
   """
   Registry class is some convenience functions tacked onto
   a dictionary that maps names (strings) to elements (Inline or Block).
