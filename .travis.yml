@@ -3,7 +3,7 @@ python:
   - 3.7
   - 3.6
   - 3.5
-install: pip install --U wheel && pip install -r requirements.txt
+install: pip install -U wheel && pip install -r requirements.txt
 script: python3 -m pytest --cov glue
 after_success:
   coveralls
