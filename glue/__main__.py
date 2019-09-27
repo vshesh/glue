@@ -5,11 +5,27 @@ from bs4 import BeautifulSoup
 from getopt import getopt
 import importlib
 
+def usage():
+  return """
+  glue [hm:l:] 
+  
+  Converts a text file into some form of rich output, either HTML, a
+  frontend component library (mithril, react, etc) or a raw compiler template 
+  type of output ({tag: ..., attrs: ..., body: [...]}).  
+  
+  -h  this help message
+  -m  --module python file containing a definition of a registry. Default is the Standard registry if this isn't included.
+  -l  --language is the output language. can be one of html (default), elm, mithril, or react. See the docs for instructions on how to add a different output language.
+  """
+
 if __name__ == '__main__':
-  opts, args = getopt(sys.argv[1:], 'm:l:', ['module=','language='])
+  opts, args = getopt(sys.argv[1:], 'hm:l:', ["help", 'module=','language='])
   language = 'html'
   registry_module = None
   for (o,a) in opts:
+    if o == '-h':
+      print(usage())
+      exit()
     if o == '-l' or o == '--language':
       language = a
     if o == '-m' or o == '--module':

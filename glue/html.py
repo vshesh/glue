@@ -2,7 +2,7 @@
 # also, added the ability to define style-type tags using the css syntax, so
 # a dictionary value for an attribute is converted to: "key:value;key2:value2;"
 
-import collections
+import collections.abc as abc
 import itertools
 
 HTML_VOID_TAGS = [
@@ -142,10 +142,10 @@ def render_content(content, **context):
     yield ''
   elif isinstance(content, str):
     yield content
-  elif isinstance(content, collections.Callable):
+  elif isinstance(content, abc.Callable):
     for e in render_content(content(**context), **context):
       yield e
-  elif isinstance(content, collections.Iterable):
+  elif isinstance(content, abc.Iterable):
     for e in render_iterable(content, **context):
       yield e
   else:
@@ -164,7 +164,7 @@ def render_iterable(content, **context):
     for e in render_tag(head, tail, **context):
       yield e
   # Render nested lists
-  elif isinstance(head, collections.Iterable):
+  elif isinstance(head, abc.Iterable):
     for e in render_iterable(head, **context):
       yield e
     for content in tail:
@@ -221,8 +221,7 @@ def render_tag(tag, content, **context):
 
   # Render the delicious filling or toppings
   for content in remainder:
-    for e in render_content(content, **context):
-      yield e
+    yield from render_content(content, **context)
 
   # CLOSE THE TAG IF WE HAVE TO I GUESS
   if tag not in HTML_VOID_TAGS:

@@ -11,7 +11,7 @@ from collections import OrderedDict as odict
 
 
 def html_equiv(h1, h2):
-  return BeautifulSoup(h1) == BeautifulSoup(h2)
+  return BeautifulSoup(h1, features="html.parser") == BeautifulSoup(h2, features="html.parser")
 
 
 class TestHTML(unittest.TestCase):

@@ -75,7 +75,7 @@ def render_react_component(name: str, expr: str):
 
 
 def double_quoted_repr(s: str):
-  return '"' + repr(s)[1:-1].replace('"', '\\"') + '"'
+  return '"' + repr(s)[1:-1].replace('"', '\\"').replace("\\'", "'") + '"'
 
 def render_elm_attrs(attrs: dict):
   return ', '.join(['attribute {} {}'.format(double_quoted_repr(k),double_quoted_repr(v))
