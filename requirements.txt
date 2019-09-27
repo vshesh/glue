@@ -5,8 +5,8 @@ toolz
 ruamel.yaml
 bs4
 simplejson
+hypothesis
 
 pytest
 pytest-cov
 coveralls
-pytest-quickcheck
