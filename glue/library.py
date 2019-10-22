@@ -33,22 +33,41 @@ Strikethrough = IdenticalInline('strikethrough', '~', 'del')
 Superscript = SingleGroupInline('superscript', '^{', '}', 'sup')
 Subscript = SingleGroupInline('subscript', '_{', '}', 'sub')
 
+@asset_inline(AssetType.JS, '''
+const Link = {
+  view: ({attrs: {href, text}}) => m(m.route.Link, {href}, text)
+}
+''')
+@link('M')
+def MithrilLink(groups):
+  return ['Link', {'href': groups[1], 'text': groups[0]}]
+
 @link('')
 def Link(groups):
-  return ['a', {'href': groups[1]}, groups[0]]
+  return ['a',
+    {'href': groups[1],
+     'target': '_blank' if groups[1].startswith('http') else '_self'},
+    groups[0]]
 
 @link('!!')
 def InlineImage(groups):
-  return ['img', {'alt': groups[0], 'src': groups[1],
+  return ['img.inline-image', {'alt': groups[0], 'src': groups[1],
                   'style': {'display': 'inline-block',
                             'vertical-align': 'middle',
                             'max-width': '100%'}}]
 
 @link('!')
 def FullImage(groups):
-  return ['img', {'alt': groups[0], 'src': groups[1],
+  return ['img.full-image', {'alt': groups[0], 'src': groups[1],
                   'style': {'margin': '0 auto', 'display': 'block',
                             'max-width': '100%'}}]
+
+@link('\.')
+def Classed(groups):
+  '''
+  .[class1 class2](text) => ['span', {class: 'class1 class2'}, 'text']
+  '''
+  return ['span', {'class': groups[0]}, groups[1]]
 
 @asset_inline(AssetType.CSS, '''
 .pictogram {
@@ -75,7 +94,7 @@ def FullImage(groups):
 @link('P')
 def Pictogram(groups):
   return ['span.pictogram',
-          ['img', {'alt': groups[0], 'src': groups[1]}],
+          ['img', {'alt': groups[0], 'src': groups[1] or f'img/pictogram/{groups[0]}.png'}],
           ['span.pictoword', groups[0]]]
 
 @asset_inline(AssetType.CSS, '''
@@ -122,11 +141,12 @@ def Tooltip(groups):
 @inline(r'^(\#{1,6})([^\n]*)$', display=Display.BLOCK, nest=Nesting.POST, escape='#')
 def Header(groups):
   return ['h' + str(len(groups[0])),
-          ['a', {'name':  re.sub(r'[^A-Za-z0-9 ]', '', groups[1]).strip().replace(' ', '-').lower()},
+          ['a.anchor', {'id':  re.sub(r'[^A-Za-z0-9 ]', '', groups[1]).strip().replace(' ', '-').lower()},
            groups[1].lstrip()]]
 
-StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic, Monospace,
-                          Strikethrough, Link, InlineImage, FullImage, Pictogram, Tooltip, Header)
+StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic,
+                          Monospace, Classed, Strikethrough, MithrilLink, Link,
+                          InlineImage, FullImage, Pictogram, Tooltip, Header)
 
 # CRITIC - registry for doing annotations and critiques on the document.
 # insertion, deletion, substitution (really deletion + insertion)
@@ -157,6 +177,12 @@ MarkdownInline = (StandardInline - [Bold, Italic, Underline]) + [
   MDStarBold, MDLodashBold, MDStarItalic, MDLodashItalic]
 
 # Standard Blocks:
+
+@block(Nesting.SUB)
+def Aside(text: str):
+  r = Paragraphs(text)
+  r[0] = 'aside'
+  return r
 
 @asset_inline(AssetType.CSS, '''
 .blockquote {
@@ -231,7 +257,7 @@ def List(text, o:bool=False):
         items[-1].append(item)
         pos.pop()
       items[-1].append(line.strip())
-      pos.append(p)
+      if pos[-1] != p: pos.append(p)
     else:
       items[-1].append(line.strip())
   # turtle down remaining lists.
@@ -291,7 +317,7 @@ def Matrix(text, type='flex'):
 
 @block()
 def Figure(text):
-  split = text.split('\n', maxsplit=1)
+  split = text.split('\n\n', maxsplit=1)
   if len(split) == 1:
     caption = None
     body = split[0]
@@ -314,6 +340,31 @@ def Audio(group):
   return ['audio',{'controls': True, 'src': group[0]},
           'Audio is not supported on your browser.']
 
+@asset_inline(AssetType.CSS, '''
+.video {
+	position:relative;
+	padding-bottom:56.25%;
+	padding-top:30px;
+	height:0;
+	overflow:hidden;
+}
+
+.video iframe, .video object, .video embed {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+}
+''')
+@terminal_block()
+def Video(url):
+  return ['div.video', ['iframe', {
+    'src':url,
+    "frameborder":"0",
+    "allow":"autoplay; encrypted-media; picture-in-picture",
+    "allowfullscreen":True}]]
+
 # STANDALONE - such as KaTeX and musicalabc, to name a few.
 
 # the few general strategies here are:
@@ -328,6 +379,15 @@ def Audio(group):
 #    Fast also, and has less cruft, but then requires you use react/mithril/etc
 
 # #2 is the best compromise and that is what is included with the standard library.
+
+@asset_inline(AssetType.CSS, '''
+.pdfobject-container {height: 30rem; border: 1rem solid rgba(0,0,0,.1)}
+''')
+@asset_url(AssetType.JS, 'https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js')
+@standalone_integration()
+def PdfObject(text, docid, elem):
+  return f"PDFObject.embed('{text.strip()}', {elem});"
+
 
 @asset_inline(AssetType.CSS, '.katex {position: relative;}')
 @asset_url(AssetType.CSS, 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css')
@@ -381,7 +441,7 @@ def Code(text, language='python'):
   :return: HTML code that will render a nice syntax highlighted code block.
   """
   h = str(uuid.uuid4())
-  return ['pre', ['code#{0}.language-{1}'.format(h, language), text],
+  return ['pre', ['code#{0}.language-{1}'.format(h, language), {'key': h+'-element'}, text],
                  ['script', {'key': h},
                   "hljs.highlightBlock(document.getElementById('{0}'))".format(h)]]
 
@@ -486,12 +546,12 @@ def YamlComponent(text, name):
   :return: [name, props] -> syntax that represents this component with these props.
   """
   props = yaml.safe_load(text)
-  return [name, props]
+  return ['ℝ'+name, props]
 
 @terminal_block()
 def JsonComponent(text, name):
   props = json.loads(text)
-  return [name, props]
+  return ['ℝ'+name, props]
 
 # Domain Specific Blocks -> MUSIC related:
 
@@ -555,7 +615,7 @@ Music = Registry(GuitarChord, MusicalAbc)
 # Registry setup
 
 Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [
-  Blockquote, List, CodeBySide, SideBySide, Matrix, Katex, Figure, Audio,
+  Aside, Blockquote, List, CodeBySide, SideBySide, Matrix, Katex, Figure, Audio, Video, PdfObject,
   MusicalAbc, GuitarChord, Code, AnnotatedCode, JsonComponent, YamlComponent
 ]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup

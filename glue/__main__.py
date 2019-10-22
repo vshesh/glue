@@ -1,17 +1,19 @@
 import sys
-from glue.codegen import *
+import glue.codegen as codegen
 from glue.library import Standard
 from bs4 import BeautifulSoup
 from getopt import getopt
 import importlib
+import os.path as path
+import inflection
 
 def usage():
   return """
-  glue [hm:l:] 
+  glue [hm:l:]
   
   Converts a text file into some form of rich output, either HTML, a
-  frontend component library (mithril, react, etc) or a raw compiler template 
-  type of output ({tag: ..., attrs: ..., body: [...]}).  
+  frontend component library (mithril, react, etc) or a raw compiler template
+  type of output ({tag: ..., attrs: ..., body: [...]}).
   
   -h  this help message
   -m  --module python file containing a definition of a registry. Default is the Standard registry if this isn't included.
@@ -30,14 +32,18 @@ if __name__ == '__main__':
       language = a
     if o == '-m' or o == '--module':
       registry_module = a
-    
+  
   registry = importlib.import_module(registry_module).__getattribute__('registry') if registry_module else Standard
-  s = sys.stdin.read()
-  if language == 'html':
-    print(BeautifulSoup(tohtml(registry, s), 'html.parser').prettify())
-  elif language == 'mithril':
-    print(render_mithril_component((args and args[0]) or 'UnidentifiedComponent', tomithril(registry, s)))
-  elif language == 'react':
-    print(render_react_component((args and args[0]) or 'UnidentifiedComponent', toreact(registry, s)))
-  elif language == 'elm':
-    print(render_elm_component((args and args[0]) or 'unidentifiedComponent'), toelm(registry, s))
+  
+  def process(s: str, name: str) -> None:
+    if language == 'html':
+      print(BeautifulSoup(tohtml(registry, s), 'html.parser').prettify())
+    else:
+      print(codegen.__getattribute__(f'render_{language}_component')(
+        name,
+        codegen.__getattribute__(f'to{language}')(registry, s)))
+  
+  if len(args) == 0: process(sys.stdin.read(), 'UnidentifiedComponent')
+  else:
+    for f in args:
+      process(open(f).read(), inflection.camelize(inflection.underscore(path.splitext(path.basename(f))[0])))

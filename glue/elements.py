@@ -29,7 +29,7 @@ class Patterns(Enum):
   """
   escape = '(?<!\\\\)(?:\\\\\\\\)*{0}'
   single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'
-  link = r'(?<!\\)(?:\\\\)*\K{0}\[(.*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
+  link = r'(?<!\\)(?:\\\\)*\K{0}\[((?:(?:[^\[])|(?:\[.*?\]))*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
   double_group = r'(?<!\\)(?:\\\\)*\K\{0}(.*?(?<!\\)(?:\\\\)*){1}(.*?(?<!\\)(?:\\\\)*){2}'
 
 
@@ -294,7 +294,7 @@ def asset_url(type: AssetType, url: str):
 
 def asset_inline(type: AssetType, contents: Union[str, list]):
   def asset_inline_helper(elem: Element):
-    elem.add_asset('<script type="text/javascript">\n{0}\n</script>'.format(contents)
+    elem.add_asset('<script defer type="text/javascript">\n{0}\n</script>'.format(contents)
                    if type == AssetType.JS
                    else '<style>\n{0}\n</style>'.format(css.scss(contents)
                                                         if isinstance(contents, list)
@@ -355,7 +355,7 @@ def standalone_integration(outer_elem='div', inner_elem='div'):
       elem = "document.getElementById('{0}')".format(docid);
 
       return [outer_elem + '.' + makename(f.__name__),
-              [inner_elem + '#{0}'.format(docid)],
+              [inner_elem + '#{0}'.format(docid), {'key': docid+"-container"}],
               ['script', {'key': docid}, f(text, docid=docid, elem=elem)]]
     return standalone_block
 

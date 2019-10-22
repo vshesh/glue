@@ -6,9 +6,19 @@ from glue.parser import parse
 from inflection import camelize
 
 def attr_values_to_str(attrs: dict):
-  return str({k: ' '.join('{}:{};'.format(k2,v2) for k2,v2 in v)
+  return str({k: ' '.join('{}:{};'.format(k2,v2) for k2,v2 in v.items())
               if isinstance(v, dict)
-              else v})
+              else v for (k,v) in attrs.items()})
+
+def component_attrs_to_str(attrs: dict):
+  # f"'{k}':'{v}'" is what should be in the join call. i'm not wrapping v in
+  # quotes right now because for a project, i needed to be able to call a
+  # custom component with some live data in the app. This should NOT
+  # be allowed from a client side, because it means that a user can make the
+  # page run arbitrary js, which is a security issue.
+  
+  # TODO(vishesh): probably should write some tests to make sure that this hole is covered.
+  return ('{'+', '.join(f"'{k}':{v}" for (k,v) in attrs.items())+'}')
 
 def render_mithril(html) -> str:
   """
@@ -27,11 +37,11 @@ def render_mithril(html) -> str:
       return '[{}]'.format(','.join(render_mithril(x) for x in html))
     else:
       tag = repr(html[0])
-      attr = (str(attr_values_to_str(html[1])).replace('True', 'true').replace('False', 'false')
+      attr = ((component_attrs_to_str if tag[1] == 'ℝ' and tag[2].isupper() else attr_values_to_str)(html[1]).replace('True', 'true').replace('False', 'false')
               if len(html) > 1 and isinstance(html[1], dict)
               else {})
       if tag[1].isupper():
-        return 'm.component({}, {})'.format(html[0], attr)
+        return 'm({}, {})'.format(html[0].lstrip('ℝ'), attr)
       elif len(html) == 1:
         return 'm(' + tag + ')'
       elif len(html) == 2 and isinstance(html[1], dict):

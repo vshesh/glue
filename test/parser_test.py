@@ -102,10 +102,6 @@ def test_parseblock_nestingsub_multiple():
 
 
 def test_parseblock_nestingpost():
-  @block()
-  def IdentityBlock(text):
-    return ['div', text]
-
   assert unwind(parseblock(Registry(IdentityBlock, Paragraphs), IdentityBlock,
                            'hello\n---paragraphs\nhello\n...\n')) == ['div', 'hello\n', ['div', ['p', 'hello']]]
 
