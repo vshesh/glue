@@ -7,6 +7,7 @@ import ruamel.yaml as yaml
 import toolz as t
 import toolz.curried as tc
 from itertools import zip_longest
+from datetime import datetime
 
 from glue import Registry
 from glue.elements import *
@@ -62,6 +63,37 @@ def FullImage(groups):
                   'style': {'margin': '0 auto', 'display': 'block',
                             'max-width': '100%'}}]
 
+@asset_inline(AssetType.CSS, '''
+@media only screen and (min-width: 700px) {
+  p.stacked {
+    text-align: center;  }
+  p.stacked span {
+    vertical-align: middle;  }
+
+  p.stacked .stack {
+    display: inline-flex;
+    flex-direction: column;
+    margin: 0 0.5em;}
+
+  p.stacked .stack span {
+    text-align: center;
+    font-weight: 500;  }
+}
+@media only screen and (max-width: 700px) {
+  p.stacked .stack span::after {
+    content: ", " }
+  
+  p.stacked .stack span:last-child::after,
+  p.stacked .stack span:first-child::before {
+    content: " " }
+}''')
+@block()
+def Stacked(text):
+  return ['p.stacked',
+          *[['span.stack', *[['span', phrase] for phrase in line[2:].split(',')]]
+            if line.startswith('$#')
+            else ['span', line] for line in text.split('\n')]]
+
 @link('\.')
 def Classed(groups):
   '''
@@ -74,8 +106,9 @@ def Classed(groups):
   position: relative;
 }
 .pictogram > img {
-  height: 1.5em;
-  vertical-align: middle;
+  max-height: 1.5em;
+  position: relative;
+  top: 0.45em;
 }
 .pictogram > span.pictoword {
   position: absolute;
@@ -144,7 +177,7 @@ def Header(groups):
           ['a.anchor', {'id':  re.sub(r'[^A-Za-z0-9 ]', '', groups[1]).strip().replace(' ', '-').lower()},
            groups[1].lstrip()]]
 
-StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic,
+StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic, Stacked,
                           Monospace, Classed, Strikethrough, MithrilLink, Link,
                           InlineImage, FullImage, Pictogram, Tooltip, Header)
 
@@ -315,6 +348,35 @@ def Matrix(text, type='flex'):
 # figures - images with captions, basically.
 # annotated image - component library image processing
 
+@asset_inline(AssetType.CSS, '''
+.slideshow{width:100%;position:relative;text-align:center}.slideshow--item{width:100%;line-height:1.5;display:none}.slideshow--item img{width:100%;display:inherit}.slideshow--item::after{content:attr(data-pos);position:absolute;color:white;top:0.25em;right:0.5em;text-anchor:end;padding:0.1em;}.slideshow--bullet:checked + .slideshow--item{display:block}.slideshow[data-transition="fade"] .slideshow--item{opacity:0;transition:0.3s ease-out opacity}.slideshow[data-transition="fade"] .slideshow--bullet:checked + .slideshow--item{opacity:1}.slideshow--nav{position:absolute;top:0;bottom:0;width:50%;display:none;z-index:88;cursor:pointer;color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.slideshow--nav:after{display:block;content:'\25B6';font-size:2em;color:#fff;position:absolute;top:50%;right:10px;margin-top:-.5em}.slideshow--nav-previous{left:0;display:block}.slideshow--nav-previous:after{transform:scaleX(-1);right:auto;left:10px}.slideshow--nav-next{left:50%;display:block}.slideshow--bullet{display:none}
+.slideshow--caption {width: 100%;color: white;background: #000a;padding: 0.25em 0;}
+''')
+@terminal_block()
+def Slideshow(text):
+  '''
+  Shows an image with arrows to go to next/previous images.
+  
+  ---image-slider
+  url1::caption1
+  url2::caption2
+  ...
+  
+  Will make an image slider with those images in that order.
+  '''
+  lines = list(filter(lambda x: x.strip() != "", text.split('\n')))
+  name = f'ss-{int(datetime.now().timestamp())}-{re.sub(r"[^a-z]", "", lines[0])}'
+  return ['div.slideshow', {'data-transition': 'fade'}, [
+    [['input.slideshow--bullet',
+      {'type': 'radio', 'name': name, 'id': f'{name}-item-{i}', 'checked': i == 0}],
+     ['div.slideshow--item', {'data-pos': f"{i+1}/{len(lines)}"},
+      ['img', {'src': line.split('::')[0]}],
+      ['div.slideshow--caption',  t.get(1, line.split('::'), '')],
+      ['label.slideshow--nav.slideshow--nav-previous', {'for': f'{name}-item-{(i-1)%len(lines)}'}, f'Go to slide {(i-1)%len(lines) + 1}'],
+      ['label.slideshow--nav.slideshow--nav-next', {'for': f'{name}-item-{(i+1)%len(lines)}'}, f'Go to slide {(i+1)%len(lines) + 1}']
+    ]
+    ] for (i, line) in enumerate(lines)]]
+
 @block()
 def Figure(text):
   split = text.split('\n\n', maxsplit=1)
@@ -358,12 +420,18 @@ def Audio(group):
 }
 ''')
 @terminal_block()
-def Video(url):
+def Youtube(url):
   return ['div.video', ['iframe', {
     'src':url,
     "frameborder":"0",
-    "allow":"autoplay; encrypted-media; picture-in-picture",
+    "allow":"encrypted-media; picture-in-picture",
     "allowfullscreen":True}]]
+
+@terminal_block()
+def Video(url):
+  return ['video', {'controls': True},
+    ['source', {'src': url}],
+    'Your browser does not support the video tag.']
 
 # STANDALONE - such as KaTeX and musicalabc, to name a few.
 
@@ -615,7 +683,8 @@ Music = Registry(GuitarChord, MusicalAbc)
 # Registry setup
 
 Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [
-  Aside, Blockquote, List, CodeBySide, SideBySide, Matrix, Katex, Figure, Audio, Video, PdfObject,
+  Aside, Blockquote, List, CodeBySide, SideBySide, Matrix, Katex,
+  Slideshow, Figure, Audio, Youtube, Video, PdfObject,
   MusicalAbc, GuitarChord, Code, AnnotatedCode, JsonComponent, YamlComponent
 ]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup
