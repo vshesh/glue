@@ -8,5 +8,5 @@ simplejson
 hypothesis
 
 pytest
-pytest-cov
 coveralls
+pytest-cov

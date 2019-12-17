@@ -91,13 +91,13 @@ def render_elm_attrs(attrs: dict):
   return ', '.join(['attribute {} {}'.format(double_quoted_repr(k),double_quoted_repr(v))
                     for (k,v) in attr_values_to_str(attrs.items())])
 
-def render_elm(html):
+def render_elm(html: list):
   """
   Generate an Elm template that can be used as part of a view function.
   Elm is a bit more particular about the generated template than mithril. First, the template must have a root node.
   At no time can you have a list of list of nodes, either.
-  :param html:
-  :return:
+  :param html: cottonmouth form html ['div', {attrs}, body]
+  :return: string that should be written to a .elm file eg `python3 -m glue -l elm about.glu > about.elm`
   """
   if html is None: return ''
   elif isinstance(html, list):
@@ -111,7 +111,7 @@ def render_elm(html):
               else {})
       if tag[1].isupper():
         # components are not well supported this way in Elm. They are more complicated than just adding a call to a
-        # known wrapper function.
+        # known wrapper function, thanks to Elm's architecture requiring very structured nesting for the various actions, updates etc.
         # return 'm.component({}, {})'.format(html[0], attr)
         return ''
       elif len(html) == 1:
@@ -129,9 +129,9 @@ def render_elm(html):
 
 
 def render_elm_component(name: str, expr: str):
-  return '''{name} : Html Msg
+  return f'''{name} : Html Msg
   {name} = {expr}
-  '''.format(name=name, expr=expr)
+  '''
 
 tohtml = t.compose(render, parse)
 tomithril = t.compose(render_mithril, unwind, parse)
