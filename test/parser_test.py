@@ -40,9 +40,9 @@ def test_parseinline_multiline(s1: str, s2: str):
 
 def test_parseinline_post():
   assert parseinline(sample + [Link], Paragraphs,
-                     '[link](http://google.com)') == [(Link, ['a', {'href': 'http://google.com'}, 'link'])]
+                     '[link](http://google.com)') == [(Link, ['a', {'href': 'http://google.com', 'target': '_blank'}, 'link'])]
   assert parseinline(sample + [Link], Paragraphs,
-                     '[*link*](http://google.com)') == [(Link, ['a', {'href': 'http://google.com'}, (Bold, ['strong', {}, 'link'])])]
+                     '[*link*](http://google.com)') == [(Link, ['a', {'href': 'http://google.com', 'target': '_blank'}, (Bold, ['strong', {}, 'link'])])]
 
 
 def test_parseinline_none():
@@ -109,14 +109,14 @@ def test_parseblock_nestingpost():
 
 def test_parse_header():
   assert unwind(parse(Standard, '# Header ![img](imgurl)')) == [
-    'div', ['h1', ['a', {'name': 'header-imgimgurl'},
-                   'Header ', ['img', {'alt': 'img', 'src': 'imgurl',
+    'div', ['h1', ['a.anchor', {'id': 'header-imgimgurl'},
+                   'Header ', ['img.full-image', {'alt': 'img', 'src': 'imgurl',
     'style': {'margin': '0 auto', 'display': 'block', 'max-width': '100%'}}]]]]
   assert unwind(
     parse(Standard, '# h1\n## h2\n### h3', Paragraphs)) == [
-           'div', ['h1', ['a', {'name': 'h1'}, 'h1']],
-                  ['h2', ['a', {'name': 'h2'}, 'h2']],
-                  ['h3', ['a', {'name': 'h3'}, 'h3']]]
+           'div', ['h1', ['a.anchor', {'id': 'h1'}, 'h1']],
+                  ['h2', ['a.anchor', {'id': 'h2'}, 'h2']],
+                  ['h3', ['a.anchor', {'id': 'h3'}, 'h3']]]
 
 
 @given(words)
@@ -138,4 +138,3 @@ def test_macroexpand(s: str):
 @given(text(alphabet=(string.ascii_letters+string.digits)), text(alphabet=(string.ascii_letters+string.digits)))
 def test_parsemacros(name: str, text: str):
   assert unwind(parsemacros('{} = {}'.format(name, text))) == [[name.strip(), text.strip()]]
-

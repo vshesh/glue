@@ -64,8 +64,9 @@ def FullImage(groups):
                             'max-width': '100%'}}]
 
 @asset_inline(AssetType.CSS, '''
-@media only screen and (min-width: 700px) {
+@media only screen and (min-width: 750px) {
   p.stacked {
+    white-space: nowrap;
     text-align: center;  }
   p.stacked span {
     vertical-align: middle;  }
@@ -79,13 +80,15 @@ def FullImage(groups):
     text-align: center;
     font-weight: 500;  }
 }
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 750px) {
   p.stacked .stack span::after {
     content: ", " }
   
   p.stacked .stack span:last-child::after,
   p.stacked .stack span:first-child::before {
     content: " " }
+  p.stacked .stack span:last-child::before {
+      content: "and"}
 }''')
 @block()
 def Stacked(text):

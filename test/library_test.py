@@ -26,7 +26,7 @@ def test_tooltip():
 @given(text(alphabet=(string.digits+string.ascii_letters)), integers(min_value=1, max_value=6))
 def test_header(s: str, n: int):
   assert unwind(parse(Registry(Paragraphs, Header), '#'*n+' '+s, Paragraphs)) == [
-    'div', ['h'+str(n), ['a', {'name': s.lower()}, s]]]
+    'div', ['h'+str(n), ['a.anchor', {'id': s.lower()}, s]]]
 
 
 def test_criticsub():
@@ -88,7 +88,7 @@ def test_matrix():
      ['td', {}, 'c'],
      ['td', {}, 'x']]]
 
-def test_list():
+def test_list_basic():
   s = '''
   one
   two
@@ -103,8 +103,15 @@ def test_list():
   two
    two sub one
   '''
-  assert List(s2) == ['ul', ['li', 'one', ['ul', ['li', 'sub one'], ['li', 'sub two', ['ul', ['li', 'sub sub one']]]]],
-                      ['li', 'two', ['ul', ['li', 'two sub one']]]]
+  assert List(s2) == ['ul',
+    ['li', 'one',
+      ['ul',
+        ['li', 'sub one'],
+        ['li', 'sub two',
+        ['ul', ['li', 'sub sub one']]]]],
+    ['li', 'two',
+      ['ul',
+        ['li', 'two sub one']]]]
 
 
 def test_annotated_code():
@@ -130,7 +137,7 @@ def test_standard_registry():
 
 new paragraph
   """
-  assert unwind(parse(Standard, t1)) == ['div', ['h1', ['a', {'name': 'placeholder'}, 'Placeholder']],
+  assert unwind(parse(Standard, t1)) == ['div', ['h1', ['a.anchor', {'id': 'placeholder'}, 'Placeholder']],
                                                 ['p', ['strong', {}, ' bold ']],
                                                 ['p', 'new paragraph']]
 
@@ -180,4 +187,4 @@ Discussion    22
 Works Cited    23
 '''
 def test_list():
-  assert List(listtestsimple) == []
+  assert List(listtestsimple) == ['ul', ['li', 'A'], ['li', 'B', ['ul', ['li', 'a'], ['li', 'b', ['ul', ['li', 'c']]]]], ['li', 'D', ['ul', ['li', 'e']]], ['li', 'G']]
