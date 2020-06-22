@@ -59,6 +59,7 @@ def InlineImage(groups):
 
 @link('!')
 def FullImage(groups):
+  '''An image that takes up the full width of the page.'''
   return ['img.full-image', {'alt': groups[0], 'src': groups[1],
                   'style': {'margin': '0 auto', 'display': 'block',
                             'max-width': '100%'}}]
@@ -92,6 +93,7 @@ def FullImage(groups):
 }''')
 @block()
 def Stacked(text):
+  '''Creates a stacked sentence as in Artful Language by Tufte and his wife.'''
   return ['p.stacked',
           *[['span.stack', *[['span', phrase] for phrase in line[2:].split(',')]]
             if line.startswith('$#')
@@ -129,6 +131,7 @@ def Classed(groups):
 ''')
 @link('P')
 def Pictogram(groups):
+  '''Icon pictogram, hover to see the word.'''
   return ['span.pictogram',
           ['img', {'alt': groups[0], 'src': groups[1] or f'img/pictogram/{groups[0]}.png'}],
           ['span.pictoword', groups[0]]]
@@ -352,7 +355,19 @@ def Matrix(text, type='flex'):
 # annotated image - component library image processing
 
 @asset_inline(AssetType.CSS, '''
-.slideshow{width:100%;position:relative;text-align:center}.slideshow--item{width:100%;line-height:1.5;display:none}.slideshow--item img{width:100%;display:inherit}.slideshow--item::after{content:attr(data-pos);position:absolute;color:white;top:0.25em;right:0.5em;text-anchor:end;padding:0.1em;}.slideshow--bullet:checked + .slideshow--item{display:block}.slideshow[data-transition="fade"] .slideshow--item{opacity:0;transition:0.3s ease-out opacity}.slideshow[data-transition="fade"] .slideshow--bullet:checked + .slideshow--item{opacity:1}.slideshow--nav{position:absolute;top:0;bottom:0;width:50%;display:none;z-index:88;cursor:pointer;color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.slideshow--nav:after{display:block;content:'\25B6';font-size:2em;color:#fff;position:absolute;top:50%;right:10px;margin-top:-.5em}.slideshow--nav-previous{left:0;display:block}.slideshow--nav-previous:after{transform:scaleX(-1);right:auto;left:10px}.slideshow--nav-next{left:50%;display:block}.slideshow--bullet{display:none}
+.slideshow{width:100%;position:relative;text-align:center}
+.slideshow--item{width:100%;line-height:1.5;display:none}
+.slideshow--item img{width:100%;display:inherit}
+.slideshow--item::after{content:attr(data-pos);position:absolute;color:white;top:0.25em;right:0.5em;text-anchor:end;padding:0.1em;}
+.slideshow--bullet:checked + .slideshow--item{display:block}
+.slideshow[data-transition="fade"] .slideshow--item{opacity:0;transition:0.3s ease-out opacity}
+.slideshow[data-transition="fade"] .slideshow--bullet:checked + .slideshow--item{opacity:1}
+.slideshow--nav{position:absolute;top:0;bottom:0;width:50%;display:none;z-index:88;cursor:pointer;color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+.slideshow--nav:after{display:block;content:'\25B6';font-size:2em;color:#fff;position:absolute;top:50%;right:10px;margin-top:-.5em}
+.slideshow--nav-previous{left:0;display:block}
+.slideshow--nav-previous:after{transform:scaleX(-1);right:auto;left:10px}
+.slideshow--nav-next{left:50%;display:block}
+.slideshow--bullet{display:none}
 .slideshow--caption {width: 100%;color: white;background: #000a;padding: 0.25em 0;}
 ''')
 @terminal_block()
@@ -424,6 +439,14 @@ def Audio(group):
 ''')
 @terminal_block()
 def Youtube(url):
+  '''
+  ---youtube
+  http://youtube.com/something
+  ...
+  
+  Creates an iframe with an embedded youtube video that expands to take the
+  full width.
+  '''
   return ['div.video', ['iframe', {
     'src':url,
     "frameborder":"0",
