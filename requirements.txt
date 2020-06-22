@@ -7,6 +7,6 @@ bs4
 simplejson
 hypothesis
 
-pytest
+pytest>=4.6
 coveralls
 pytest-cov
