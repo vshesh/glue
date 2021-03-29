@@ -18,4 +18,6 @@ def test_render_imba_attrs_single(o):
 def test_render_imba_attrs_double(t, t2):
   assert render_imba_attrs({t:1, t2:2}) == f'{t}=1 {t2}=2'
 
-def test_render_imba_attrs_
+@given(text())
+def test_render_imba_attrs_style(t):
+  assert render_imba_attrs({'style': {t: 1}}) == f'[{t}:1]'
