@@ -640,14 +640,28 @@ def YamlComponent(text, name):
   :return: [name, props] -> syntax that represents this component with these props.
   """
   props = yaml.safe_load(text)
-  return ['ℝ'+name, props]
+  return [name, props]
 
 @terminal_block()
 def JsonComponent(text, name):
   props = json.loads(text)
-  return ['ℝ'+name, props]
+  return [name, props]
 
 # Domain Specific Blocks -> MUSIC related:
+
+@terminal_block()
+def LiveYamlComponentDangerous(text, name):
+    """
+    You can specify your props using the YAML syntax, and create a component in a
+    js view library out of it. `name` must be camel case, and upper case, for it to be
+    recognized properly by this library.
+
+    :param text: The YAML formatted props to the component
+    :param name: name of the component like `AnnotatedCode`
+    :return: [name, props] -> syntax that represents this component with these props.
+    """
+    props = yaml.safe_load(text)
+    return ['ℂ'+name, props]
 
 @asset_inline(AssetType.CSS, '''
 .chordChart g.grid {stroke: black; stroke-width: 1px;}

@@ -1,9 +1,10 @@
+import inspect
 import toolz as t
+from inflection import camelize
 
-from glue.util import unwind
+from glue.util import unwind, indented_tree
 from glue.html import render
 from glue.parser import parse
-from inflection import camelize
 
 def attr_values_to_str(attrs: dict):
   return str({k: ' '.join('{}:{};'.format(k2,v2) for k2,v2 in v.items())
@@ -37,11 +38,11 @@ def render_mithril(html) -> str:
       return '[{}]'.format(','.join(render_mithril(x) for x in html))
     else:
       tag = repr(html[0])
-      attr = ((component_attrs_to_str if tag[1] == 'ℝ' and tag[2].isupper() else attr_values_to_str)(html[1]).replace('True', 'true').replace('False', 'false')
+      attr = ((component_attrs_to_str if tag[1] == 'ℂ' and tag[2].isupper() else attr_values_to_str)(html[1]).replace('True', 'true').replace('False', 'false')
               if len(html) > 1 and isinstance(html[1], dict)
               else {})
       if tag[1].isupper():
-        return 'm({}, {})'.format(html[0].lstrip('ℝ'), attr)
+        return 'm({}, {})'.format(html[0].lstrip('ℂ'), attr)
       elif len(html) == 1:
         return 'm(' + tag + ')'
       elif len(html) == 2 and isinstance(html[1], dict):
@@ -133,7 +134,54 @@ def render_elm_component(name: str, expr: str):
   {name} = {expr}
   '''
 
+
+def render_imba_attrs(attrs: dict, dangerous=False): 
+  style = (f'[{" ".join(f"{k}:{v}" for (k,v) in attrs["style"].items())}]' 
+           if 'style' in attrs and len(attrs['style']) > 0 
+           else '')
+  return style + ' '.join(f'{k}={repr(v) if not dangerous else v}' 
+                          for (k,v) in attrs.items() 
+                          if k != 'style')
+
+def generate_imba(html: list):
+  """
+  At no time can you have a list of list of nodes, either.
+  :param html: cottonmouth form html ['div', {attrs}, body]
+  :return: string that should be written to a .elm file eg `python3 -m glue -l elm about.glu > about.elm`
+  """
+  if html is None: return ''
+  elif isinstance(html, list):
+    if isinstance(html[0], list):
+      # nested list, need to unpack:
+      return ['<>' , *(generate_imba(x) for x in html)]
+    else:
+      dangerous = html[0][0] == 'ℂ'
+      tag = html[0].lstrip('ℂ')
+      attrs = render_imba_attrs(html[1]
+              if len(html) > 1 and isinstance(html[1], dict)
+              else {}, dangerous = dangerous)
+      if len(html) == 1:
+        return f'<{tag}/>'
+      elif isinstance(html[1], dict):
+        return [f'<{tag} {attrs}>', *(generate_imba(x) for x in html[2:])]
+      else:
+        return [f'<{tag}>', *(generate_imba(x) for x in html[1:])]
+  elif isinstance(html, str):
+    return repr(html)
+  else:
+    raise ValueError('{} is not convertible into html'.format(html))
+
+render_imba = t.compose('\n'.join, indented_tree, generate_imba)
+
+def render_imba_component(name: str, expr: str):
+  return inspect.cleandoc(f'''
+  tag {name}
+    <self>
+      {expr.replace(chr(10), f'{chr(10)}    ')}
+  ''')
+
 tohtml = t.compose(render, parse)
 tomithril = t.compose(render_mithril, unwind, parse)
 toreact = t.compose(render, parse)
 toelm = t.compose(render_elm, unwind, parse)
+toimba = t.compose(render_imba, unwind, parse)

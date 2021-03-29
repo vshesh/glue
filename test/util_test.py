@@ -34,6 +34,21 @@ def test_fills():
   assert fills([1,1,1], 10) == 3
 
 
+# ------------- testing indented_tree ---------------------
+def test_indented_tree_empty():
+  assert indented_tree([]) == ''
+
+@given(text())
+def test_indented_tree_singleton(t):
+  assert indented_tree([t]) == t
+
+@given(text(), text())
+def test_indented_tree_onesub(t, t2):
+  assert indented_tree([t, t2]) == f'{t}\n  {t2}'
+
+@given(text(min_size=1), text(min_size=1), text(min_size=1))
+def test_indented_tree_doublesub(t, t2, t3):
+  assert indented_tree([t, [t2, t3]]) == f'{t}\n  {t2}\n    {t3}'
 
 # ------------------------- testing splitblocks -------------------------
 
