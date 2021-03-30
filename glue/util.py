@@ -62,7 +62,7 @@ def fills(quantities, n):
 
 # ------------------------- PROJECT SPECIFIC UTILITIES --------------------
 
-def indented_tree(tags, indent=0):
+def indented_tree(tags, indent=0, ch='  '):
   """
   Converts a nested list of strings to an indented version.
 
@@ -82,23 +82,22 @@ def indented_tree(tags, indent=0):
   >>> print(indented_tree(['', 'item', 'item'], -1).lstrip())
   item
   item
-
   """
-  return '\n'.join(indented_tree_h(tags, indent))
+  return '\n'.join(indented_tree_h(tags, indent, ch))
 
-def indented_tree_h(tags: list, indent=0):
+def indented_tree_h(tags: list, indent:int =0, ch:str ='  '):
   """
   Helper for `indented_tree`. See that function for details.
 
   yields a series of strings properly indented given a tree like nested list structure.
   """
   if len(tags) == 0: return ''
-  yield '  '*indent + tags[0]
+  yield ch*indent + tags[0]
   for subtag in tags[1:]:
     if isinstance(subtag, list):
-      yield from indented_tree_h(subtag, indent+1)
+      yield from indented_tree_h(subtag, indent+1, ch=ch)
     else: 
-      yield '  '*(indent+1) + subtag
+      yield ch*(indent+1) + subtag
 
 
 def splitblocks(text: str):

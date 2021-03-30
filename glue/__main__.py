@@ -16,14 +16,18 @@ def usage():
   type of output ({tag: ..., attrs: ..., body: [...]}).
   
   -h  this help message
+  -a  --assets include all assets from registry in the output of the file.
   -m  --module python file containing a definition of a registry. Default is the Standard registry if this isn't included.
-  -l  --language is the output language. can be one of html (default), elm, mithril, or react. See the docs for instructions on how to add a different output language.
+  -n  --name   the name of the component being generated if using a js library style output.
+  -l  --language is the output language. can be one of html (default), elm, mithril, imba, or react. See the docs for instructions on how to add a different output language.
   """
 
 if __name__ == '__main__':
-  opts, args = getopt(sys.argv[1:], 'hm:l:', ["help", 'module=','language='])
+  opts, args = getopt(sys.argv[1:], 'han:m:l:', ["help", 'assets', 'name=', 'module=','language='])
   language = 'html'
   registry_module = None
+  name = 'UnidentifiedComponent'
+  assets = False
   for (o,a) in opts:
     if o == '-h':
       print(usage())
@@ -32,18 +36,24 @@ if __name__ == '__main__':
       language = a
     if o == '-m' or o == '--module':
       registry_module = a
+    if o == '-n' or o == '--name':
+      name = a
+    if o == '-a' or o == '--assets':
+      assets = True
   
   registry = importlib.import_module(registry_module).__getattribute__('registry') if registry_module else Standard
   
   def process(s: str, name: str) -> None:
+    if assets: 
+      print(registry.assets)
     if language == 'html':
-      print(BeautifulSoup(tohtml(registry, s), 'html.parser').prettify())
+      print(BeautifulSoup(codegen.tohtml(registry, s), 'html.parser').prettify())
     else:
       print(codegen.__getattribute__(f'render_{language}_component')(
         name,
         codegen.__getattribute__(f'to{language}')(registry, s)))
   
-  if len(args) == 0: process(sys.stdin.read(), 'UnidentifiedComponent')
+  if len(args) == 0: process(sys.stdin.read(), name)
   else:
     for f in args:
       process(open(f).read(), inflection.camelize(inflection.underscore(path.splitext(path.basename(f))[0])))

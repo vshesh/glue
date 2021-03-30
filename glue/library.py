@@ -524,7 +524,6 @@ def CodeBySide(text, language='md'):
 
 @asset_url(AssetType.CSS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/styles/atom-one-light.min.css")
 @asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/julia.min.js")
-@asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/languages/haskell.min.js")
 @asset_url(AssetType.JS, "//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js")
 @terminal_block()
 def Code(text, language='python'):
@@ -725,6 +724,7 @@ Music = Registry(GuitarChord, MusicalAbc)
 Standard = Registry(Paragraphs, top=Paragraphs) | StandardInline | CriticMarkup + [
   Aside, Blockquote, List, CodeBySide, SideBySide, Matrix, Katex,
   Slideshow, Figure, Audio, Youtube, Video, PdfObject,
-  MusicalAbc, GuitarChord, Code, AnnotatedCode, JsonComponent, YamlComponent
+  MusicalAbc, GuitarChord, Code, AnnotatedCode, JsonComponent, YamlComponent,
+  LiveYamlComponentDangerous
 ]
 Markdown = Registry(Paragraphs, top=Paragraphs) | MarkdownInline | CriticMarkup

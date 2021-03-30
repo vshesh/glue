@@ -1,4 +1,4 @@
-import inspect
+import textwrap
 import toolz as t
 from inflection import camelize
 
@@ -136,9 +136,12 @@ def render_elm_component(name: str, expr: str):
 
 
 def render_imba_attrs(attrs: dict, dangerous=False): 
-  style = (f'[{" ".join(f"{k}:{v}" for (k,v) in attrs["style"].items())}]' 
-           if 'style' in attrs and len(attrs['style']) > 0 
-           else '')
+  style = ''
+  if 'style' in attrs and len(attrs['style']) > 0:
+    style = (f'[{" ".join(f"{k}:{v}" for (k,v) in attrs["style"].items())}]' 
+             if isinstance(attrs["style"], dict) 
+             else attrs["style"])
+  
   return style + ' '.join(f'{k}={repr(v) if not dangerous else v}' 
                           for (k,v) in attrs.items() 
                           if k != 'style')
@@ -149,7 +152,7 @@ def generate_imba(html: list):
   :param html: cottonmouth form html ['div', {attrs}, body]
   :return: string that should be written to a .elm file eg `python3 -m glue -l elm about.glu > about.elm`
   """
-  if html is None: return ''
+  if html is None or html == []: return ''
   elif isinstance(html, list):
     if isinstance(html[0], list):
       # nested list, need to unpack:
@@ -171,14 +174,13 @@ def generate_imba(html: list):
   else:
     raise ValueError('{} is not convertible into html'.format(html))
 
-render_imba = t.compose('\n'.join, indented_tree, generate_imba)
+render_imba = t.compose(lambda x: x if isinstance(x, str) else indented_tree(x, ch="\t"), generate_imba)
 
 def render_imba_component(name: str, expr: str):
-  return inspect.cleandoc(f'''
-  tag {name}
-    <self>
-      {expr.replace(chr(10), f'{chr(10)}    ')}
-  ''')
+  return '''
+tag {name}
+\t<self>
+\t\t{expr}'''.format(name=name, expr=expr.replace('\n', '\n\t\t'))
 
 tohtml = t.compose(render, parse)
 tomithril = t.compose(render_mithril, unwind, parse)
