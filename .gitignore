@@ -12,3 +12,4 @@ dist/*
 glue.egg-info/*
 */elm-stuff/*
 .hypothesis
+.vscode
