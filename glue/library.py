@@ -133,7 +133,7 @@ def Classed(groups):
 def Pictogram(groups):
   '''Icon pictogram, hover to see the word.'''
   return ['span.pictogram',
-          ['img', {'alt': groups[0], 'src': groups[1] or f'img/pictogram/{groups[0]}.png'}],
+          ['img', {'alt': groups[0], 'src': groups[1] or f'./img/pictogram/{groups[0]}.png'}],
           ['span.pictoword', groups[0]]]
 
 @asset_inline(AssetType.CSS, '''

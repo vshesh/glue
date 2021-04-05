@@ -101,8 +101,7 @@ class Registry(OrderedDict, Mapping[str, Element]):
   def top(self) -> Element:
     return self[Registry.TOP]
   
-  @top.setter
-  def top(self, e: Element):
+  def set_top(self, e: Element):
     self[Registry.TOP] = e
 
   @property

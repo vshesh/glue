@@ -142,7 +142,7 @@ def render_imba_attrs(attrs: dict, dangerous=False):
              if isinstance(attrs["style"], dict) 
              else attrs["style"])
   
-  return style + ' '.join(f'{k}={repr(v) if not dangerous else v}' 
+  return style + ' ' + ' '.join(f'{k}={repr(v) if not dangerous else v}' 
                           for (k,v) in attrs.items() 
                           if k != 'style')
 
@@ -178,7 +178,7 @@ render_imba = t.compose(lambda x: x if isinstance(x, str) else indented_tree(x, 
 
 def render_imba_component(name: str, expr: str):
   return '''
-tag {name}
+export tag {name}
 \t<self>
 \t\t{expr}'''.format(name=name, expr=expr.replace('\n', '\n\t\t'))
 
