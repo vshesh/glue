@@ -99,7 +99,7 @@ def Stacked(text):
             if line.startswith('$#')
             else ['span', line] for line in text.split('\n')]]
 
-@link('\.')
+@link(r'\.')
 def Classed(groups):
   '''
   .[class1 class2](text) => ['span', {class: 'class1 class2'}, 'text']
@@ -133,7 +133,7 @@ def Classed(groups):
 def Pictogram(groups):
   '''Icon pictogram, hover to see the word.'''
   return ['span.pictogram',
-          ['img', {'alt': groups[0], 'src': groups[1] or f'./img/pictogram/{groups[0]}.png'}],
+          ['img', {'alt': groups[0], 'src': groups[1] or f'/img/pictogram/{groups[0]}.png'}],
           ['span.pictoword', groups[0]]]
 
 @asset_inline(AssetType.CSS, '''

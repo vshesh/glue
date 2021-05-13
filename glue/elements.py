@@ -29,7 +29,7 @@ class Patterns(Enum):
   """
   escape = '(?<!\\\\)(?:\\\\\\\\)*{0}'
   single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'
-  link = r'(?<!\\)(?:\\\\)*\K{0}\[((?:(?:[^\[])|(?:\[.*?\]))*?(?<!\\)(?:\\\\)*)\]\((.*?(?<!\\)(?:\\\\)*)\)'
+  link = r'(?<!\\)(?:\\\\)*\K{0}\[((?:(?:[^\[])|(?:\[.*?\]))*?(?<!\\)(?:\\\\)*)\]\(((?:\([^\)]*\)|[^)\n])*)\)'
   double_group = r'(?<!\\)(?:\\\\)*\K\{0}(.*?(?<!\\)(?:\\\\)*){1}(.*?(?<!\\)(?:\\\\)*){2}'
 
 
@@ -131,7 +131,7 @@ class Element(abc.ABC):
 
 
   # this class does not require instance data, so we can save space.
-  __slots__ = ()
+  #__slots__ = ()
 
   def __eq__(self, other):
     for attr in self.__dict__:
@@ -352,7 +352,7 @@ def standalone_integration(outer_elem='div', inner_elem='div'):
     @functools.wraps(f)
     def standalone_block(text):
       docid = makename(f.__name__) + '-' + str(uuid.uuid4())
-      elem = "document.getElementById('{0}')".format(docid);
+      elem = "document.getElementById('{0}')".format(docid)
 
       return [outer_elem + '.' + makename(f.__name__),
               [inner_elem + '#{0}'.format(docid), {'key': docid+"-container"}],

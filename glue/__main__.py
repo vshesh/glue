@@ -46,11 +46,12 @@ if __name__ == '__main__':
   def process(s: str, name: str) -> None:
     if assets: 
       print(registry.assets)
+      return 
     if language == 'html':
       print(BeautifulSoup(codegen.tohtml(registry, s), 'html.parser').prettify())
     else:
       print(codegen.__getattribute__(f'render_{language}_component')(
-        name,
+        inflection.dasherize(inflection.underscore(name)) if language == 'imba' else name,
         codegen.__getattribute__(f'to{language}')(registry, s)))
   
   if len(args) == 0: process(sys.stdin.read(), name)

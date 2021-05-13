@@ -127,11 +127,18 @@ def parseblock(registry:Registry, block:Block, text:str, args=None, parent=None)
     l = []
     for b in subblocks:
       if isinstance(b, list):
-        if b[0] not in registry:  # means block name is not in registry
+        blockname, *classnames = b[0].split('.')
+        if blockname not in registry:  # means block name is not in registry
           raise ValueError('Parser Error: Block `{}` is not in registry'.format(b[0]))
-        sub = parseblock(registry, registry[b[0]], b[2], args=b[1])
+        sub = parseblock(registry, registry[blockname], b[2], args=b[1])
+        if len(classnames) > 0:
+          # have to incur this cost otherwise will not be able to append 
+          # the classnames. There is a pure generator version of this 
+          # that I could write, but not interested in debugging that right now. 
+          sub = unwind(sub)
+          sub[0] += f'.{".".join(classnames)}'
         if meta:
-          l.append((registry[b[0]], sub))
+          l.append((registry[blockname], sub))
         else:
           l.append(sub)
       elif isinstance(b, str):
