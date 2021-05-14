@@ -26,12 +26,17 @@ class Patterns(Enum):
   Defines some known regex pattern templates for common types of inline syntax.
   For example, a single group inline element (one capture group framed by
   something before and after the group).
+
+  Note: `(?<!\\)(?:\\\\)*` is a syntax for detecting an odd number of \ characters.
+  This is used prior to the start of some pattern element so that the pattern can be escaped 
+  in case the user wnats the literal value of that character. 
   """
-  escape = '(?<!\\\\)(?:\\\\\\\\)*{0}'
-  single_group = '(?<!\\\\)(?:\\\\\\\\)*\\K{0}(.*?(?<!\\\\)(?:\\\\\\\\)*){1}'
+  escape = r'(?<!\\)(?:\\\\)*{0}'
+  single_group = r'(?<!\\)(?:\\\\)*\K{0}(.*?(?<!\\)(?:\\\\)*){1}'
   link = r'(?<!\\)(?:\\\\)*\K{0}\[((?:(?:[^\[])|(?:\[.*?\]))*?(?<!\\)(?:\\\\)*)\]\(((?:\([^\)]*\)|[^)\n])*)\)'
   double_group = r'(?<!\\)(?:\\\\)*\K\{0}(.*?(?<!\\)(?:\\\\)*){1}(.*?(?<!\\)(?:\\\\)*){2}'
-
+  # matches structures like <ident.class.class2:text> useful for one line html tag formats.
+  tag_simple = r'(?<!\\)(?:\\\\)*\K<([a-zA-Z][a-zA-Z0-9_-]*)((?:\.[a-zA-Z][a-zA-Z0-9_-]*)*):\s*([^>]+)>'
 
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 Nesting.__doc__ = """

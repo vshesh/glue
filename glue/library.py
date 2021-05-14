@@ -34,6 +34,12 @@ Strikethrough = IdenticalInline('strikethrough', '~', 'del')
 Superscript = SingleGroupInline('superscript', '^{', '}', 'sup')
 Subscript = SingleGroupInline('subscript', '_{', '}', 'sub')
 
+
+@inline(Patterns.tag_simple.value, nest=Nesting.POST)
+def TagBasic(groups):
+  return [groups[0]+(groups[1] or ''), groups[2]]
+
+
 @asset_inline(AssetType.JS, '''
 const Link = {
   view: ({attrs: {href, text}}) => m(m.route.Link, {href}, text)
@@ -183,7 +189,7 @@ def Header(groups):
           ['a.anchor', {'id':  re.sub(r'[^A-Za-z0-9 ]', '', groups[1]).strip().replace(' ', '-').lower()},
            groups[1].lstrip()]]
 
-StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic, Stacked,
+StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic, Stacked, TagBasic,
                           Monospace, Classed, Strikethrough, MithrilLink, Link,
                           InlineImage, FullImage, Pictogram, Tooltip, Header)
 
