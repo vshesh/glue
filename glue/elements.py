@@ -145,7 +145,7 @@ class Element(abc.ABC):
     return True
 
   def __repr__(self):
-    return inflection.camelize(inflection.underscore(self.name))
+    return f'{self.__class__.__name__}(name={inflection.camelize(inflection.underscore(self.name))})'
 
   def __hash__(self):
     return self.name.__hash__()
@@ -462,3 +462,23 @@ def inline_two(start: str, mid: str, end: str, nest=Nesting.POST, sub=None):
     return Inline(pattern, parser, nest, sub or ['inherit'])
 
   return inline_two_fn
+
+# ------------------------ OTHER UTILITIES ------------------------
+
+def wrap(e: Element):
+  """
+  Creates a new Element by wrapping the parser function of another Element.
+
+  >>> wrap('NewBlock', lambda x: x)(SomeBlock)
+  Block(name='NewBlock', ...)
+  """
+  def wrapper(f: Callable):
+    @functools.wraps(e.parser)
+    def new_parser(*args, **kwargs):
+      return f(e.parser(*args, **kwargs))
+    
+    new_element = copy.copy(e)
+    new_element.parser = new_parser
+    new_element.name = makename(f.__name__)
+    return new_element
+  return wrapper 

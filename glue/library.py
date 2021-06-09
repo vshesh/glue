@@ -339,9 +339,10 @@ def SideBySide(text):
 def Matrix(text, type='flex'):
   """Displays a table or flexbox style grid of values.
   For flexbox mode, make sure that there are an equal number of | in each row.
-  Table mode is more flexible.
+  Table mode is more flexible. Blank lines are ignored. 
   """
   return t.pipe(text.split('\n'),
+                tc.filter(lambda x: x.strip() != ''),
                 tc.map(lambda x: re.split(' ?' + Patterns.escape.value.format('\|') + ' ?', x)),
                 tc.map(lambda x: ['div' if type == 'flex' else 'tr',
                                   {'style': {'display':'flex'} if type == 'flex' else {}},
