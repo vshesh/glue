@@ -39,6 +39,9 @@ Subscript = SingleGroupInline('subscript', '_{', '}', 'sub')
 def TagBasic(groups):
   return [groups[0]+(groups[1] or ''), groups[2]]
 
+@inline(Patterns.tag_attributes.value, nest=Nesting.POST)
+def TagAttributes(groups):
+  return [groups[0]+ (groups[1] or ''), {x[0]:x[1] for x in t.partition(2, groups[2:-1])}, groups[-1]]
 
 @asset_inline(AssetType.JS, '''
 const Link = {
@@ -189,7 +192,7 @@ def Header(groups):
           ['a.anchor', {'id':  re.sub(r'[^A-Za-z0-9 ]', '', groups[1]).strip().replace(' ', '-').lower()},
            groups[1].lstrip()]]
 
-StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic, Stacked, TagBasic,
+StandardInline = Registry(Bold, Underline, Superscript, Subscript, Italic, Stacked, TagBasic, TagAttributes,
                           Monospace, Classed, Strikethrough, MithrilLink, Link,
                           InlineImage, FullImage, Pictogram, Tooltip, Header)
 
@@ -391,7 +394,7 @@ def Slideshow(text):
   '''
   lines = list(filter(lambda x: x.strip() != "", text.split('\n')))
   name = f'ss-{int(datetime.now().timestamp())}-{re.sub(r"[^a-z]", "", lines[0])}'
-  return ['div.slideshow', {'data-transition': 'fade'}, [
+  return ['div.slideshow', {'data-transition': 'fade'}, *[
     [['input.slideshow--bullet',
       {'type': 'radio', 'name': name, 'id': f'{name}-item-{i}', 'checked': i == 0}],
      ['div.slideshow--item', {'data-pos': f"{i+1}/{len(lines)}"},

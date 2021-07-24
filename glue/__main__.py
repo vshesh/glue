@@ -51,7 +51,7 @@ if __name__ == '__main__':
       print(BeautifulSoup(codegen.tohtml(registry, s), 'html.parser').prettify())
     else:
       print(codegen.__getattribute__(f'render_{language}_component')(
-        inflection.dasherize(inflection.underscore(name)) if language == 'imba' else name,
+        inflection.dasherize(inflection.underscore(name)) if language == 'imba' or language == "mithril" else name,
         codegen.__getattribute__(f'to{language}')(registry, s)))
   
   if len(args) == 0: process(sys.stdin.read(), name)

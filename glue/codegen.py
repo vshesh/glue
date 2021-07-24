@@ -1,6 +1,6 @@
 import textwrap
 import toolz as t
-from inflection import camelize
+from inflection import camelize, underscore
 
 from glue.util import unwind, indented_tree
 from glue.html import render
@@ -70,12 +70,14 @@ def render_mithril_component(name: str, expr: str):
     `var NAME = {controller: () => null, view: function() { return EXPR;} };`
   """
 
-  return '''var {name} = {{
-    view: function() {{
-      return {expr};
-    }}
-  }};
-  '''.format(name=camelize(name), expr=expr)
+  return '''window.Glue = window.Glue || {{}};
+var {name} = {{
+  view: function() {{
+    return {expr};
+  }}
+}};
+window.Glue["{rawname}"] = {name};
+  '''.format(name=camelize(underscore(name)), rawname=name, expr=expr)
 
 def render_react_component(name: str, expr: str):
   return '''var {name} = React.createClass({{
@@ -140,7 +142,7 @@ def render_imba_attrs(attrs: dict, dangerous=False):
   if 'style' in attrs and len(attrs['style']) > 0:
     style = (f'[{" ".join(f"{k}:{v}" for (k,v) in attrs["style"].items())}]' 
              if isinstance(attrs["style"], dict) 
-             else attrs["style"])
+             else f'style={attrs["style"]}')
   
   return style + ' ' + ' '.join(f'{"className" if k == "class" else k}={"true" if v == True else "false" if v == False else repr(v) if not dangerous else v}' 
                           for (k,v) in attrs.items() 

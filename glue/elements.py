@@ -37,6 +37,7 @@ class Patterns(Enum):
   double_group = r'(?<!\\)(?:\\\\)*\K\{0}(.*?(?<!\\)(?:\\\\)*){1}(.*?(?<!\\)(?:\\\\)*){2}'
   # matches structures like <ident.class.class2:text> useful for one line html tag formats.
   tag_simple = r'(?<!\\)(?:\\\\)*\K<([a-zA-Z][a-zA-Z0-9_-]*)((?:\.[a-zA-Z][a-zA-Z0-9_-]*)*):\s*([^>]+)>'
+  tag_attributes = r'(?<!\\)(?:\\\\)*\K<([a-zA-Z][a-zA-Z0-9_-]*)((?:\.[a-zA-Z][a-zA-Z0-9_-]*)*)(?:\s+([a-zA-Z]+)=("[^"]+"))+:\s*([^>]+)>'
 
 Nesting = Enum('Nesting', 'FRAME POST SUB NONE')
 Nesting.__doc__ = """
