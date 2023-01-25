@@ -10,6 +10,7 @@ Requires Python 3.6+
 ```bash
 $ git clone <this repo>
 $ cd glue
+$ pip install -e . # dev mode install (haven't put this on pypi)
 glue$ echo '*test*' | python3 -m glue 
 
 
