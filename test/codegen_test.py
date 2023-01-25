@@ -20,4 +20,4 @@ def test_render_imba_attrs_double(t, t2):
 
 @given(text())
 def test_render_imba_attrs_style(t):
-  assert render_imba_attrs({'style': {t: 1}}) == f'[{t}:1]'
+  assert render_imba_attrs({'style': {t: 1}}) == f'[{t}:1] '
