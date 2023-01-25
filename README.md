@@ -1,6 +1,6 @@
 # Glue: plain-text format for other plain-text formats
 
-[![Build Status](https://travis-ci.org/vshesh/glue.svg?branch=master)](https://travis-ci.org/vshesh/glue)
+![Build Status](https://github.com/vshesh/glue/actions/workflows/python-package.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/vshesh/glue/badge.svg?branch=master)](https://coveralls.io/github/vshesh/glue?branch=master)
 
 ## Quickstart
